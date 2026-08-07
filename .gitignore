@@ -2,3 +2,6 @@
 cookies.txt
 hts-cache/
 hts-log.txt
+
+# Legacy WordPress mirror kept locally as reference only; not tracked/pushed.
+/legacy-site/
