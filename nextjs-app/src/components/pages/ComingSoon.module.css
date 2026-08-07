@@ -1,0 +1,48 @@
+.hero {
+  position: relative;
+  min-height: 520px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.image {
+  object-fit: cover;
+}
+
+.overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(10, 15, 25, 0.68);
+}
+
+.content {
+  position: relative;
+  z-index: 1;
+  max-width: 640px;
+  text-align: center;
+  color: #fff;
+  padding: 0 24px;
+}
+
+.title {
+  font-size: 34px;
+  margin-bottom: 20px;
+}
+
+.body {
+  font-size: 15px;
+  line-height: 1.9;
+  color: #e4e7ee;
+}
+
+@media (max-width: 768px) {
+  .hero {
+    min-height: 400px;
+  }
+
+  .title {
+    font-size: 24px;
+  }
+}

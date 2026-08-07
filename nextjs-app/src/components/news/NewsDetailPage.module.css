@@ -1,0 +1,105 @@
+.section {
+  padding: 56px 0 96px;
+}
+
+.inner {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 0 var(--container-padding);
+}
+
+.back,
+.backBottom {
+  display: inline-block;
+  font-size: 14px;
+  color: var(--color-primary);
+  margin-bottom: 24px;
+}
+
+.backBottom {
+  margin-top: 48px;
+  margin-bottom: 0;
+}
+
+.back:hover,
+.backBottom:hover {
+  text-decoration: underline;
+}
+
+.meta {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.date {
+  font-size: 14px;
+  color: var(--color-text-muted);
+}
+
+.tag {
+  font-size: 12px;
+  color: var(--color-primary);
+  background: #eaf1fb;
+  padding: 3px 12px;
+  border-radius: 3px;
+}
+
+.title {
+  font-size: 28px;
+  line-height: 1.5;
+  color: var(--color-text);
+  margin-bottom: 32px;
+  padding-bottom: 24px;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.imageWrap {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  background: var(--color-bg-alt);
+  border-radius: 6px;
+  overflow: hidden;
+  margin-bottom: 32px;
+}
+
+.image {
+  object-fit: contain;
+}
+
+.body {
+  font-size: 15px;
+  line-height: 2;
+  color: var(--color-text);
+}
+
+.body :global(p) {
+  margin-bottom: 1.4em;
+  white-space: pre-line;
+}
+
+.body :global(strong) {
+  color: var(--color-primary);
+}
+
+.body :global(ul) {
+  margin: 0 0 1.4em 1.2em;
+}
+
+.body :global(li) {
+  margin-bottom: 0.4em;
+}
+
+@media (max-width: 768px) {
+  .title {
+    font-size: 20px;
+    margin-bottom: 24px;
+    padding-bottom: 16px;
+  }
+
+  .body {
+    font-size: 14px;
+  }
+}

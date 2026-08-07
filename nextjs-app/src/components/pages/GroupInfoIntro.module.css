@@ -1,0 +1,33 @@
+.section {
+  padding: 56px 0 40px;
+}
+
+.inner {
+  max-width: 860px;
+  margin: 0 auto;
+  padding: 0 var(--container-padding);
+  text-align: center;
+}
+
+.badge {
+  margin: 0 auto 20px;
+}
+
+.title {
+  font-size: 26px;
+  margin-bottom: 24px;
+}
+
+.paragraph {
+  font-size: 14px;
+  line-height: 2;
+  color: var(--color-text-muted);
+  text-align: left;
+  margin-bottom: 16px;
+}
+
+@media (max-width: 600px) {
+  .title {
+    font-size: 22px;
+  }
+}

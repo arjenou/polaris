@@ -1,0 +1,158 @@
+.hero {
+  position: relative;
+  width: 100%;
+  height: 650px;
+  overflow: hidden;
+  background: #0a2540;
+}
+
+.slide {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  transition: opacity 1s ease;
+}
+
+.slideActive {
+  opacity: 1;
+}
+
+.slideImage {
+  object-fit: cover;
+}
+
+.overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    90deg,
+    rgba(0, 20, 50, 0.55) 0%,
+    rgba(0, 20, 50, 0.15) 60%,
+    rgba(0, 20, 50, 0.05) 100%
+  );
+}
+
+.headline {
+  position: absolute;
+  left: max(calc((100% - var(--container-width)) / 2), var(--container-padding));
+  top: 50%;
+  transform: translateY(-50%);
+  color: #ffffff;
+  font-size: 48px;
+  line-height: 1.5;
+  max-width: 640px;
+  text-shadow: 0 2px 12px rgba(0, 0, 0, 0.35);
+  z-index: 2;
+}
+
+.dots {
+  display: none;
+  position: absolute;
+  bottom: 24px;
+  left: 50%;
+  transform: translateX(-50%);
+  gap: 10px;
+  z-index: 2;
+}
+
+.dot {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  border: none;
+  background: rgba(255, 255, 255, 0.5);
+  cursor: pointer;
+  padding: 0;
+}
+
+.dotActive {
+  background: #ffffff;
+  transform: scale(1.2);
+}
+
+.thumbnails {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  z-index: 3;
+  display: flex;
+  gap: 8px;
+  background: #ffffff;
+  padding: 12px;
+  box-shadow: 0 -4px 16px rgba(0, 0, 0, 0.12);
+}
+
+.thumbnail {
+  position: relative;
+  width: 120px;
+  height: 84px;
+  flex-shrink: 0;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  overflow: hidden;
+  opacity: 0.6;
+  transition: opacity 0.2s ease, box-shadow 0.2s ease;
+}
+
+.thumbnail:hover {
+  opacity: 0.85;
+}
+
+.thumbnailActive {
+  opacity: 1;
+  box-shadow: inset 0 0 0 3px var(--color-primary);
+}
+
+.thumbnailImage {
+  object-fit: cover;
+}
+
+@media (max-width: 1024px) {
+  .hero {
+    height: 480px;
+  }
+
+  .headline {
+    font-size: 36px;
+  }
+
+  .thumbnail {
+    width: 96px;
+    height: 68px;
+  }
+}
+
+@media (max-width: 768px) {
+  .hero {
+    height: 380px;
+  }
+
+  .headline {
+    font-size: 26px;
+    max-width: 80%;
+  }
+
+  .thumbnails {
+    display: none;
+  }
+
+  .dots {
+    display: flex;
+  }
+}
+
+@media (max-width: 480px) {
+  .hero {
+    height: 320px;
+  }
+
+  .headline {
+    font-size: 21px;
+    line-height: 1.6;
+  }
+
+  .dots {
+    bottom: 14px;
+  }
+}

@@ -1,0 +1,320 @@
+.section {
+  padding: 64px 0;
+  background: #f0f1f3;
+}
+
+.inner {
+  max-width: var(--container-width);
+  margin: 0 auto;
+  padding: 0 var(--container-padding);
+  position: relative;
+}
+
+.header {
+  position: relative;
+  margin-bottom: 36px;
+}
+
+.teamLabel {
+  position: absolute;
+  top: -8px;
+  right: 0;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 42px;
+  font-weight: 800;
+  font-style: italic;
+  letter-spacing: 2px;
+  color: rgba(0, 78, 162, 0.1);
+}
+
+.eyebrow {
+  font-size: 13px;
+  color: var(--color-text-muted);
+  letter-spacing: 2px;
+}
+
+.title {
+  font-size: 24px;
+}
+
+.layout {
+  display: flex;
+  align-items: center;
+  gap: 48px;
+}
+
+.cards {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  flex-shrink: 0;
+}
+
+.card {
+  position: relative;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  border-radius: 4px;
+  overflow: hidden;
+  background: #d8dce3;
+}
+
+.cardImage {
+  object-fit: cover;
+}
+
+.cardSide {
+  width: 110px;
+  height: 260px;
+  opacity: 0.65;
+  transition: opacity 0.2s ease;
+}
+
+.cardSide:hover {
+  opacity: 0.9;
+}
+
+.cardActive {
+  width: 220px;
+  height: 320px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.18);
+}
+
+.info {
+  flex: 1;
+  min-width: 0;
+}
+
+.nameRow {
+  display: flex;
+  align-items: baseline;
+  gap: 16px;
+  flex-wrap: wrap;
+  border-bottom: 1px solid var(--color-border);
+  padding-bottom: 12px;
+  margin-bottom: 10px;
+}
+
+.nameBlock {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.kana {
+  font-size: 11px;
+  color: var(--color-text-muted);
+}
+
+.kanji {
+  font-size: 24px;
+  font-weight: 700;
+  font-family: var(--font-heading);
+}
+
+.position {
+  font-size: 14px;
+  color: var(--color-text-muted);
+  margin-left: auto;
+}
+
+.department {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--color-primary);
+  margin-bottom: 10px;
+}
+
+.description {
+  font-size: 14px;
+  color: var(--color-text-muted);
+  line-height: 1.8;
+  margin-bottom: 16px;
+}
+
+.detailBtn {
+  background: none;
+  border: none;
+  padding: 0;
+  color: var(--color-primary);
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.navButtons {
+  display: none;
+  gap: 10px;
+  margin-top: 20px;
+}
+
+.navButtons button {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  border: 1px solid var(--color-border);
+  background: #fff;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+/* Modal */
+.modalOverlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 200;
+  padding: 20px;
+}
+
+.modal {
+  position: relative;
+  background: #fff;
+  border-radius: 8px;
+  max-width: 620px;
+  width: 100%;
+  max-height: 90vh;
+  overflow-y: auto;
+  padding: 32px;
+  display: flex;
+  gap: 28px;
+}
+
+.modalClose {
+  position: absolute;
+  top: 12px;
+  right: 16px;
+  background: none;
+  border: none;
+  font-size: 26px;
+  cursor: pointer;
+  color: var(--color-text-muted);
+  line-height: 1;
+}
+
+.modalPhoto {
+  position: relative;
+  flex-shrink: 0;
+  width: 180px;
+  height: 240px;
+  border-radius: 4px;
+  overflow: hidden;
+  background: #d8dce3;
+}
+
+.modalBody {
+  flex: 1;
+  min-width: 0;
+}
+
+.tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 10px 0;
+}
+
+.tag {
+  font-size: 12px;
+  color: var(--color-primary);
+  background: #eaf1fb;
+  padding: 3px 10px;
+  border-radius: 999px;
+}
+
+.sectionTitle {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--color-primary);
+  border-left: 3px solid var(--color-primary);
+  padding-left: 8px;
+  margin: 16px 0 6px;
+}
+
+.modalDescription {
+  font-size: 13px;
+  color: var(--color-text-muted);
+  line-height: 1.8;
+}
+
+.contactBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  margin-top: 22px;
+  padding: 12px 18px;
+  background: var(--color-secondary);
+  color: #fff !important;
+  border-radius: 4px;
+  font-size: 14px;
+  font-weight: 700;
+}
+
+@media (max-width: 1024px) {
+  .layout {
+    flex-direction: column;
+    gap: 28px;
+  }
+
+  .cards {
+    align-self: center;
+  }
+
+  .info {
+    width: 100%;
+    text-align: center;
+  }
+
+  .nameRow {
+    justify-content: center;
+  }
+
+  .position {
+    margin-left: 0;
+    width: 100%;
+  }
+
+  .navButtons {
+    display: flex;
+    justify-content: center;
+  }
+}
+
+@media (max-width: 600px) {
+  .section {
+    padding: 44px 0;
+  }
+
+  .teamLabel {
+    font-size: 28px;
+  }
+
+  .cardSide {
+    width: 60px;
+    height: 170px;
+  }
+
+  .cardActive {
+    width: 150px;
+    height: 220px;
+  }
+
+  .cards {
+    gap: 8px;
+  }
+
+  .modal {
+    flex-direction: column;
+    padding: 24px 20px;
+  }
+
+  .modalPhoto {
+    width: 100%;
+    height: 200px;
+  }
+}
