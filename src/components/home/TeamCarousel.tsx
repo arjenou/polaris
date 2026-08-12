@@ -1,13 +1,15 @@
 "use client";
 
 import Image from "next/image";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { MEMBER_CONTACT_URL, teamMembers } from "@/data/team";
 import styles from "./TeamCarousel.module.css";
 
 function mod(n: number, m: number) {
   return ((n % m) + m) % m;
 }
+
+const AUTOPLAY_INTERVAL_MS = 3000;
 
 interface TeamCarouselLabels {
   eyebrow: string;
@@ -36,6 +38,7 @@ export default function TeamCarousel({
   const [modalMember, setModalMember] = useState<(typeof teamMembers)[number] | null>(
     null
   );
+  const [isPaused, setIsPaused] = useState(false);
   const total = teamMembers.length;
 
   const visible = useMemo(() => {
@@ -48,6 +51,16 @@ export default function TeamCarousel({
   const goPrev = () => setActiveIndex((i) => mod(i - 1, total));
   const goNext = () => setActiveIndex((i) => mod(i + 1, total));
 
+  // Auto-advance the carousel; pauses on hover and while the detail modal is open,
+  // and restarts the countdown whenever the slide changes (manually or automatically).
+  useEffect(() => {
+    if (isPaused || modalMember || total <= 1) return;
+    const timer = setInterval(() => {
+      setActiveIndex((i) => mod(i + 1, total));
+    }, AUTOPLAY_INTERVAL_MS);
+    return () => clearInterval(timer);
+  }, [isPaused, modalMember, total, activeIndex]);
+
   return (
     <section className={styles.section}>
       <div className={styles.inner}>
@@ -57,7 +70,11 @@ export default function TeamCarousel({
           <h2 className={styles.title}>{labels.title}</h2>
         </div>
 
-        <div className={styles.layout}>
+        <div
+          className={styles.layout}
+          onMouseEnter={() => setIsPaused(true)}
+          onMouseLeave={() => setIsPaused(false)}
+        >
           <div className={styles.cards}>
             <button
               type="button"
@@ -65,7 +82,15 @@ export default function TeamCarousel({
               onClick={goPrev}
               aria-label="前のメンバー"
             >
-              <Image src={visible.prev.image} alt="" fill sizes="140px" className={styles.cardImage} />
+              <div key={visible.prev.id} className={styles.cardImageWrap}>
+                <Image
+                  src={visible.prev.image}
+                  alt=""
+                  fill
+                  sizes="140px"
+                  className={styles.cardImage}
+                />
+              </div>
             </button>
 
             <button
@@ -73,14 +98,16 @@ export default function TeamCarousel({
               className={`${styles.card} ${styles.cardActive}`}
               onClick={() => setModalMember(visible.active)}
             >
-              <Image
-                src={visible.active.image}
-                alt={`${visible.active.lastName} ${visible.active.firstName}`}
-                fill
-                sizes="(max-width: 600px) 60vw, 240px"
-                className={styles.cardImage}
-                priority
-              />
+              <div key={visible.active.id} className={styles.cardImageWrap}>
+                <Image
+                  src={visible.active.image}
+                  alt={`${visible.active.lastName} ${visible.active.firstName}`}
+                  fill
+                  sizes="(max-width: 600px) 60vw, 240px"
+                  className={styles.cardImage}
+                  priority
+                />
+              </div>
             </button>
 
             <button
@@ -89,33 +116,43 @@ export default function TeamCarousel({
               onClick={goNext}
               aria-label="次のメンバー"
             >
-              <Image src={visible.next.image} alt="" fill sizes="140px" className={styles.cardImage} />
+              <div key={visible.next.id} className={styles.cardImageWrap}>
+                <Image
+                  src={visible.next.image}
+                  alt=""
+                  fill
+                  sizes="140px"
+                  className={styles.cardImage}
+                />
+              </div>
             </button>
           </div>
 
           <div className={styles.info}>
-            <div className={styles.nameRow}>
-              <div className={styles.nameBlock}>
-                <span className={styles.kana}>{visible.active.lastNameJp}</span>
-                <span className={styles.kanji}>{visible.active.lastName}</span>
+            <div key={visible.active.id} className={styles.infoContent}>
+              <div className={styles.nameRow}>
+                <div className={styles.nameBlock}>
+                  <span className={styles.kana}>{visible.active.lastNameJp}</span>
+                  <span className={styles.kanji}>{visible.active.lastName}</span>
+                </div>
+                <div className={styles.nameBlock}>
+                  <span className={styles.kana}>{visible.active.firstNameJp}</span>
+                  <span className={styles.kanji}>{visible.active.firstName}</span>
+                </div>
+                <span className={styles.position}>
+                  {visible.active.position.replace(/^\/\s*/, "")}
+                </span>
               </div>
-              <div className={styles.nameBlock}>
-                <span className={styles.kana}>{visible.active.firstNameJp}</span>
-                <span className={styles.kanji}>{visible.active.firstName}</span>
-              </div>
-              <span className={styles.position}>
-                {visible.active.position.replace(/^\/\s*/, "")}
-              </span>
+              <div className={styles.department}>{visible.active.department}</div>
+              <p className={styles.description}>{visible.active.description}</p>
+              <button
+                type="button"
+                className={styles.detailBtn}
+                onClick={() => setModalMember(visible.active)}
+              >
+                {labels.detailBtn}
+              </button>
             </div>
-            <div className={styles.department}>{visible.active.department}</div>
-            <p className={styles.description}>{visible.active.description}</p>
-            <button
-              type="button"
-              className={styles.detailBtn}
-              onClick={() => setModalMember(visible.active)}
-            >
-              {labels.detailBtn}
-            </button>
 
             <div className={styles.navButtons}>
               <button type="button" onClick={goPrev} aria-label="前のメンバー">
