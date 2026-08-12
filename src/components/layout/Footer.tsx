@@ -1,9 +1,20 @@
 import Image from "next/image";
 import { site } from "@/data/site";
+import { subsidiaries, type SubsidiaryKey } from "@/data/subsidiaries";
 import styles from "./Footer.module.css";
 
-export default function Footer({ locale = "ja" }: { locale?: "ja" | "zh" }) {
+export default function Footer({
+  locale = "ja",
+  subsidiary,
+}: {
+  locale?: "ja" | "zh";
+  subsidiary?: SubsidiaryKey;
+}) {
   const isZh = locale === "zh";
+  const sub = subsidiary ? subsidiaries[subsidiary] : undefined;
+  const companyName = sub ? (isZh ? sub.nameZh : sub.name) : isZh ? site.nameZh : site.name;
+  const companyAddress = sub ? (isZh ? sub.addressZh : sub.address) : isZh ? site.addressZh : site.address;
+
   return (
     <footer className={styles.footer}>
       <div className={styles.inner}>
@@ -11,13 +22,23 @@ export default function Footer({ locale = "ja" }: { locale?: "ja" | "zh" }) {
           <Image
             src={site.footerLogo}
             alt={site.nameEn}
-            width={200}
-            height={67}
+            width={280}
+            height={94}
             className={styles.logo}
           />
+          <span className={styles.divider} aria-hidden="true" />
+          {sub && (
+            <Image
+              src={sub.image}
+              alt={companyName}
+              width={260}
+              height={102}
+              className={styles.subsidiaryLogo}
+            />
+          )}
           <div className={styles.companyBlock}>
-            <h3>{isZh ? site.nameZh : site.name}</h3>
-            <p>{isZh ? site.addressZh : site.address}</p>
+            <h3>{companyName}</h3>
+            <p>{companyAddress}</p>
           </div>
         </div>
         <div className={styles.bottom}>

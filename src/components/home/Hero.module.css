@@ -34,13 +34,15 @@
 
 .headline {
   position: absolute;
-  left: max(calc((100% - var(--container-width)) / 2), var(--container-padding));
+  left: 50%;
   top: 50%;
-  transform: translateY(-50%);
+  transform: translate(-50%, -50%);
   color: #ffffff;
-  font-size: 48px;
+  font-size: 64px;
   line-height: 1.5;
-  max-width: 640px;
+  width: 100%;
+  white-space: nowrap;
+  text-align: center;
   text-shadow: 0 2px 12px rgba(0, 0, 0, 0.35);
   z-index: 2;
 }
@@ -114,7 +116,7 @@
   }
 
   .headline {
-    font-size: 36px;
+    font-size: 48px;
   }
 
   .thumbnail {
@@ -129,8 +131,8 @@
   }
 
   .headline {
-    font-size: 26px;
-    max-width: 80%;
+    font-size: 32px;
+    max-width: 85%;
   }
 
   .thumbnails {
@@ -148,7 +150,7 @@
   }
 
   .headline {
-    font-size: 21px;
+    font-size: 24px;
     line-height: 1.6;
   }
 

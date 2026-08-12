@@ -21,6 +21,7 @@ export default function Page() {
       />
       <CompanyTimeline title={groupInfoZh.timelineTitle} items={groupInfoZh.timeline} />
       <CompanyCards
+        companiesTitle={groupInfoZh.companiesTitle}
         domesticTitle={groupInfoZh.domesticTitle}
         overseasTitle={groupInfoZh.overseasTitle}
         domestic={groupInfoZh.domestic}

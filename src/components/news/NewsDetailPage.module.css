@@ -56,17 +56,19 @@
 }
 
 .imageWrap {
-  position: relative;
   width: 100%;
-  aspect-ratio: 16 / 9;
   background: var(--color-bg-alt);
   border-radius: 6px;
   overflow: hidden;
   margin-bottom: 32px;
+  text-align: center;
 }
 
 .image {
-  object-fit: contain;
+  display: block;
+  width: 100%;
+  height: auto;
+  max-width: 100%;
 }
 
 .body {

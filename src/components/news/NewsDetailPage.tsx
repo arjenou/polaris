@@ -34,7 +34,8 @@ export default function NewsDetailPage({
           <Image
             src={post.image}
             alt=""
-            fill
+            width={post.imageWidth}
+            height={post.imageHeight}
             sizes="(max-width: 768px) 100vw, 800px"
             className={styles.image}
             priority

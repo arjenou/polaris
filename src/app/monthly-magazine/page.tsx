@@ -9,7 +9,7 @@ export const metadata: Metadata = {
 
 export default function Page() {
   return (
-    <PageShell locale="ja">
+    <PageShell locale="ja" subsidiary="arknest">
       <ComingSoon image={comingSoonCopy.image} body={comingSoonCopy.body} />
     </PageShell>
   );

@@ -44,7 +44,7 @@ export interface ContactCopy {
 export const contactCopyJa: ContactCopy = {
   heroTitle: "お問い合わせ",
   intro:
-    "ご不明な点やご相談などがございましたら、お気軽にお問い合わせください。担当者より折り返しご連絡いたします。",
+    "ご不明な点やご相談などがございましたら、お気軽にお問い合わせください。\n担当者より折り返しご連絡いたします。",
   steps: {
     input: "入力",
     confirm: "確認",

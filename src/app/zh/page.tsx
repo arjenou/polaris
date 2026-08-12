@@ -35,7 +35,7 @@ const eventsLabelsZh = {
 
 export default function ZhHomePage() {
   return (
-    <PageShell locale="zh">
+    <PageShell locale="zh" subsidiary="shanghai">
       <Hero headline={heroHeadlineZh} />
       <NewsSection items={newsItemsZh} moreHref="/zh/news" moreLabel="查看全部" />
       <RecommendedSection

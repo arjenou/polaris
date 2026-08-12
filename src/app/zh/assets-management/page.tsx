@@ -14,7 +14,7 @@ export const metadata: Metadata = {
 
 export default function Page() {
   return (
-    <PageShell locale="zh">
+    <PageShell locale="zh" subsidiary="property">
       <PageHero image={assetsManagementZh.heroImage} title={assetsManagementZh.heroTitle} />
       <ServiceStrip items={assetsManagementZh.services} />
       <NewsSection items={newsItemsZh} />

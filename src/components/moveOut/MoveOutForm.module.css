@@ -1,0 +1,270 @@
+.section {
+  padding: 56px 0 80px;
+}
+
+.inner {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 0 var(--container-padding);
+}
+
+.title {
+  font-size: 30px;
+  margin-bottom: 16px;
+  text-align: center;
+}
+
+.intro {
+  font-size: 14px;
+  color: var(--color-text-muted);
+  line-height: 1.9;
+  text-align: center;
+  margin-bottom: 32px;
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
+  background: #f7f8fa;
+  padding: 36px;
+  border-radius: 8px;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.label {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--color-text);
+}
+
+.required {
+  color: #c0392b;
+  margin-left: 4px;
+  font-size: 12px;
+}
+
+.optional {
+  color: var(--color-text-muted);
+  margin-left: 8px;
+  font-size: 12px;
+  font-weight: 400;
+}
+
+.input,
+.select,
+.textarea {
+  font-family: inherit;
+  font-size: 14px;
+  padding: 12px 14px;
+  border: 1px solid var(--color-border);
+  border-radius: 4px;
+  background: #fff;
+  color: var(--color-text);
+}
+
+.input:focus,
+.select:focus,
+.textarea:focus {
+  outline: none;
+  border-color: var(--color-primary);
+}
+
+.textarea {
+  resize: vertical;
+  min-height: 100px;
+}
+
+.fieldNote {
+  font-size: 12px;
+  color: var(--color-text-muted);
+  line-height: 1.7;
+}
+
+.noticeBox {
+  background: #fff;
+  border: 1px solid var(--color-border);
+  border-radius: 6px;
+  padding: 20px 22px;
+}
+
+.noticeTitle {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--color-primary);
+  margin-bottom: 12px;
+}
+
+.noticeList {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding-left: 18px;
+}
+
+.noticeList li {
+  font-size: 13px;
+  line-height: 1.8;
+  color: var(--color-text-secondary);
+  list-style: disc;
+}
+
+.fieldset {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  background: #fff;
+  border: 1px solid var(--color-border);
+  border-radius: 6px;
+  padding: 22px;
+}
+
+.legend {
+  padding: 0 6px;
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--color-text);
+}
+
+.agreeField {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  background: #fff;
+  border: 1px solid var(--color-border);
+  border-radius: 6px;
+  padding: 20px 22px;
+}
+
+.agreeHeading {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--color-text);
+}
+
+.agreeNote {
+  font-size: 13px;
+  line-height: 1.8;
+  color: var(--color-text-secondary);
+}
+
+.checkboxOption {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--color-text);
+  cursor: pointer;
+}
+
+.checkboxOption input {
+  accent-color: var(--color-primary);
+  width: 18px;
+  height: 18px;
+  flex-shrink: 0;
+}
+
+.note {
+  font-size: 12px;
+  color: var(--color-text-muted);
+}
+
+.actions {
+  display: flex;
+  justify-content: center;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.submitBtn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  align-self: center;
+  margin-top: 8px;
+  min-width: 220px;
+  padding: 14px 32px;
+  background: var(--color-primary);
+  color: #fff;
+  font-size: 15px;
+  font-weight: 700;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.submitBtn:hover {
+  background: var(--color-secondary);
+}
+
+.secondaryBtn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 160px;
+  margin-top: 8px;
+  padding: 14px 28px;
+  background: #fff;
+  color: var(--color-text);
+  font-size: 15px;
+  font-weight: 700;
+  border: 1px solid var(--color-border);
+  border-radius: 4px;
+  cursor: pointer;
+  transition: border-color 0.2s ease, color 0.2s ease;
+}
+
+.secondaryBtn:hover {
+  border-color: var(--color-primary);
+  color: var(--color-primary);
+}
+
+.successBox {
+  background: #eaf6ec;
+  border: 1px solid #bfe4c6;
+  color: #256029;
+  border-radius: 6px;
+  padding: 32px 24px;
+  text-align: center;
+}
+
+.successTitle {
+  font-size: 20px;
+  font-weight: 700;
+  margin-bottom: 8px;
+}
+
+.successBox p {
+  margin-bottom: 24px;
+  line-height: 1.8;
+}
+
+.successActions {
+  display: flex;
+  justify-content: center;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+@media (max-width: 600px) {
+  .form {
+    padding: 24px 20px;
+  }
+
+  .title {
+    font-size: 24px;
+  }
+
+  .noticeBox,
+  .fieldset,
+  .agreeField {
+    padding: 16px 18px;
+  }
+}

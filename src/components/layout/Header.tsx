@@ -38,6 +38,34 @@ function PaperPlaneIcon() {
   );
 }
 
+function GlobeIcon({ className }: { className?: string }) {
+  return (
+    <svg viewBox="0 0 20 20" fill="none" className={className} aria-hidden="true">
+      <circle cx="10" cy="10" r="7.5" stroke="currentColor" strokeWidth="1.3" />
+      <path
+        d="M2.5 10h15M10 2.5c2.1 2.1 3.2 4.8 3.2 7.5s-1.1 5.4-3.2 7.5c-2.1-2.1-3.2-4.8-3.2-7.5s1.1-5.4 3.2-7.5Z"
+        stroke="currentColor"
+        strokeWidth="1.3"
+      />
+    </svg>
+  );
+}
+
+// ja and zh routes mirror each other 1:1 under the /zh prefix, so the
+// equivalent page in the other locale is found by toggling that prefix.
+function getLocalePath(pathname: string, targetLocale: "ja" | "zh"): string {
+  const isZh = pathname === "/zh" || pathname.startsWith("/zh/");
+
+  if (targetLocale === "zh") {
+    if (isZh) return pathname;
+    return pathname === "/" ? "/zh" : `/zh${pathname}`;
+  }
+
+  if (!isZh) return pathname;
+  const stripped = pathname.slice(3);
+  return stripped === "" ? "/" : stripped;
+}
+
 export default function Header({ locale = "ja" }: { locale?: "ja" | "zh" }) {
   const pathname = usePathname();
   const [menuOpen, setMenuOpen] = useState(false);
@@ -48,6 +76,8 @@ export default function Header({ locale = "ja" }: { locale?: "ja" | "zh" }) {
   const contactHref = locale === "zh" ? "/zh/contact" : site.contactHref;
   const comingSoonText = comingSoonLabel[locale];
   const logoSubtitle = locale === "zh" ? site.nameZh : site.name;
+  const jaHref = getLocalePath(pathname, "ja");
+  const zhHref = getLocalePath(pathname, "zh");
 
   useEffect(() => {
     setMenuOpen(false);
@@ -77,11 +107,13 @@ export default function Header({ locale = "ja" }: { locale?: "ja" | "zh" }) {
       <div className={styles.topBar}>
         <div className={styles.topBarInner}>
           <div className={styles.languageSwitch}>
-            <span className={styles.languageLabel}>LANGUAGE</span>
-            <Link href="/" className={locale === "ja" ? styles.active : undefined}>
+            <span className={styles.languageLabel} aria-label="Language" role="img">
+              <GlobeIcon className={styles.languageIcon} />
+            </span>
+            <Link href={jaHref} className={locale === "ja" ? styles.active : undefined}>
               日本語
             </Link>
-            <Link href="/zh" className={locale === "zh" ? styles.active : undefined}>
+            <Link href={zhHref} className={locale === "zh" ? styles.active : undefined}>
               中国語
             </Link>
           </div>
@@ -165,7 +197,12 @@ export default function Header({ locale = "ja" }: { locale?: "ja" | "zh" }) {
                               <ul>
                                 {group.items.map((sub) => (
                                   <li key={sub.label}>
-                                    <Link href={item.href}>{sub.label}</Link>
+                                    <Link
+                                      href={sub.href ?? item.href}
+                                      className={sub.bold ? styles.megaSubItemBold : undefined}
+                                    >
+                                      {sub.label}
+                                    </Link>
                                   </li>
                                 ))}
                               </ul>
@@ -271,7 +308,12 @@ export default function Header({ locale = "ja" }: { locale?: "ja" | "zh" }) {
                             <ul>
                               {group.items.map((sub) => (
                                 <li key={sub.label}>
-                                  <Link href={item.href}>{sub.label}</Link>
+                                  <Link
+                                    href={sub.href ?? item.href}
+                                    className={sub.bold ? styles.mobileSubItemBold : undefined}
+                                  >
+                                    {sub.label}
+                                  </Link>
                                 </li>
                               ))}
                             </ul>
@@ -289,9 +331,9 @@ export default function Header({ locale = "ja" }: { locale?: "ja" | "zh" }) {
           </ul>
         </nav>
         <div className={styles.mobileLanguageSwitch}>
-          <Link href="/">日本語</Link>
+          <Link href={jaHref}>日本語</Link>
           <span aria-hidden="true">|</span>
-          <Link href="/zh">中国語</Link>
+          <Link href={zhHref}>中国語</Link>
         </div>
         <Link href={contactHref} className={styles.mobileContactButton}>
           {locale === "zh" ? "联系我们" : "お問い合わせ"}

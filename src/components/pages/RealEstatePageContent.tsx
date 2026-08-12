@@ -19,7 +19,7 @@ export default function RealEstatePageContent({
   const galleryTitle =
     variant === "renovation" ? data.renovationGalleryTitle : data.galleryTitle;
   return (
-    <PageShell locale={locale}>
+    <PageShell locale={locale} subsidiary="next">
       <PageHero image={data.heroImage} title={data.heroTitle} />
       <ServiceStrip items={data.services} />
       <NewsSection items={locale === "zh" ? newsItemsZh : undefined} />

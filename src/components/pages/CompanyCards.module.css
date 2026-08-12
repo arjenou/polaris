@@ -1,6 +1,6 @@
 .section {
   padding: 24px 0 64px;
-  background: #f7f8fa;
+  background: #f5f5f5;
 }
 
 .inner {
@@ -9,42 +9,68 @@
   padding: 0 var(--container-padding);
 }
 
-.title {
-  font-size: 20px;
-  margin-bottom: 20px;
+.mainTitle {
+  font-size: 26px;
+  font-weight: 700;
+  color: var(--color-text-secondary);
+  padding-bottom: 16px;
+  border-bottom: 1px solid var(--color-border);
+  margin-bottom: 24px;
 }
 
-.grid {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 20px;
+.subTitle {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--color-text);
+  margin: 0 0 16px;
+}
+
+.list {
   margin-bottom: 40px;
 }
 
-.card {
-  position: relative;
+.company {
+  margin-bottom: 20px;
+}
+
+.company:last-child {
+  margin-bottom: 0;
+}
+
+.companyHeader {
+  background: #ebedf0;
+  border-left: 5px solid var(--color-primary);
+  padding: 12px 18px;
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--color-text);
+}
+
+.companyBody {
+  display: flex;
+  align-items: center;
+  gap: 24px;
   background: #fff;
-  border-radius: 6px;
-  overflow: hidden;
-  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.05);
-  display: block;
+  padding: 24px;
 }
 
-.imageWrap {
+.logoBox {
   position: relative;
-  width: 100%;
+  flex-shrink: 0;
+  width: 240px;
   aspect-ratio: 818 / 322;
-  background: #e5e8ee;
+  border: 1px solid var(--color-border);
+  background: #fff;
 }
 
-.image {
+.logoImage {
   object-fit: cover;
 }
 
 .badge {
   position: absolute;
-  top: 10px;
-  right: 10px;
+  top: 8px;
+  right: 8px;
   z-index: 1;
   font-size: 11px;
   color: #fff;
@@ -53,30 +79,61 @@
   border-radius: 3px;
 }
 
-.body {
-  padding: 16px 18px 20px;
+.divider {
+  align-self: stretch;
+  width: 1px;
+  background: var(--color-border);
+  flex-shrink: 0;
 }
 
-.name {
-  font-size: 16px;
-  font-weight: 700;
-  margin-bottom: 8px;
-  color: var(--color-text);
+.infoList {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
 }
 
-.meta {
-  font-size: 13px;
-  color: var(--color-text-muted);
+.infoRow {
+  display: flex;
+  gap: 24px;
+  font-size: 14px;
   line-height: 1.7;
 }
 
-.metaLabel {
-  color: var(--color-primary);
+.infoLabel {
+  flex-shrink: 0;
+  width: 90px;
   font-weight: 700;
+  color: var(--color-text);
+}
+
+.infoValue {
+  color: var(--color-text);
 }
 
 @media (max-width: 768px) {
-  .grid {
-    grid-template-columns: 1fr;
+  .companyBody {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 16px;
+  }
+
+  .logoBox {
+    width: 100%;
+  }
+
+  .divider {
+    width: 100%;
+    height: 1px;
+    align-self: auto;
+  }
+
+  .infoRow {
+    gap: 12px;
+  }
+
+  .infoLabel {
+    width: 76px;
   }
 }

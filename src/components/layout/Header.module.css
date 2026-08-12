@@ -32,10 +32,15 @@
 }
 
 .languageLabel {
-  font-size: 11px;
-  letter-spacing: 0.08em;
-  color: rgba(255, 255, 255, 0.55);
+  display: inline-flex;
+  align-items: center;
+  color: rgba(255, 255, 255, 0.7);
   margin-right: 4px;
+}
+
+.languageIcon {
+  width: 15px;
+  height: 15px;
 }
 
 .mainBar {
@@ -250,19 +255,27 @@
   list-style: none;
   display: flex;
   flex-direction: column;
+  align-items: flex-start;
   gap: 10px;
 }
 
 .megaGroup a {
+  display: block;
   font-size: 13px;
   font-weight: 400;
   color: var(--color-text-secondary);
+  text-align: left;
   white-space: nowrap;
   padding: 0;
 }
 
 .megaGroup a:hover {
   color: var(--color-primary);
+}
+
+.megaSubItemBold {
+  font-weight: 700 !important;
+  color: var(--color-primary) !important;
 }
 
 .megaComingSoon {
@@ -507,13 +520,21 @@
     list-style: none;
     display: flex;
     flex-direction: column;
+    align-items: flex-start;
   }
 
   .mobileGroup a {
+    display: block;
     padding: 8px 4px;
     font-size: 14px;
     font-weight: 400;
     color: var(--color-text-secondary);
+    text-align: left;
+  }
+
+  .mobileSubItemBold {
+    font-weight: 700 !important;
+    color: var(--color-primary) !important;
   }
 
   .mobileComingSoon {

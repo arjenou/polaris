@@ -17,7 +17,7 @@ function Card({ item }: { item: GroupCompanyCard }) {
         sizes="(max-width: 768px) 100vw, 33vw"
         className={styles.cardImage}
       />
-      {item.comingSoon && <span className={styles.comingSoonBadge}>準備中</span>}
+      {item.comingSoon && <span className={styles.comingSoonBadge}>サイト準備中</span>}
       <span className={styles.cardLabel}>{item.title}</span>
     </div>
   );

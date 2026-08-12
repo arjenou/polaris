@@ -3,6 +3,7 @@ import path from "node:path";
 import matter from "gray-matter";
 import { remark } from "remark";
 import remarkHtml from "remark-html";
+import { imageSize } from "image-size";
 
 export type PostLocale = "ja" | "zh";
 
@@ -20,9 +21,26 @@ export interface PostSummary extends PostFrontmatter {
 
 export interface Post extends PostSummary {
   contentHtml: string;
+  imageWidth: number;
+  imageHeight: number;
 }
 
 const postsDirectory = path.join(process.cwd(), "content", "posts");
+const publicDirectory = path.join(process.cwd(), "public");
+
+/** Reads the real pixel dimensions of a `public/`-relative image path so the
+ * detail page can render it at its native aspect ratio instead of cropping. */
+function getImageDimensions(imagePath: string): { width: number; height: number } {
+  const fallback = { width: 1200, height: 800 };
+  try {
+    const fullPath = path.join(publicDirectory, imagePath);
+    const buffer = fs.readFileSync(fullPath);
+    const { width, height } = imageSize(buffer);
+    return width && height ? { width, height } : fallback;
+  } catch {
+    return fallback;
+  }
+}
 
 function localeDir(locale: PostLocale) {
   return path.join(postsDirectory, locale);
@@ -56,10 +74,14 @@ export function getPostBySlug(locale: PostLocale, slug: string): Post | null {
   const fileContents = fs.readFileSync(fullPath, "utf8");
   const { data, content } = matter(fileContents);
   const processed = remark().use(remarkHtml).processSync(content);
+  const frontmatter = data as PostFrontmatter;
+  const { width, height } = getImageDimensions(frontmatter.image);
 
   return {
     slug,
-    ...(data as PostFrontmatter),
+    ...frontmatter,
     contentHtml: processed.toString(),
+    imageWidth: width,
+    imageHeight: height,
   };
 }

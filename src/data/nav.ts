@@ -1,5 +1,9 @@
 export interface NavSubItem {
   label: string;
+  /** Optional dedicated page for this sub-item; falls back to the parent NavItem's href when omitted. */
+  href?: string;
+  /** Renders the sub-item label in bold, e.g. to highlight a newly published page. */
+  bold?: boolean;
 }
 
 export interface NavGroup {
@@ -60,6 +64,7 @@ export const jaNavItems: NavItem[] = [
           { label: "PM収支管理" },
           { label: "リーシング業務" },
           { label: "入居者・テナント対応" },
+          { label: "退去受付フォーム", href: "/move-out-request", bold: true },
         ],
       },
       {
@@ -164,6 +169,7 @@ export const zhNavItems: NavItem[] = [
           { label: "PM收支管理" },
           { label: "招商运营" },
           { label: "入住者・租户对应" },
+          { label: "退租受理表单", href: "/zh/move-out-request", bold: true },
         ],
       },
       {
