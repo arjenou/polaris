@@ -1,0 +1,12 @@
+name = "polaris-cms"
+compatibility_date = "2026-08-01"
+pages_build_output_dir = "dist"
+
+[[d1_databases]]
+binding = "DB"
+database_name = "polaris-cms"
+database_id = "3fec4dfc-5745-4c27-a3a6-2d9521e5dcb5"
+
+[[r2_buckets]]
+binding = "MEDIA"
+bucket_name = "polaris-cms-media"

@@ -30,17 +30,19 @@ export default function NewsDetailPage({
 
         <h1 className={styles.title}>{post.title}</h1>
 
-        <div className={styles.imageWrap}>
-          <Image
-            src={post.image}
-            alt=""
-            width={post.imageWidth}
-            height={post.imageHeight}
-            sizes="(max-width: 768px) 100vw, 800px"
-            className={styles.image}
-            priority
-          />
-        </div>
+        {post.image && (
+          <div className={styles.imageWrap}>
+            <Image
+              src={post.image}
+              alt=""
+              width={post.imageWidth}
+              height={post.imageHeight}
+              sizes="(max-width: 768px) 100vw, 800px"
+              className={styles.image}
+              priority
+            />
+          </div>
+        )}
 
         <div
           className={styles.body}

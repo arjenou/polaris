@@ -27,9 +27,10 @@ const zhPaths = [
   "/zh/news",
 ];
 
-export default function sitemap(): MetadataRoute.Sitemap {
-  const jaNewsPaths = getAllSlugs("ja").map((slug) => `/news/${slug}`);
-  const zhNewsPaths = getAllSlugs("zh").map((slug) => `/zh/news/${slug}`);
+export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
+  const [jaSlugs, zhSlugs] = await Promise.all([getAllSlugs("ja"), getAllSlugs("zh")]);
+  const jaNewsPaths = jaSlugs.map((slug) => `/news/${slug}`);
+  const zhNewsPaths = zhSlugs.map((slug) => `/zh/news/${slug}`);
 
   const allPaths = [...jaPaths, ...jaNewsPaths, ...zhPaths, ...zhNewsPaths];
 

@@ -28,15 +28,17 @@ export default function NewsListPage({
           <div className={styles.grid}>
             {posts.map((post) => (
               <Link key={post.slug} href={`${basePath}/${post.slug}`} className={styles.card}>
-                <div className={styles.imageWrap}>
-                  <Image
-                    src={post.image}
-                    alt=""
-                    fill
-                    sizes="(max-width: 768px) 100vw, 33vw"
-                    className={styles.image}
-                  />
-                </div>
+                {post.image && (
+                  <div className={styles.imageWrap}>
+                    <Image
+                      src={post.image}
+                      alt=""
+                      fill
+                      sizes="(max-width: 768px) 100vw, 33vw"
+                      className={styles.image}
+                    />
+                  </div>
+                )}
                 <div className={styles.cardBody}>
                   <div className={styles.meta}>
                     <span className={styles.date}>{post.date}</span>

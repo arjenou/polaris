@@ -12,6 +12,9 @@ const eslintConfig = defineConfig([
     "out/**",
     "build/**",
     "next-env.d.ts",
+    // Independent sub-projects with their own lint/build toolchains.
+    "cms/**",
+    "legacy-site/**",
   ]),
 ]);
 

@@ -7,8 +7,8 @@ export const metadata: Metadata = {
   title: "お知らせ一覧 | ポラリス・グループ",
 };
 
-export default function Page() {
-  const posts = getAllPosts("ja");
+export default async function Page() {
+  const posts = await getAllPosts("ja");
 
   return (
     <PageShell locale="ja">

@@ -4,6 +4,14 @@ Polaris Group 官网。Next.js + TypeScript（App Router），支持日文（`/`
 
 > 仓库根目录即为本项目代码；本地磁盘上还有一个 `legacy-site/` 目录，存放旧版 WordPress 站点的静态镜像，仅作迁移参考，未被 git 跟踪，不会被提交或推送。
 
+## 内容管理（CMS）
+
+新闻公告（News）内容不再是本地 Markdown 文件，而是由 `cms/` 目录下的 Polaris CMS 管理后台维护，数据存储在 Cloudflare D1，图片存储在 Cloudflare R2。本站点在构建/请求时通过 `src/lib/posts.ts` 调用 CMS 提供的公开 API（`CMS_API_URL` 环境变量，默认 `https://polaris.api.yingmu-tech.com`）读取新闻数据，并做 5 分钟的增量静态再生成（ISR）。
+
+后台管理界面 / API 地址：`https://polaris.api.yingmu-tech.com`（自定义域名，绑定在 `yingmu-tech.com` 这个 Cloudflare 账号下，实际由 Cloudflare Pages 项目 `polaris-cms` 提供服务，原始地址 `https://polaris-cms.pages.dev` 仍可作为备用访问入口）。详见 `cms/` 目录（其自身是一个独立的 Vite + Cloudflare Pages Functions 项目，与本 Next.js 项目分开构建/部署）。
+
+当前仅 News 模块接入 CMS；Team / Events / Subsidiaries / 联系与退租表单等模块仍为静态数据，计划后续按相同模式迁移。
+
 ## Getting Started
 
 First, run the development server:

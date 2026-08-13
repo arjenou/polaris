@@ -7,8 +7,8 @@ export const metadata: Metadata = {
   title: "资讯列表 | Polaris Group",
 };
 
-export default function Page() {
-  const posts = getAllPosts("zh");
+export default async function Page() {
+  const posts = await getAllPosts("zh");
 
   return (
     <PageShell locale="zh">
