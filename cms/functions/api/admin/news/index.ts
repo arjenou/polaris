@@ -3,6 +3,7 @@ import type { Env } from "../../../_lib/env";
 import { errorJson, json } from "../../../_lib/response";
 import { sanitizeNewsContent } from "../../../_lib/sanitizeHtml";
 import { EXCERPT_MAX_LENGTH } from "../../../_lib/newsValidation";
+import { triggerRevalidate } from "../../../_lib/revalidate";
 
 interface NewsPostRow {
   id: number;
@@ -111,6 +112,7 @@ export const onRequestPost: PagesFunction<Env> = async ({ request, env }) => {
 
     const id = result.meta.last_row_id;
     const row = await env.DB.prepare("SELECT * FROM news_posts WHERE id = ?").bind(id).first<NewsPostRow>();
+    await triggerRevalidate(env, { locale: input.locale!, slug: input.slug! });
     return json(toApiShape(row!, new URL(request.url).origin), { status: 201 });
   } catch (e) {
     const message = e instanceof Error ? e.message : String(e);

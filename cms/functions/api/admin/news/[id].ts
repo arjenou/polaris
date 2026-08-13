@@ -3,6 +3,7 @@ import type { Env } from "../../../_lib/env";
 import { errorJson, json } from "../../../_lib/response";
 import { sanitizeNewsContent } from "../../../_lib/sanitizeHtml";
 import { EXCERPT_MAX_LENGTH } from "../../../_lib/newsValidation";
+import { triggerRevalidate } from "../../../_lib/revalidate";
 
 interface NewsPostRow {
   id: number;
@@ -90,6 +91,10 @@ export const onRequestPut: PagesFunction<Env> = async ({ request, env, params })
   const validationError = validate(input);
   if (validationError) return errorJson(validationError, 400);
 
+  const previous = await env.DB.prepare("SELECT locale, slug FROM news_posts WHERE id = ?")
+    .bind(id)
+    .first<{ locale: string; slug: string }>();
+
   try {
     await env.DB.prepare(
       `UPDATE news_posts SET locale = ?, slug = ?, title = ?, date = ?, tag = ?, excerpt = ?, content = ?,
@@ -114,6 +119,12 @@ export const onRequestPut: PagesFunction<Env> = async ({ request, env, params })
 
     const row = await env.DB.prepare("SELECT * FROM news_posts WHERE id = ?").bind(id).first<NewsPostRow>();
     if (!row) return errorJson("未找到该新闻", 404);
+
+    await triggerRevalidate(env, { locale: input.locale!, slug: input.slug! });
+    if (previous && (previous.locale !== input.locale || previous.slug !== input.slug)) {
+      await triggerRevalidate(env, { locale: previous.locale, slug: previous.slug });
+    }
+
     return json(toApiShape(row, new URL(request.url).origin));
   } catch (e) {
     const message = e instanceof Error ? e.message : String(e);
@@ -126,6 +137,13 @@ export const onRequestDelete: PagesFunction<Env> = async ({ env, params }) => {
   const id = Number(params.id);
   if (!Number.isInteger(id)) return errorJson("无效的 id", 400);
 
+  const row = await env.DB.prepare("SELECT locale, slug FROM news_posts WHERE id = ?")
+    .bind(id)
+    .first<{ locale: string; slug: string }>();
+
   await env.DB.prepare("DELETE FROM news_posts WHERE id = ?").bind(id).run();
+
+  if (row) await triggerRevalidate(env, { locale: row.locale, slug: row.slug });
+
   return json({ ok: true });
 };
