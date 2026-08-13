@@ -188,7 +188,7 @@ export default function TeamCarousel({
                 alt={`${modalMember.lastName} ${modalMember.firstName}`}
                 fill
                 sizes="220px"
-                className={styles.cardImage}
+                className={styles.modalPhotoImage}
               />
             </div>
             <div className={styles.modalBody}>
