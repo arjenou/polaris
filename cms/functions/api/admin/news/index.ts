@@ -1,6 +1,8 @@
 /// <reference types="@cloudflare/workers-types" />
 import type { Env } from "../../../_lib/env";
 import { errorJson, json } from "../../../_lib/response";
+import { sanitizeNewsContent } from "../../../_lib/sanitizeHtml";
+import { EXCERPT_MAX_LENGTH } from "../../../_lib/newsValidation";
 
 interface NewsPostRow {
   id: number;
@@ -60,6 +62,7 @@ function validate(input: NewsPostInput): string | null {
   if (!input.date || !/^\d{4}\.\d{2}\.\d{2}$/.test(input.date)) return "日期格式应为 YYYY.MM.DD";
   if (!input.tag) return "标签不能为空";
   if (!input.excerpt) return "摘要不能为空";
+  if (input.excerpt.length > EXCERPT_MAX_LENGTH) return `摘要不能超过 ${EXCERPT_MAX_LENGTH} 字`;
   return null;
 }
 
@@ -98,7 +101,7 @@ export const onRequestPost: PagesFunction<Env> = async ({ request, env }) => {
         input.date,
         input.tag,
         input.excerpt,
-        input.content ?? "",
+        sanitizeNewsContent(input.content ?? ""),
         input.imageKey ?? null,
         input.imageWidth ?? null,
         input.imageHeight ?? null,

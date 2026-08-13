@@ -1,6 +1,3 @@
-import { remark } from "remark";
-import remarkHtml from "remark-html";
-
 export type PostLocale = "ja" | "zh";
 
 export interface PostSummary {
@@ -51,11 +48,12 @@ export async function getPostBySlug(locale: PostLocale, slug: string): Promise<P
     if (!res.ok) return null;
 
     const post = await res.json();
-    const processed = remark().use(remarkHtml).processSync(post.content);
 
+    // `content` is authored as sanitized HTML by the CMS's rich text editor
+    // (see /cms), so it can be rendered directly without markdown parsing.
     return {
       ...post,
-      contentHtml: processed.toString(),
+      contentHtml: post.content,
     };
   } catch {
     return null;

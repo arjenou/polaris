@@ -1,6 +1,9 @@
 import { useEffect, useState, type FormEvent } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { mediaApi, newsApi, type NewsPostInput } from "../lib/api";
+import RichTextEditor from "../components/RichTextEditor";
+
+const EXCERPT_MAX_LENGTH = 120;
 
 const EMPTY_FORM: NewsPostInput = {
   locale: "ja",
@@ -132,20 +135,29 @@ export default function NewsEditor({ mode }: { mode: "create" | "edit" }) {
         </label>
 
         <label>
-          摘要
-          <textarea rows={2} value={form.excerpt} onChange={(e) => update("excerpt", e.target.value)} required />
+          摘要（卡片文字，最多 {EXCERPT_MAX_LENGTH} 字）
+          <textarea
+            rows={2}
+            value={form.excerpt}
+            maxLength={EXCERPT_MAX_LENGTH}
+            onChange={(e) => update("excerpt", e.target.value)}
+            required
+          />
+          <span className="char-counter">
+            {form.excerpt.length} / {EXCERPT_MAX_LENGTH}
+          </span>
         </label>
 
         <label>
-          配图
+          配图（新闻卡片图）
           <input type="file" accept="image/png,image/jpeg,image/webp,image/gif" onChange={handleImageChange} />
         </label>
         {uploading && <p>上传中…</p>}
         {imageUrl && <img src={imageUrl} alt="" className="image-preview" />}
 
         <label>
-          正文（Markdown）
-          <textarea rows={14} value={form.content} onChange={(e) => update("content", e.target.value)} />
+          正文
+          <RichTextEditor initialContent={form.content} onChange={(html) => update("content", html)} />
         </label>
 
         {error && <p className="form-error">{error}</p>}

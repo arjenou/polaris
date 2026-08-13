@@ -281,3 +281,114 @@ body {
   display: flex;
   justify-content: flex-end;
 }
+
+.char-counter {
+  align-self: flex-end;
+  font-size: 12px;
+  color: #8a93a6;
+}
+
+.rich-text-editor {
+  border: 1px solid #d8dce3;
+  border-radius: 6px;
+  overflow: hidden;
+}
+
+.rich-text-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px;
+  padding: 8px;
+  background: #f7f8fa;
+  border-bottom: 1px solid #d8dce3;
+}
+
+.rich-text-toolbar button {
+  padding: 5px 10px;
+  border: 1px solid transparent;
+  border-radius: 4px;
+  background: transparent;
+  font-size: 13px;
+  color: #333;
+  cursor: pointer;
+}
+
+.rich-text-toolbar button:hover {
+  background: #eef0f3;
+}
+
+.rich-text-toolbar button.active {
+  background: #e3ecfd;
+  border-color: #b9cdfb;
+  color: #2054c9;
+}
+
+.rich-text-toolbar button:disabled {
+  opacity: 0.6;
+  cursor: default;
+}
+
+.toolbar-divider {
+  width: 1px;
+  height: 20px;
+  background: #d8dce3;
+  margin: 0 4px;
+}
+
+.rich-text-content {
+  padding: 12px 14px;
+  min-height: 320px;
+  font-size: 14px;
+  line-height: 1.7;
+}
+
+.rich-text-content:focus {
+  outline: none;
+}
+
+.rich-text-content p {
+  margin: 0 0 12px;
+}
+
+.rich-text-content h2 {
+  font-size: 20px;
+  margin: 20px 0 10px;
+}
+
+.rich-text-content h3 {
+  font-size: 17px;
+  margin: 18px 0 8px;
+}
+
+.rich-text-content ul,
+.rich-text-content ol {
+  padding-left: 24px;
+  margin: 0 0 12px;
+}
+
+.rich-text-content blockquote {
+  margin: 0 0 12px;
+  padding-left: 12px;
+  border-left: 3px solid #d8dce3;
+  color: #4a5468;
+}
+
+.rich-text-content pre {
+  background: #1f2430;
+  color: #eee;
+  padding: 12px;
+  border-radius: 6px;
+  overflow-x: auto;
+  margin: 0 0 12px;
+}
+
+.rich-text-content img {
+  max-width: 100%;
+  border-radius: 6px;
+  margin: 8px 0;
+}
+
+.rich-text-content a {
+  color: #2054c9;
+}

@@ -14,12 +14,18 @@
     "d1:migrate:local": "wrangler d1 migrations apply polaris-cms --local",
     "d1:migrate:remote": "wrangler d1 migrations apply polaris-cms --remote",
     "migrate:news": "tsx scripts/migrate-news.ts",
-    "bootstrap:admin": "tsx scripts/bootstrap-admin.ts"
+    "bootstrap:admin": "tsx scripts/bootstrap-admin.ts",
+    "migrate:content-to-html": "tsx scripts/migrate-content-to-html.ts"
   },
   "dependencies": {
+    "@tiptap/extension-image": "^3.29.2",
+    "@tiptap/pm": "^3.29.2",
+    "@tiptap/react": "^3.29.2",
+    "@tiptap/starter-kit": "^3.29.2",
     "react": "^19.1.0",
     "react-dom": "^19.1.0",
-    "react-router-dom": "^7.1.1"
+    "react-router-dom": "^7.1.1",
+    "unsane": "^0.1.0"
   },
   "devDependencies": {
     "@cloudflare/workers-types": "^5.20260801.1",
@@ -33,6 +39,8 @@
     "globals": "^15.14.0",
     "gray-matter": "^4.0.3",
     "image-size": "^2.0.2",
+    "remark": "^15.0.1",
+    "remark-html": "^16.0.1",
     "tsx": "^4.19.2",
     "typescript": "^5.7.2",
     "typescript-eslint": "^8.19.1",
