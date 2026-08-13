@@ -1,3 +1,6 @@
+/// <reference types="@cloudflare/workers-types" />
+import type { Env } from "./env";
+
 const SESSION_COOKIE_NAME = "admin_session";
 const SESSION_MAX_AGE_SECONDS = 60 * 60 * 24 * 7; // 7 days
 
@@ -42,32 +45,41 @@ function timingSafeEqual(a: string, b: string): boolean {
   return result === 0;
 }
 
-export async function createSessionToken(username: string, secret: string): Promise<string> {
-  const expires = Date.now() + SESSION_MAX_AGE_SECONDS * 1000;
-  const payload = `${username}|${expires}`;
-  const signature = await hmacSign(secret, payload);
-  return `${base64UrlEncode(payload)}.${signature}`;
+export interface SessionPayload {
+  username: string;
+  tokenVersion: number;
 }
 
-export async function verifySessionToken(token: string, secret: string): Promise<{ username: string } | null> {
+export async function createSessionToken(payload: SessionPayload, secret: string): Promise<string> {
+  const expires = Date.now() + SESSION_MAX_AGE_SECONDS * 1000;
+  const raw = `${payload.username}|${expires}|${payload.tokenVersion}`;
+  const signature = await hmacSign(secret, raw);
+  return `${base64UrlEncode(raw)}.${signature}`;
+}
+
+/** Verifies the cookie's signature/expiry only. Does NOT check that
+ * `tokenVersion` still matches the user's current password — callers that
+ * need that guarantee should use `requireSession` instead. */
+async function verifySessionSignature(token: string, secret: string): Promise<SessionPayload | null> {
   const [payloadB64, signature] = token.split(".");
   if (!payloadB64 || !signature) return null;
 
-  let payload: string;
+  let raw: string;
   try {
-    payload = base64UrlDecode(payloadB64);
+    raw = base64UrlDecode(payloadB64);
   } catch {
     return null;
   }
 
-  const expectedSignature = await hmacSign(secret, payload);
+  const expectedSignature = await hmacSign(secret, raw);
   if (!timingSafeEqual(signature, expectedSignature)) return null;
 
-  const [username, expiresStr] = payload.split("|");
+  const [username, expiresStr, tokenVersionStr] = raw.split("|");
   const expires = Number(expiresStr);
-  if (!username || Number.isNaN(expires) || Date.now() > expires) return null;
+  const tokenVersion = Number(tokenVersionStr);
+  if (!username || Number.isNaN(expires) || Date.now() > expires || !Number.isInteger(tokenVersion)) return null;
 
-  return { username };
+  return { username, tokenVersion };
 }
 
 export function buildSessionCookie(token: string): string {
@@ -85,8 +97,22 @@ export function readSessionTokenFromRequest(request: Request): string | null {
   return match ? decodeURIComponent(match[1]) : null;
 }
 
-export async function requireSession(request: Request, secret: string): Promise<{ username: string } | null> {
+/** Verifies the session cookie's signature/expiry AND that its `tokenVersion`
+ * still matches the user's current row in D1 — so changing a password (which
+ * bumps `token_version`) immediately invalidates any other outstanding
+ * sessions for that user. */
+export async function requireSession(request: Request, env: Env): Promise<{ username: string } | null> {
   const token = readSessionTokenFromRequest(request);
   if (!token) return null;
-  return verifySessionToken(token, secret);
+
+  const payload = await verifySessionSignature(token, env.SESSION_SECRET);
+  if (!payload) return null;
+
+  const row = await env.DB.prepare("SELECT token_version FROM admin_users WHERE username = ?")
+    .bind(payload.username)
+    .first<{ token_version: number }>();
+
+  if (!row || row.token_version !== payload.tokenVersion) return null;
+
+  return { username: payload.username };
 }

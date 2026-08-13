@@ -78,3 +78,28 @@ export const mediaApi = {
     );
   },
 };
+
+export interface AdminUser {
+  id: number;
+  username: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export const usersApi = {
+  list: () => request<AdminUser[]>("/api/admin/users"),
+  create: (username: string, password: string) =>
+    request<{ id: number; username: string }>("/api/admin/users", {
+      method: "POST",
+      body: JSON.stringify({ username, password }),
+    }),
+  remove: (id: number) => request<{ ok: true }>(`/api/admin/users/${id}`, { method: "DELETE" }),
+};
+
+export const accountApi = {
+  changePassword: (currentPassword: string, newPassword: string) =>
+    request<{ ok: true }>("/api/admin/account/password", {
+      method: "POST",
+      body: JSON.stringify({ currentPassword, newPassword }),
+    }),
+};

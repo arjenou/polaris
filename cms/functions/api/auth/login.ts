@@ -1,11 +1,18 @@
 /// <reference types="@cloudflare/workers-types" />
 import type { Env } from "../../_lib/env";
+import { verifyPassword } from "../../_lib/password";
 import { errorJson, json } from "../../_lib/response";
 import { buildSessionCookie, createSessionToken } from "../../_lib/session";
 
 interface LoginBody {
   username?: string;
   password?: string;
+}
+
+interface AdminUserRow {
+  username: string;
+  password_hash: string;
+  token_version: number;
 }
 
 export const onRequestPost: PagesFunction<Env> = async ({ request, env }) => {
@@ -21,10 +28,14 @@ export const onRequestPost: PagesFunction<Env> = async ({ request, env }) => {
     return errorJson("请输入用户名和密码", 400);
   }
 
-  if (username !== env.ADMIN_USERNAME || password !== env.ADMIN_PASSWORD) {
+  const row = await env.DB.prepare("SELECT username, password_hash, token_version FROM admin_users WHERE username = ?")
+    .bind(username)
+    .first<AdminUserRow>();
+
+  if (!row || !(await verifyPassword(password, row.password_hash))) {
     return errorJson("用户名或密码错误", 401);
   }
 
-  const token = await createSessionToken(username, env.SESSION_SECRET);
-  return json({ ok: true, username }, {}, { "Set-Cookie": buildSessionCookie(token) });
+  const token = await createSessionToken({ username: row.username, tokenVersion: row.token_version }, env.SESSION_SECRET);
+  return json({ ok: true, username: row.username }, {}, { "Set-Cookie": buildSessionCookie(token) });
 };

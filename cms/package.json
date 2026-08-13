@@ -13,7 +13,8 @@
     "pages:deploy": "npm run build && wrangler pages deploy dist",
     "d1:migrate:local": "wrangler d1 migrations apply polaris-cms --local",
     "d1:migrate:remote": "wrangler d1 migrations apply polaris-cms --remote",
-    "migrate:news": "tsx scripts/migrate-news.ts"
+    "migrate:news": "tsx scripts/migrate-news.ts",
+    "bootstrap:admin": "tsx scripts/bootstrap-admin.ts"
   },
   "dependencies": {
     "react": "^19.1.0",
