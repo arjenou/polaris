@@ -1,6 +1,7 @@
 import type { MetadataRoute } from "next";
 import { getAllSlugs } from "@/lib/posts";
 import { getAllRecommendedSlugs } from "@/lib/recommended";
+import { getAllEventSlugs } from "@/lib/events";
 
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "https://example.com";
 
@@ -15,6 +16,7 @@ const jaPaths = [
   "/contact",
   "/news",
   "/recommended",
+  "/events",
 ];
 
 const zhPaths = [
@@ -28,33 +30,43 @@ const zhPaths = [
   "/zh/contact",
   "/zh/news",
   "/zh/recommended",
+  "/zh/events",
 ];
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const [jaSlugs, zhSlugs, jaRecommendedSlugs, zhRecommendedSlugs] = await Promise.all([
+  const [jaSlugs, zhSlugs, jaRecommendedSlugs, zhRecommendedSlugs, jaEventSlugs, zhEventSlugs] = await Promise.all([
     getAllSlugs("ja"),
     getAllSlugs("zh"),
     getAllRecommendedSlugs("ja"),
     getAllRecommendedSlugs("zh"),
+    getAllEventSlugs("ja"),
+    getAllEventSlugs("zh"),
   ]);
   const jaNewsPaths = jaSlugs.map((slug) => `/news/${slug}`);
   const zhNewsPaths = zhSlugs.map((slug) => `/zh/news/${slug}`);
   const jaRecommendedPaths = jaRecommendedSlugs.map((slug) => `/recommended/${slug}`);
   const zhRecommendedPaths = zhRecommendedSlugs.map((slug) => `/zh/recommended/${slug}`);
+  const jaEventPaths = jaEventSlugs.map((slug) => `/events/${slug}`);
+  const zhEventPaths = zhEventSlugs.map((slug) => `/zh/events/${slug}`);
 
   const allPaths = [
     ...jaPaths,
     ...jaNewsPaths,
     ...jaRecommendedPaths,
+    ...jaEventPaths,
     ...zhPaths,
     ...zhNewsPaths,
     ...zhRecommendedPaths,
+    ...zhEventPaths,
   ];
 
   return allPaths.map((pathname) => ({
     url: `${SITE_URL}${pathname}`,
     lastModified: new Date(),
-    changeFrequency: pathname.includes("/news/") || pathname.includes("/recommended/") ? "monthly" : "weekly",
+    changeFrequency:
+      pathname.includes("/news/") || pathname.includes("/recommended/") || pathname.includes("/events/")
+        ? "monthly"
+        : "weekly",
     priority: pathname === "" || pathname === "/zh" ? 1 : 0.7,
   }));
 }

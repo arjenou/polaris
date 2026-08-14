@@ -24,6 +24,9 @@ export default function Layout() {
           <NavLink to="/team" className={({ isActive }) => (isActive ? "active" : "")}>
             社员介绍
           </NavLink>
+          <NavLink to="/events" className={({ isActive }) => (isActive ? "active" : "")}>
+            社内イベント
+          </NavLink>
           <NavLink to="/contact-submissions" className={({ isActive }) => (isActive ? "active" : "")}>
             咨询记录
           </NavLink>

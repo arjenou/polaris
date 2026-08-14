@@ -16,6 +16,7 @@
     "migrate:news": "tsx scripts/migrate-news.ts",
     "migrate:recommended": "tsx scripts/migrate-recommended.ts",
     "migrate:team": "tsx scripts/migrate-team.ts",
+    "migrate:events": "tsx scripts/migrate-events.ts",
     "bootstrap:admin": "tsx scripts/bootstrap-admin.ts",
     "migrate:content-to-html": "tsx scripts/migrate-content-to-html.ts"
   },

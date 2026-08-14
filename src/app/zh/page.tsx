@@ -4,11 +4,10 @@ import Hero from "@/components/home/Hero";
 import LatestNewsSection from "@/components/home/LatestNewsSection";
 import LatestRecommendedSection from "@/components/home/LatestRecommendedSection";
 import TeamSection from "@/components/home/TeamSection";
-import EventsCarousel from "@/components/home/EventsCarousel";
+import EventsSection from "@/components/home/EventsSection";
 // GroupCompanies section is temporarily hidden on the homepage (kept for possible future re-enable).
 // import GroupCompanies from "@/components/home/GroupCompanies";
 import { heroHeadlineZh } from "@/data/home.zh";
-import { companyEventsZh } from "@/data/events.zh";
 
 export const metadata: Metadata = {
   title: "Polaris Group｜妙見川禾",
@@ -25,8 +24,8 @@ const teamLabelsZh = {
 
 const eventsLabelsZh = {
   title: "社内活动",
-  subtitle:
-    "年会、团建等活动，为您展示Polaris集团的日常风采（照片・日程为示例内容）",
+  subtitle: "年会、团建等活动，为您展示Polaris集团的日常风采",
+  more: "查看全部",
 };
 
 export default function ZhHomePage() {
@@ -42,7 +41,7 @@ export default function ZhHomePage() {
         moreLabel="查看全部"
       />
       <TeamSection locale="zh" labels={teamLabelsZh} />
-      <EventsCarousel labels={eventsLabelsZh} events={companyEventsZh} basePath="/zh/events" />
+      <EventsSection locale="zh" labels={eventsLabelsZh} />
       {/* <GroupCompanies
         eyebrow="集团企业"
         title="欢迎了解Polaris集团旗下各企业官网！"

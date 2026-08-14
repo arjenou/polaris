@@ -1,7 +1,8 @@
 import Image from "next/image";
-import type { CompanyEvent } from "@/data/events";
+import type { EventCard, EventDetail } from "@/lib/events";
 import Breadcrumb from "@/components/layout/Breadcrumb";
 import EventGallery from "./EventGallery";
+import EventVideo from "./EventVideo";
 import OtherEventsCarousel from "./OtherEventsCarousel";
 import styles from "./EventDetailPage.module.css";
 
@@ -48,13 +49,13 @@ export default function EventDetailPage({
   homeHref,
   labels = defaultEventDetailLabels,
 }: {
-  event: CompanyEvent;
-  otherEvents: CompanyEvent[];
+  event: EventDetail;
+  otherEvents: EventCard[];
   basePath: string;
   homeHref: string;
   labels?: EventDetailLabels;
 }) {
-  const heroImage = event.heroImage ?? event.photo;
+  const heroImage = event.heroImage ?? event.image;
   const overview = event.overview;
 
   return (
@@ -62,7 +63,7 @@ export default function EventDetailPage({
       <Breadcrumb
         items={[
           { label: labels.home, href: homeHref },
-          { label: labels.eventsIndex, href: `${homeHref}#events` },
+          { label: labels.eventsIndex, href: basePath },
           { label: event.title },
         ]}
       />
@@ -93,20 +94,19 @@ export default function EventDetailPage({
 
           <div className={styles.mainRow}>
             <div className={styles.heroWrap}>
-              <Image
-                src={heroImage}
-                alt={event.title}
-                fill
-                priority
-                sizes="(max-width: 900px) 100vw, 58vw"
-                className={styles.heroImage}
-              />
-              {event.hasVideo && (
-                <span className={styles.playButton} aria-hidden="true">
-                  <svg width="26" height="26" viewBox="0 0 24 24" fill="currentColor">
-                    <path d="M8 5v14l11-7z" />
-                  </svg>
-                </span>
+              {event.videoUrl ? (
+                <EventVideo url={event.videoUrl} title={event.title} />
+              ) : (
+                heroImage && (
+                  <Image
+                    src={heroImage}
+                    alt={event.title}
+                    fill
+                    priority
+                    sizes="(max-width: 900px) 100vw, 58vw"
+                    className={styles.heroImage}
+                  />
+                )
               )}
             </div>
 

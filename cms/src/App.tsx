@@ -6,6 +6,8 @@ import PostList from "./pages/PostList";
 import PostEditor from "./pages/PostEditor";
 import TeamList from "./pages/TeamList";
 import TeamEditor from "./pages/TeamEditor";
+import EventList from "./pages/EventList";
+import EventEditor from "./pages/EventEditor";
 import ContactSubmissions from "./pages/ContactSubmissions";
 import Account from "./pages/Account";
 
@@ -38,6 +40,9 @@ export default function App() {
         <Route path="team" element={<TeamList />} />
         <Route path="team/new" element={<TeamEditor mode="create" />} />
         <Route path="team/:id/edit" element={<TeamEditor mode="edit" />} />
+        <Route path="events" element={<EventList />} />
+        <Route path="events/new" element={<EventEditor mode="create" />} />
+        <Route path="events/:id/edit" element={<EventEditor mode="edit" />} />
         <Route path="contact-submissions" element={<ContactSubmissions />} />
         <Route path="account" element={<Account />} />
       </Route>

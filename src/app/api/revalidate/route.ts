@@ -1,7 +1,7 @@
 import { revalidatePath } from "next/cache";
 import { NextRequest, NextResponse } from "next/server";
 
-type RevalidateKind = "news" | "recommended" | "team";
+type RevalidateKind = "news" | "recommended" | "team" | "events";
 
 /** Pages (besides the content type's own list/detail pages) that render a
  * card fed by the CMS, and therefore also need revalidating on every change. */
@@ -20,11 +20,16 @@ const PAGES_WITH_CARD: Record<RevalidateKind, { ja: string[]; zh: string[] }> = 
     ja: ["/"],
     zh: ["/zh"],
   },
+  events: {
+    ja: ["/"],
+    zh: ["/zh"],
+  },
 };
 
 const BASE_PATH: Partial<Record<RevalidateKind, { ja: string; zh: string }>> = {
   news: { ja: "/news", zh: "/zh/news" },
   recommended: { ja: "/recommended", zh: "/zh/recommended" },
+  events: { ja: "/events", zh: "/zh/events" },
 };
 
 /**
@@ -46,7 +51,13 @@ export async function POST(request: NextRequest) {
   }
 
   const kind: RevalidateKind =
-    body.kind === "recommended" ? "recommended" : body.kind === "team" ? "team" : "news";
+    body.kind === "recommended"
+      ? "recommended"
+      : body.kind === "team"
+        ? "team"
+        : body.kind === "events"
+          ? "events"
+          : "news";
   const { locale, slug } = body;
   const locales = locale === "ja" || locale === "zh" ? [locale] : (["ja", "zh"] as const);
 

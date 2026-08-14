@@ -3,7 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useState } from "react";
-import { companyEvents as defaultEvents, type CompanyEvent } from "@/data/events";
+import type { EventCard } from "@/lib/events";
 import styles from "./EventsCarousel.module.css";
 
 function useVisibleCount() {
@@ -28,21 +28,22 @@ function useVisibleCount() {
 interface EventsCarouselLabels {
   title: string;
   subtitle: string;
+  more?: string;
 }
 
 const defaultLabels: EventsCarouselLabels = {
   title: "社内イベント",
-  subtitle:
-    "忘年会・社内イベントなど、ポラリスグループの活動風景をご紹介します（写真・日程はサンプルです）",
+  subtitle: "忘年会・社内イベントなど、ポラリスグループの活動風景をご紹介します",
+  more: "More",
 };
 
 export default function EventsCarousel({
   labels = defaultLabels,
-  events = defaultEvents,
+  events,
   basePath = "/events",
 }: {
   labels?: EventsCarouselLabels;
-  events?: CompanyEvent[];
+  events: EventCard[];
   basePath?: string;
 }) {
   const visibleCount = useVisibleCount();
@@ -55,6 +56,8 @@ export default function EventsCarousel({
 
   const goPrev = () => setStartIndex((i) => Math.max(0, i - 1));
   const goNext = () => setStartIndex((i) => Math.min(maxStart, i + 1));
+
+  if (events.length === 0) return null;
 
   return (
     <section id="events" className={styles.section}>
@@ -94,13 +97,15 @@ export default function EventsCarousel({
                 >
                   <Link href={`${basePath}/${event.slug}`} className={styles.cardLink}>
                     <div className={styles.photo}>
-                      <Image
-                        src={event.photo}
-                        alt={event.title}
-                        fill
-                        sizes="(max-width: 600px) 100vw, 25vw"
-                        className={styles.photoImage}
-                      />
+                      {event.image && (
+                        <Image
+                          src={event.image}
+                          alt={event.title}
+                          fill
+                          sizes="(max-width: 600px) 100vw, 25vw"
+                          className={styles.photoImage}
+                        />
+                      )}
                       <span
                         className={styles.badge}
                         style={{ backgroundColor: event.badgeColor }}
@@ -127,6 +132,10 @@ export default function EventsCarousel({
             </button>
           )}
         </div>
+
+        <Link href={basePath} className={styles.more}>
+          {labels.more ?? "More"} ›
+        </Link>
       </div>
     </section>
   );

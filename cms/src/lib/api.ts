@@ -177,3 +177,64 @@ export interface ContactSubmission {
 export const contactSubmissionsApi = {
   list: () => request<ContactSubmission[]>("/api/admin/contact-submissions"),
 };
+
+export interface EventOverview {
+  eventName: string;
+  datetime: string;
+  venue: string;
+  participants: string;
+  content: string;
+  organizer: string;
+}
+
+export interface EventGalleryImage {
+  key: string;
+  url: string | null;
+}
+
+export interface EventItem {
+  id: number;
+  locale: "ja" | "zh";
+  slug: string;
+  title: string;
+  date: string;
+  dateRange: string;
+  badge: string;
+  badgeColor: string;
+  summary: string;
+  coverImageKey: string | null;
+  coverImageUrl: string | null;
+  coverImageWidth: number | null;
+  coverImageHeight: number | null;
+  heroImageKey: string | null;
+  heroImageUrl: string | null;
+  heroImageWidth: number | null;
+  heroImageHeight: number | null;
+  videoUrl: string;
+  overview: EventOverview;
+  gallery: EventGalleryImage[];
+  published: boolean;
+  scheduledAt: string | null;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export type EventInput = Omit<
+  EventItem,
+  | "id"
+  | "coverImageUrl"
+  | "heroImageUrl"
+  | "gallery"
+  | "createdAt"
+  | "updatedAt"
+> & { gallery: string[] };
+
+export const eventsApi = {
+  list: (locale?: "ja" | "zh") => request<EventItem[]>(`/api/admin/events${locale ? `?locale=${locale}` : ""}`),
+  get: (id: number) => request<EventItem>(`/api/admin/events/${id}`),
+  create: (input: EventInput) =>
+    request<EventItem>("/api/admin/events", { method: "POST", body: JSON.stringify(input) }),
+  update: (id: number, input: EventInput) =>
+    request<EventItem>(`/api/admin/events/${id}`, { method: "PUT", body: JSON.stringify(input) }),
+  remove: (id: number) => request<{ ok: true }>(`/api/admin/events/${id}`, { method: "DELETE" }),
+};

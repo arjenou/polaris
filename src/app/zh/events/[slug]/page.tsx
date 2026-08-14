@@ -22,8 +22,8 @@ const labelsZh = {
   otherEventsTitle: "其他公司活动",
 };
 
-export function generateStaticParams() {
-  return getAllEventSlugs("zh").map((slug) => ({ slug }));
+export async function generateStaticParams() {
+  return (await getAllEventSlugs("zh")).map((slug) => ({ slug }));
 }
 
 export async function generateMetadata({
@@ -32,7 +32,7 @@ export async function generateMetadata({
   params: Promise<{ slug: string }>;
 }): Promise<Metadata> {
   const { slug } = await params;
-  const event = getEventBySlug("zh", slug);
+  const event = await getEventBySlug("zh", slug);
   return {
     title: event ? `${event.title} | Polaris Group` : "公司活动 | Polaris Group",
   };
@@ -44,14 +44,14 @@ export default async function Page({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
-  const event = getEventBySlug("zh", slug);
+  const event = await getEventBySlug("zh", slug);
   if (!event) notFound();
 
   return (
     <PageShell locale="zh">
       <EventDetailPage
         event={event}
-        otherEvents={getOtherEvents("zh", slug)}
+        otherEvents={await getOtherEvents("zh", slug)}
         basePath="/zh/events"
         homeHref="/zh"
         labels={labelsZh}

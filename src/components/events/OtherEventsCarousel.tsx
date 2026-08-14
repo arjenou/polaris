@@ -3,7 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useState } from "react";
-import type { CompanyEvent } from "@/data/events";
+import type { EventCard } from "@/lib/events";
 import styles from "./OtherEventsCarousel.module.css";
 
 function useVisibleCount() {
@@ -29,7 +29,7 @@ export default function OtherEventsCarousel({
   events,
   basePath,
 }: {
-  events: CompanyEvent[];
+  events: EventCard[];
   basePath: string;
 }) {
   const visibleCount = useVisibleCount();
@@ -70,13 +70,15 @@ export default function OtherEventsCarousel({
             >
               <Link href={`${basePath}/${event.slug}`} className={styles.cardLink}>
                 <div className={styles.photo}>
-                  <Image
-                    src={event.photo}
-                    alt={event.title}
-                    fill
-                    sizes="(max-width: 600px) 100vw, 25vw"
-                    className={styles.photoImage}
-                  />
+                  {event.image && (
+                    <Image
+                      src={event.image}
+                      alt={event.title}
+                      fill
+                      sizes="(max-width: 600px) 100vw, 25vw"
+                      className={styles.photoImage}
+                    />
+                  )}
                   <span
                     className={styles.badge}
                     style={{ backgroundColor: event.badgeColor }}
