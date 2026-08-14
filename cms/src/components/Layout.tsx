@@ -33,6 +33,9 @@ export default function Layout() {
           <NavLink to="/page-advantages" className={({ isActive }) => (isActive ? "active" : "")}>
             选择理由管理
           </NavLink>
+          <NavLink to="/group-companies" className={({ isActive }) => (isActive ? "active" : "")}>
+            集团企业管理
+          </NavLink>
           <NavLink to="/contact-submissions" className={({ isActive }) => (isActive ? "active" : "")}>
             咨询记录
           </NavLink>

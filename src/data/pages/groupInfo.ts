@@ -34,58 +34,7 @@ export const groupInfo = {
   ],
   companiesTitle: "グループ企業紹介",
   domesticTitle: "日本国内企業",
-  domestic: [
-    {
-      name: "ポラリス・ネクスト株式会社",
-      business: "実需物件買取再販・収益物件買取再販・不動産仲介全般・リノベーション・リフォーム",
-      address: "東京都千代田区麴町３丁目５−１５ 得水ビル 5F",
-      image: "/images/pages/group-info/company-nexus.png",
-      href: "/business-headquarters",
-    },
-    {
-      name: "ポラリス・プロパティ株式会社",
-      business: "リーシング・賃貸管理（PM）・建物管理（BM）",
-      address: "東京都千代田区麴町３丁目５−１５ 得水ビル 5F",
-      image: "/images/pages/group-info/company-property.png",
-      href: "/assets-management",
-    },
-    {
-      name: "ArkNest株式会社",
-      business: "マンスリーマンションの運営",
-      address: "東京都新宿区百人町1-18-8大久保カドビル903-A",
-      image: "/images/pages/group-info/company-arknest.png",
-      comingSoon: true,
-    },
-    {
-      name: "川禾株式会社",
-      business: "民泊旅館ホテル清掃・建物共用部清掃・退室清掃",
-      address: "東京都新宿区百人町1-18-8大久保カドビル903-B",
-      image: "/images/pages/group-info/company-kawara.png",
-      comingSoon: true,
-    },
-    {
-      name: "喬木商事合同会社",
-      business: "起業家向け創業経営支援・レンタルオフィスの運営",
-      address: "東京都新宿区百人町1-18-8大久保カドビル903-C",
-      image: "/images/pages/group-info/company-takagi.png",
-      comingSoon: true,
-    },
-    {
-      name: "妙見行政書士事務所",
-      business: "行政書士業務全般",
-      address: "東京都新宿区百人町1-18-8大久保カドビル903-D",
-      image: "/images/pages/group-info/company-myoken.png",
-      comingSoon: true,
-    },
-  ],
   overseasTitle: "海外企業",
-  overseas: [
-    {
-      name: "妙見川禾（上海）商務諮詢有限公司",
-      business: "日本移住支援・日本投資企画・海外ビジネス開発",
-      address: "中国上海市长宁区SOHO天山广场T2座 5F",
-      image: "/images/pages/group-info/company-shanghai.png",
-      comingSoon: true,
-    },
-  ],
+  // Company cards are now managed via the CMS admin (group-companies), see
+  // src/lib/groupCompanies.ts.
 };

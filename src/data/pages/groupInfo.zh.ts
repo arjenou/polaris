@@ -37,58 +37,5 @@ export const groupInfoZh = {
   ],
   companiesTitle: "集团企业介绍",
   domesticTitle: "日本企业",
-  domestic: [
-    {
-      name: "Polaris Next株式会社",
-      business: "投资及自住不动产买卖・全方位不动产中介",
-      address: "東京都千代田区麴町３丁目５−１５ 得水ビル 5F",
-      image: "/images/pages/group-info/company-nexus.png",
-      href: "/zh/business-headquarters",
-    },
-    {
-      name: "Polaris Property株式会社",
-      business: "资产管理・租赁运营管理（PM）・建筑设施管理（BM）",
-      address: "東京都千代田区麴町３丁目５−１５ 得水ビル 5F",
-      image: "/images/pages/group-info/company-property.png",
-      href: "/zh/assets-management",
-    },
-    {
-      name: "ArkNest株式会社",
-      business: "短租公寓运营",
-      address: "東京都新宿区百人町1-18-8大久保カドビル903-A",
-      image: "/images/pages/group-info/company-arknest.png",
-      comingSoon: true,
-    },
-    {
-      name: "川禾株式会社",
-      business: "民宿、旅馆、酒店客房清扫服务・建筑物公共区域清扫服务",
-      address: "東京都新宿区百人町1-18-8大久保カドビル903-B",
-      image: "/images/pages/group-info/company-kawara.png",
-      comingSoon: true,
-    },
-    {
-      name: "喬木商事合同会社",
-      business: "为创业者提供全方位创业经营支持・共享办公室的运营",
-      address: "東京都新宿区百人町1-18-8大久保カドビル903-C",
-      image: "/images/pages/group-info/company-takagi.png",
-      comingSoon: true,
-    },
-    {
-      name: "妙見行政書士事務所",
-      business: "全方位行政书士业务",
-      address: "東京都新宿区百人町1-18-8大久保カドビル903-D",
-      image: "/images/pages/group-info/company-myoken.png",
-      comingSoon: true,
-    },
-  ],
   overseasTitle: "海外企业",
-  overseas: [
-    {
-      name: "妙见川禾（上海）商务咨询有限公司",
-      business: "移民规划・赴日投资策划・海外商务拓展服务",
-      address: "中国上海市长宁区SOHO天山广场T2座 5F",
-      image: "/images/pages/group-info/company-shanghai.png",
-      comingSoon: true,
-    },
-  ],
 };

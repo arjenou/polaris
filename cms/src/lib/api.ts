@@ -247,6 +247,47 @@ export const pageAdvantagesApi = {
     }),
 };
 
+export type GroupCompanyRegion = "domestic" | "overseas";
+
+export interface GroupCompany {
+  id: number;
+  locale: "ja" | "zh";
+  region: GroupCompanyRegion;
+  name: string;
+  business: string;
+  address: string;
+  imageKey: string | null;
+  imageUrl: string | null;
+  imageWidth: number | null;
+  imageHeight: number | null;
+  href: string | null;
+  comingSoon: boolean;
+  sortOrder: number;
+}
+
+export type GroupCompanyInput = Omit<GroupCompany, "id" | "imageUrl" | "sortOrder">;
+
+export const groupCompaniesApi = {
+  list: (locale?: "ja" | "zh", region?: GroupCompanyRegion) => {
+    const params = new URLSearchParams();
+    if (locale) params.set("locale", locale);
+    if (region) params.set("region", region);
+    const qs = params.toString();
+    return request<GroupCompany[]>(`/api/admin/group-companies${qs ? `?${qs}` : ""}`);
+  },
+  get: (id: number) => request<GroupCompany>(`/api/admin/group-companies/${id}`),
+  create: (input: GroupCompanyInput) =>
+    request<GroupCompany>("/api/admin/group-companies", { method: "POST", body: JSON.stringify(input) }),
+  update: (id: number, input: GroupCompanyInput) =>
+    request<GroupCompany>(`/api/admin/group-companies/${id}`, { method: "PUT", body: JSON.stringify(input) }),
+  remove: (id: number) => request<{ ok: true }>(`/api/admin/group-companies/${id}`, { method: "DELETE" }),
+  reorder: (locale: "ja" | "zh", region: GroupCompanyRegion, orderedIds: number[]) =>
+    request<{ ok: true }>("/api/admin/group-companies/reorder", {
+      method: "POST",
+      body: JSON.stringify({ locale, region, orderedIds }),
+    }),
+};
+
 export interface EventOverview {
   eventName: string;
   datetime: string;

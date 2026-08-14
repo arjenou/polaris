@@ -3,6 +3,7 @@ import Link from "next/link";
 import styles from "./CompanyCards.module.css";
 
 export interface CompanyCard {
+  id?: number;
   name: string;
   business: string;
   address: string;
@@ -23,13 +24,15 @@ function Row({
   const body = (
     <>
       <div className={styles.logoBox}>
-        <Image
-          src={item.image}
-          alt={item.name}
-          fill
-          sizes="280px"
-          className={styles.logoImage}
-        />
+        {item.image && (
+          <Image
+            src={item.image}
+            alt={item.name}
+            fill
+            sizes="280px"
+            className={styles.logoImage}
+          />
+        )}
         {item.comingSoon && <span className={styles.badge}>サイト準備中</span>}
       </div>
       <div className={styles.divider} />
@@ -85,7 +88,7 @@ export default function CompanyCards({
         <div className={styles.list}>
           {domestic.map((item) => (
             <Row
-              key={item.name}
+              key={item.id ?? item.name}
               item={item}
               businessLabel={businessLabel}
               addressLabel={addressLabel}
@@ -96,7 +99,7 @@ export default function CompanyCards({
         <div className={styles.list}>
           {overseas.map((item) => (
             <Row
-              key={item.name}
+              key={item.id ?? item.name}
               item={item}
               businessLabel={businessLabel}
               addressLabel={addressLabel}

@@ -1,7 +1,7 @@
 import { revalidatePath } from "next/cache";
 import { NextRequest, NextResponse } from "next/server";
 
-type RevalidateKind = "news" | "recommended" | "team" | "events" | "gallery" | "advantages";
+type RevalidateKind = "news" | "recommended" | "team" | "events" | "gallery" | "advantages" | "group-companies";
 
 /** Pages (besides the content type's own list/detail pages) that render a
  * card fed by the CMS, and therefore also need revalidating on every change. */
@@ -34,6 +34,12 @@ const PAGES_WITH_CARD: Record<RevalidateKind, { ja: string[]; zh: string[] }> = 
   advantages: {
     ja: [],
     zh: [],
+  },
+  // "group-companies" has no dedicated list/detail page — it only ever
+  // appears on グループ情報 (enterprise-intelligence).
+  "group-companies": {
+    ja: ["/enterprise-intelligence"],
+    zh: ["/zh/enterprise-intelligence"],
   },
 };
 
@@ -80,7 +86,9 @@ export async function POST(request: NextRequest) {
             ? "gallery"
             : body.kind === "advantages"
               ? "advantages"
-              : "news";
+              : body.kind === "group-companies"
+                ? "group-companies"
+                : "news";
 
   if (kind === "gallery" || kind === "advantages") {
     const pagePaths = body.pageKey ? PAGE_KEY_PATHS[body.pageKey] : undefined;

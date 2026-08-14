@@ -11,6 +11,8 @@ import EventEditor from "./pages/EventEditor";
 import PageGalleries from "./pages/PageGalleries";
 import PageAdvantagesList from "./pages/PageAdvantagesList";
 import PageAdvantageEditor from "./pages/PageAdvantageEditor";
+import GroupCompaniesList from "./pages/GroupCompaniesList";
+import GroupCompanyEditor from "./pages/GroupCompanyEditor";
 import ContactSubmissions from "./pages/ContactSubmissions";
 import Account from "./pages/Account";
 
@@ -50,6 +52,9 @@ export default function App() {
         <Route path="page-advantages" element={<PageAdvantagesList />} />
         <Route path="page-advantages/:pageKey/:locale/new" element={<PageAdvantageEditor mode="create" />} />
         <Route path="page-advantages/:pageKey/:locale/:id/edit" element={<PageAdvantageEditor mode="edit" />} />
+        <Route path="group-companies" element={<GroupCompaniesList />} />
+        <Route path="group-companies/:locale/:region/new" element={<GroupCompanyEditor mode="create" />} />
+        <Route path="group-companies/:locale/:region/:id/edit" element={<GroupCompanyEditor mode="edit" />} />
         <Route path="contact-submissions" element={<ContactSubmissions />} />
         <Route path="account" element={<Account />} />
       </Route>

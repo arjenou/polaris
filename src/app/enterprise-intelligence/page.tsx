@@ -5,12 +5,14 @@ import GroupInfoIntro from "@/components/pages/GroupInfoIntro";
 import CompanyTimeline from "@/components/pages/CompanyTimeline";
 import CompanyCards from "@/components/pages/CompanyCards";
 import { groupInfo } from "@/data/pages/groupInfo";
+import { getGroupCompanies } from "@/lib/groupCompanies";
 
 export const metadata: Metadata = {
   title: "グループ情報 | ポラリス・グループ",
 };
 
-export default function Page() {
+export default async function Page() {
+  const { domestic, overseas } = await getGroupCompanies("ja");
   return (
     <PageShell locale="ja">
       <PageHero image={groupInfo.heroImage} title={groupInfo.heroTitle} />
@@ -24,8 +26,8 @@ export default function Page() {
         companiesTitle={groupInfo.companiesTitle}
         domesticTitle={groupInfo.domesticTitle}
         overseasTitle={groupInfo.overseasTitle}
-        domestic={groupInfo.domestic}
-        overseas={groupInfo.overseas}
+        domestic={domestic}
+        overseas={overseas}
       />
     </PageShell>
   );

@@ -5,12 +5,14 @@ import GroupInfoIntro from "@/components/pages/GroupInfoIntro";
 import CompanyTimeline from "@/components/pages/CompanyTimeline";
 import CompanyCards from "@/components/pages/CompanyCards";
 import { groupInfoZh } from "@/data/pages/groupInfo.zh";
+import { getGroupCompanies } from "@/lib/groupCompanies";
 
 export const metadata: Metadata = {
   title: "集团介绍 | Polaris Group",
 };
 
-export default function Page() {
+export default async function Page() {
+  const { domestic, overseas } = await getGroupCompanies("zh");
   return (
     <PageShell locale="zh">
       <PageHero image={groupInfoZh.heroImage} title={groupInfoZh.heroTitle} />
@@ -24,8 +26,8 @@ export default function Page() {
         companiesTitle={groupInfoZh.companiesTitle}
         domesticTitle={groupInfoZh.domesticTitle}
         overseasTitle={groupInfoZh.overseasTitle}
-        domestic={groupInfoZh.domestic}
-        overseas={groupInfoZh.overseas}
+        domestic={domestic}
+        overseas={overseas}
       />
     </PageShell>
   );

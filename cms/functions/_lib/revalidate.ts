@@ -1,6 +1,6 @@
 import type { Env } from "./env";
 
-export type RevalidateKind = "news" | "recommended" | "team" | "events" | "gallery" | "advantages";
+export type RevalidateKind = "news" | "recommended" | "team" | "events" | "gallery" | "advantages" | "group-companies";
 
 /**
  * Best-effort on-demand revalidation call to the Next.js site so content edits
