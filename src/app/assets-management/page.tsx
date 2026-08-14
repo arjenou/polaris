@@ -4,7 +4,7 @@ import PageHero from "@/components/pages/PageHero";
 import ServiceStrip from "@/components/pages/ServiceStrip";
 import AdvantageList from "@/components/pages/AdvantageList";
 import PhotoCoverflow from "@/components/pages/PhotoCoverflow";
-import NewsSection from "@/components/home/NewsSection";
+import LatestNewsSection from "@/components/home/LatestNewsSection";
 import { assetsManagement } from "@/data/pages/assetsManagement";
 
 export const metadata: Metadata = {
@@ -16,7 +16,7 @@ export default function Page() {
     <PageShell locale="ja" subsidiary="property">
       <PageHero image={assetsManagement.heroImage} title={assetsManagement.heroTitle} />
       <ServiceStrip items={assetsManagement.services} />
-      <NewsSection />
+      <LatestNewsSection locale="ja" />
       <AdvantageList
         title={assetsManagement.advantagesTitle}
         items={assetsManagement.advantages}

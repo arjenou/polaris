@@ -40,6 +40,27 @@ export async function getAllSlugs(locale: PostLocale): Promise<string[]> {
   return posts.map((post) => post.slug);
 }
 
+export interface NewsCardItem {
+  date: string;
+  tag: string;
+  title: string;
+  href: string;
+}
+
+/** Used by the homepage/section "News" card, which previously showed a
+ * hardcoded list unrelated to what's actually published in the CMS. */
+export async function getLatestNewsItems(locale: PostLocale, limit = 2): Promise<NewsCardItem[]> {
+  const posts = await getAllPosts(locale);
+  const basePath = locale === "zh" ? "/zh/news" : "/news";
+
+  return posts.slice(0, limit).map((post) => ({
+    date: post.date,
+    tag: post.tag,
+    title: post.title,
+    href: `${basePath}/${post.slug}`,
+  }));
+}
+
 export async function getPostBySlug(locale: PostLocale, slug: string): Promise<Post | null> {
   try {
     const res = await fetch(`${CMS_API_URL}/api/news?locale=${locale}&slug=${encodeURIComponent(slug)}`, {

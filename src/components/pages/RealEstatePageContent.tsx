@@ -3,12 +3,11 @@ import PageHero from "@/components/pages/PageHero";
 import ServiceStrip from "@/components/pages/ServiceStrip";
 import AdvantageList from "@/components/pages/AdvantageList";
 import PhotoCoverflow from "@/components/pages/PhotoCoverflow";
-import NewsSection from "@/components/home/NewsSection";
+import LatestNewsSection from "@/components/home/LatestNewsSection";
 import { realEstate } from "@/data/pages/realEstate";
 import { realEstateZh } from "@/data/pages/realEstate.zh";
-import { newsItemsZh } from "@/data/home.zh";
 
-export default function RealEstatePageContent({
+export default async function RealEstatePageContent({
   locale = "ja",
   variant = "business",
 }: {
@@ -22,7 +21,11 @@ export default function RealEstatePageContent({
     <PageShell locale={locale} subsidiary="next">
       <PageHero image={data.heroImage} title={data.heroTitle} />
       <ServiceStrip items={data.services} />
-      <NewsSection items={locale === "zh" ? newsItemsZh : undefined} />
+      <LatestNewsSection
+        locale={locale}
+        moreHref={locale === "zh" ? "/zh/news" : undefined}
+        moreLabel={locale === "zh" ? "查看全部" : undefined}
+      />
       <AdvantageList title={data.advantagesTitle} items={data.advantages} />
       <PhotoCoverflow title={galleryTitle} images={data.gallery} />
     </PageShell>

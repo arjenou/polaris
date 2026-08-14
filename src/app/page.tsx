@@ -1,6 +1,6 @@
 import PageShell from "@/components/layout/PageShell";
 import Hero from "@/components/home/Hero";
-import NewsSection from "@/components/home/NewsSection";
+import LatestNewsSection from "@/components/home/LatestNewsSection";
 import RecommendedSection from "@/components/home/RecommendedSection";
 import TeamCarousel from "@/components/home/TeamCarousel";
 import EventsCarousel from "@/components/home/EventsCarousel";
@@ -11,7 +11,7 @@ export default function HomePage() {
   return (
     <PageShell locale="ja">
       <Hero />
-      <NewsSection />
+      <LatestNewsSection locale="ja" />
       <RecommendedSection />
       <TeamCarousel />
       <EventsCarousel />

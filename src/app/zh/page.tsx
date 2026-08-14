@@ -1,17 +1,13 @@
 import type { Metadata } from "next";
 import PageShell from "@/components/layout/PageShell";
 import Hero from "@/components/home/Hero";
-import NewsSection from "@/components/home/NewsSection";
+import LatestNewsSection from "@/components/home/LatestNewsSection";
 import RecommendedSection from "@/components/home/RecommendedSection";
 import TeamCarousel from "@/components/home/TeamCarousel";
 import EventsCarousel from "@/components/home/EventsCarousel";
 // GroupCompanies section is temporarily hidden on the homepage (kept for possible future re-enable).
 // import GroupCompanies from "@/components/home/GroupCompanies";
-import {
-  heroHeadlineZh,
-  newsItemsZh,
-  recommendedItemsZh,
-} from "@/data/home.zh";
+import { heroHeadlineZh, recommendedItemsZh } from "@/data/home.zh";
 import { companyEventsZh } from "@/data/events.zh";
 
 export const metadata: Metadata = {
@@ -37,7 +33,7 @@ export default function ZhHomePage() {
   return (
     <PageShell locale="zh" subsidiary="shanghai">
       <Hero headline={heroHeadlineZh} />
-      <NewsSection items={newsItemsZh} moreHref="/zh/news" moreLabel="查看全部" />
+      <LatestNewsSection locale="zh" moreHref="/zh/news" moreLabel="查看全部" />
       <RecommendedSection
         eyebrow="推荐信息"
         title="精选最新案例与实用信息！"
