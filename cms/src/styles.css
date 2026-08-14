@@ -379,6 +379,61 @@ body {
   font-weight: 700;
 }
 
+/* Group companies list */
+.company-table th,
+.company-table td {
+  vertical-align: middle;
+  padding-top: 12px;
+  padding-bottom: 12px;
+}
+
+.company-table .col-drag {
+  width: 28px;
+}
+
+.company-table .col-logo {
+  width: 132px;
+}
+
+.company-table .col-status {
+  width: 110px;
+}
+
+.company-table .col-actions {
+  width: 120px;
+}
+
+.company-logo-thumb {
+  width: 112px;
+  height: 52px;
+  object-fit: contain;
+  background: #fff;
+  border: 1px solid #eef0f3;
+  border-radius: 6px;
+  padding: 6px;
+  display: block;
+}
+
+.company-logo-placeholder {
+  width: 112px;
+  height: 52px;
+  background: #f7f8fa;
+  border: 1px solid #eef0f3;
+  border-radius: 6px;
+  display: block;
+}
+
+.company-info-name {
+  font-weight: 600;
+}
+
+.company-info-detail {
+  font-size: 12px;
+  color: #8a93a6;
+  margin-top: 3px;
+  line-height: 1.5;
+}
+
 /* Events list */
 .events-table .col-cover {
   width: 96px;

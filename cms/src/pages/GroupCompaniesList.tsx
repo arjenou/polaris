@@ -94,10 +94,10 @@ export default function GroupCompaniesList() {
       {loading ? (
         <p>加载中…</p>
       ) : (
-        <table className="data-table team-table">
+        <table className="data-table company-table">
           <colgroup>
             <col className="col-drag" />
-            <col className="col-avatar" />
+            <col className="col-logo" />
             <col />
             <col className="col-status" />
             <col className="col-actions" />
@@ -105,7 +105,7 @@ export default function GroupCompaniesList() {
           <thead>
             <tr>
               <th />
-              <th>图片</th>
+              <th>Logo</th>
               <th>名称 / 业务内容 / 所在地</th>
               <th>状态</th>
               <th />
@@ -126,18 +126,28 @@ export default function GroupCompaniesList() {
                 </td>
                 <td>
                   {item.imageUrl ? (
-                    <img src={item.imageUrl} alt="" className="avatar-thumb" />
+                    <img src={item.imageUrl} alt="" className="company-logo-thumb" />
                   ) : (
-                    <span className="avatar-placeholder" />
+                    <span className="company-logo-placeholder" />
                   )}
                 </td>
                 <td>
-                  <div className="member-name">{item.name}</div>
-                  <div className="member-kana">{item.business}</div>
-                  <div className="member-kana">{item.address}</div>
+                  <div className="company-info-name">{item.name}</div>
+                  <div className="company-info-detail">{item.business}</div>
+                  <div className="company-info-detail">{item.address}</div>
                 </td>
                 <td>
-                  {item.comingSoon && <span className="tag-chip">サイト準備中</span>}
+                  {item.comingSoon ? (
+                    <span className="status-badge status-draft">
+                      <span className="status-dot" />
+                      サイト準備中
+                    </span>
+                  ) : (
+                    <span className="status-badge status-published">
+                      <span className="status-dot" />
+                      已上线
+                    </span>
+                  )}
                 </td>
                 <td className="table-actions">
                   <Link to={`/group-companies/${locale}/${region}/${item.id}/edit`}>编辑</Link>
