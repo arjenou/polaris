@@ -207,6 +207,46 @@ export const pageGalleriesApi = {
     }),
 };
 
+export interface PageAdvantage {
+  id: number;
+  pageKey: PageGalleryKey;
+  locale: "ja" | "zh";
+  badge: string;
+  heading: string;
+  body: string;
+  imageKey: string | null;
+  imageUrl: string | null;
+  imageWidth: number | null;
+  imageHeight: number | null;
+  sortOrder: number;
+}
+
+export type PageAdvantageInput = Omit<PageAdvantage, "id" | "pageKey" | "imageUrl" | "sortOrder">;
+
+export const pageAdvantagesApi = {
+  list: (pageKey: PageGalleryKey, locale?: "ja" | "zh") =>
+    request<PageAdvantage[]>(`/api/admin/page-advantages/${pageKey}${locale ? `?locale=${locale}` : ""}`),
+  get: (pageKey: PageGalleryKey, id: number) =>
+    request<PageAdvantage>(`/api/admin/page-advantages/${pageKey}/${id}`),
+  create: (pageKey: PageGalleryKey, input: PageAdvantageInput) =>
+    request<PageAdvantage>(`/api/admin/page-advantages/${pageKey}`, {
+      method: "POST",
+      body: JSON.stringify(input),
+    }),
+  update: (pageKey: PageGalleryKey, id: number, input: PageAdvantageInput) =>
+    request<PageAdvantage>(`/api/admin/page-advantages/${pageKey}/${id}`, {
+      method: "PUT",
+      body: JSON.stringify(input),
+    }),
+  remove: (pageKey: PageGalleryKey, id: number) =>
+    request<{ ok: true }>(`/api/admin/page-advantages/${pageKey}/${id}`, { method: "DELETE" }),
+  reorder: (pageKey: PageGalleryKey, locale: "ja" | "zh", orderedIds: number[]) =>
+    request<{ ok: true }>("/api/admin/page-advantages/reorder", {
+      method: "POST",
+      body: JSON.stringify({ pageKey, locale, orderedIds }),
+    }),
+};
+
 export interface EventOverview {
   eventName: string;
   datetime: string;

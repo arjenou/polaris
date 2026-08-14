@@ -1,6 +1,6 @@
 import type { Env } from "./env";
 
-export type RevalidateKind = "news" | "recommended" | "team" | "events" | "gallery";
+export type RevalidateKind = "news" | "recommended" | "team" | "events" | "gallery" | "advantages";
 
 /**
  * Best-effort on-demand revalidation call to the Next.js site so content edits
@@ -9,10 +9,12 @@ export type RevalidateKind = "news" | "recommended" | "team" | "events" | "galle
  * etc.) must not prevent the CMS save/delete itself from succeeding.
  *
  * `slug` is optional because "team" has no dedicated list/detail page — it
- * only ever revalidates the homepage carousel. `pageKey` is only used by
- * "gallery" (identifies which of the three fixed pages' photo carousel
- * changed); `locale` is ignored for "gallery" since those images are shared
- * across ja/zh and both language pages are always revalidated together.
+ * only ever revalidates the homepage carousel. `pageKey` is used by "gallery"
+ * and "advantages" to identify which of the three fixed pages changed;
+ * `locale` is ignored for "gallery" (images are shared across ja/zh, both
+ * language pages are always revalidated together) but respected for
+ * "advantages" (text differs per locale, so only that locale's page is
+ * revalidated).
  */
 export async function triggerRevalidate(
   env: Env,

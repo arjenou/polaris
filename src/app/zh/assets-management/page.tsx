@@ -7,22 +7,23 @@ import PhotoCoverflow from "@/components/pages/PhotoCoverflow";
 import LatestNewsSection from "@/components/home/LatestNewsSection";
 import { assetsManagementZh } from "@/data/pages/assetsManagement.zh";
 import { getPageGallery } from "@/lib/pageGalleries";
+import { getPageAdvantages } from "@/lib/pageAdvantages";
 
 export const metadata: Metadata = {
   title: "资产管理 | Polaris Group",
 };
 
 export default async function Page() {
-  const gallery = await getPageGallery("asset-management");
+  const [gallery, advantages] = await Promise.all([
+    getPageGallery("asset-management"),
+    getPageAdvantages("asset-management", "zh"),
+  ]);
   return (
     <PageShell locale="zh" subsidiary="property">
       <PageHero image={assetsManagementZh.heroImage} title={assetsManagementZh.heroTitle} />
       <ServiceStrip items={assetsManagementZh.services} />
       <LatestNewsSection locale="zh" moreHref="/zh/news" moreLabel="查看全部" />
-      <AdvantageList
-        title={assetsManagementZh.advantagesTitle}
-        items={assetsManagementZh.advantages}
-      />
+      <AdvantageList title={assetsManagementZh.advantagesTitle} items={advantages} />
       <PhotoCoverflow title={assetsManagementZh.galleryTitle} images={gallery} />
     </PageShell>
   );

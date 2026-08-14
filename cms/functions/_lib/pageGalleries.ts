@@ -1,13 +1,8 @@
 /// <reference types="@cloudflare/workers-types" />
+import { isPageKey, type PageKey } from "./pageKeys";
 
-/** The three fixed content pages whose bottom photo carousel is managed from
- * the CMS. Keep in sync with the frontend's PAGE_GALLERY_LABELS. */
-export const PAGE_GALLERY_KEYS = ["real-estate", "renovation", "asset-management"] as const;
-export type PageGalleryKey = (typeof PAGE_GALLERY_KEYS)[number];
-
-export function isPageGalleryKey(value: unknown): value is PageGalleryKey {
-  return typeof value === "string" && (PAGE_GALLERY_KEYS as readonly string[]).includes(value);
-}
+export type PageGalleryKey = PageKey;
+export const isPageGalleryKey = isPageKey;
 
 export interface PageGalleryImageRow {
   id: number;

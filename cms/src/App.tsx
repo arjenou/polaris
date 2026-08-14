@@ -9,6 +9,8 @@ import TeamEditor from "./pages/TeamEditor";
 import EventList from "./pages/EventList";
 import EventEditor from "./pages/EventEditor";
 import PageGalleries from "./pages/PageGalleries";
+import PageAdvantagesList from "./pages/PageAdvantagesList";
+import PageAdvantageEditor from "./pages/PageAdvantageEditor";
 import ContactSubmissions from "./pages/ContactSubmissions";
 import Account from "./pages/Account";
 
@@ -45,6 +47,9 @@ export default function App() {
         <Route path="events/new" element={<EventEditor mode="create" />} />
         <Route path="events/:id/edit" element={<EventEditor mode="edit" />} />
         <Route path="page-galleries" element={<PageGalleries />} />
+        <Route path="page-advantages" element={<PageAdvantagesList />} />
+        <Route path="page-advantages/:pageKey/:locale/new" element={<PageAdvantageEditor mode="create" />} />
+        <Route path="page-advantages/:pageKey/:locale/:id/edit" element={<PageAdvantageEditor mode="edit" />} />
         <Route path="contact-submissions" element={<ContactSubmissions />} />
         <Route path="account" element={<Account />} />
       </Route>

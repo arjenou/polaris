@@ -30,6 +30,9 @@ export default function Layout() {
           <NavLink to="/page-galleries" className={({ isActive }) => (isActive ? "active" : "")}>
             页面图片管理
           </NavLink>
+          <NavLink to="/page-advantages" className={({ isActive }) => (isActive ? "active" : "")}>
+            选择理由管理
+          </NavLink>
           <NavLink to="/contact-submissions" className={({ isActive }) => (isActive ? "active" : "")}>
             咨询记录
           </NavLink>
