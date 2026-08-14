@@ -202,6 +202,7 @@ body {
 .table-actions {
   display: flex;
   gap: 12px;
+  white-space: nowrap;
 }
 
 .empty-row {
@@ -292,7 +293,7 @@ body {
 }
 
 .team-table .col-actions {
-  width: 96px;
+  width: 120px;
 }
 
 .team-table th {
