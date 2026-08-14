@@ -1,0 +1,17 @@
+# The admin SPA is built with base "/admin/" (see vite.config.ts) so it can be
+# proxied at polaris.yingmu-tech.com/admin via the Next.js rewrite in
+# ../next.config.ts. These rules make it also keep working when visited
+# directly on this Cloudflare Pages domain.
+
+# Built asset files physically live at /assets/*, not /admin/assets/*.
+/admin/assets/*  /assets/:splat  200
+
+# Old bare routes (from before the /admin path existed) redirect to the new ones.
+/            /admin       301
+/login       /admin/login 301
+/news        /admin/news  301
+/news/*      /admin/news/:splat 301
+/account     /admin/account 301
+
+# SPA fallback: any other /admin/* path (client-side route) serves the app shell.
+/admin/*     /index.html  200
