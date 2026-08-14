@@ -1,36 +1,56 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { newsApi, type NewsPost } from "../lib/api";
+import type { ContentPost } from "../lib/api";
+import { useToast } from "../lib/ToastContext";
+import { formatDateTime } from "../lib/datetime";
+import { CONTENT_TYPES, type ContentTypeKey } from "../lib/contentTypes";
 
-export default function NewsList() {
+function statusLabel(post: ContentPost): string {
+  if (post.published) return "已发布";
+  if (post.scheduledAt) {
+    if (new Date(post.scheduledAt) <= new Date()) return "已发布";
+    return `定时发布：${formatDateTime(post.scheduledAt)}`;
+  }
+  return "草稿";
+}
+
+export default function PostList({ resource }: { resource: ContentTypeKey }) {
+  const config = CONTENT_TYPES[resource];
+  const { showToast } = useToast();
   const [locale, setLocale] = useState<"ja" | "zh">("ja");
-  const [posts, setPosts] = useState<NewsPost[]>([]);
+  const [posts, setPosts] = useState<ContentPost[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   function refresh() {
     setLoading(true);
-    newsApi
+    config.api
       .list(locale)
       .then(setPosts)
       .catch((err) => setError(err.message))
       .finally(() => setLoading(false));
   }
 
-  useEffect(refresh, [locale]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  useEffect(refresh, [locale, resource]);
 
-  async function handleDelete(post: NewsPost) {
+  async function handleDelete(post: ContentPost) {
     if (!confirm(`确认删除「${post.title}」？此操作不可撤销。`)) return;
-    await newsApi.remove(post.id);
-    refresh();
+    try {
+      await config.api.remove(post.id);
+      showToast("删除成功");
+      refresh();
+    } catch (err) {
+      showToast(err instanceof Error ? err.message : "删除失败", "error");
+    }
   }
 
   return (
     <div>
       <div className="page-header">
-        <h1>新闻公告</h1>
-        <Link to="/news/new" className="btn-primary">
-          + 新建
+        <h1>{config.labels.listTitle}</h1>
+        <Link to={`${config.basePath}/new`} className="btn-primary">
+          {config.labels.newButtonLabel}
         </Link>
       </div>
 
@@ -63,9 +83,9 @@ export default function NewsList() {
                 <td>{post.date}</td>
                 <td>{post.tag}</td>
                 <td>{post.title}</td>
-                <td>{post.published ? "已发布" : "草稿"}</td>
+                <td>{statusLabel(post)}</td>
                 <td className="table-actions">
-                  <Link to={`/news/${post.id}/edit`}>编辑</Link>
+                  <Link to={`${config.basePath}/${post.id}/edit`}>编辑</Link>
                   <button className="btn-link danger" onClick={() => handleDelete(post)}>
                     删除
                   </button>

@@ -1,12 +1,17 @@
 import type { Env } from "./env";
 
+export type RevalidateKind = "news" | "recommended";
+
 /**
- * Best-effort on-demand revalidation call to the Next.js site so news edits
+ * Best-effort on-demand revalidation call to the Next.js site so content edits
  * show up immediately instead of waiting for its 5-minute timed ISR window.
  * Never throws — a revalidation failure (site down, misconfigured secret,
  * etc.) must not prevent the CMS save/delete itself from succeeding.
  */
-export async function triggerRevalidate(env: Env, params: { locale: string; slug: string }): Promise<void> {
+export async function triggerRevalidate(
+  env: Env,
+  params: { kind?: RevalidateKind; locale: string; slug: string },
+): Promise<void> {
   if (!env.SITE_URL || !env.REVALIDATE_SECRET) return;
 
   try {
@@ -21,7 +26,7 @@ export async function triggerRevalidate(env: Env, params: { locale: string; slug
           ? { "x-vercel-protection-bypass": env.VERCEL_PROTECTION_BYPASS_SECRET }
           : {}),
       },
-      body: JSON.stringify(params),
+      body: JSON.stringify({ kind: "news", ...params }),
     });
   } catch (err) {
     console.error("Revalidation request failed:", err);

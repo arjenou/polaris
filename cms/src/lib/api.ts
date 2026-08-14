@@ -1,4 +1,8 @@
-export interface NewsPost {
+/**
+ * Shape shared by every content type built on the news/recommended post
+ * model (see cms/functions/_lib/postsApi.ts on the backend).
+ */
+export interface ContentPost {
   id: number;
   locale: "ja" | "zh";
   slug: string;
@@ -12,11 +16,12 @@ export interface NewsPost {
   imageWidth: number | null;
   imageHeight: number | null;
   published: boolean;
+  scheduledAt: string | null;
   createdAt: string;
   updatedAt: string;
 }
 
-export type NewsPostInput = Omit<NewsPost, "id" | "imageUrl" | "createdAt" | "updatedAt">;
+export type ContentPostInput = Omit<ContentPost, "id" | "imageUrl" | "createdAt" | "updatedAt">;
 
 class ApiError extends Error {
   status: number;
@@ -57,16 +62,26 @@ export const authApi = {
   me: () => request<{ authenticated: boolean; username?: string }>("/api/auth/me"),
 };
 
-export const newsApi = {
-  list: (locale?: "ja" | "zh") =>
-    request<NewsPost[]>(`/api/admin/news${locale ? `?locale=${locale}` : ""}`),
-  get: (id: number) => request<NewsPost>(`/api/admin/news/${id}`),
-  create: (input: NewsPostInput) =>
-    request<NewsPost>("/api/admin/news", { method: "POST", body: JSON.stringify(input) }),
-  update: (id: number, input: NewsPostInput) =>
-    request<NewsPost>(`/api/admin/news/${id}`, { method: "PUT", body: JSON.stringify(input) }),
-  remove: (id: number) => request<{ ok: true }>(`/api/admin/news/${id}`, { method: "DELETE" }),
-};
+export interface ContentApi {
+  list: (locale?: "ja" | "zh") => Promise<ContentPost[]>;
+  get: (id: number) => Promise<ContentPost>;
+  create: (input: ContentPostInput) => Promise<ContentPost>;
+  update: (id: number, input: ContentPostInput) => Promise<ContentPost>;
+  remove: (id: number) => Promise<{ ok: true }>;
+}
+
+function createContentApi(basePath: string): ContentApi {
+  return {
+    list: (locale) => request<ContentPost[]>(`${basePath}${locale ? `?locale=${locale}` : ""}`),
+    get: (id) => request<ContentPost>(`${basePath}/${id}`),
+    create: (input) => request<ContentPost>(basePath, { method: "POST", body: JSON.stringify(input) }),
+    update: (id, input) => request<ContentPost>(`${basePath}/${id}`, { method: "PUT", body: JSON.stringify(input) }),
+    remove: (id) => request<{ ok: true }>(`${basePath}/${id}`, { method: "DELETE" }),
+  };
+}
+
+export const newsApi = createContentApi("/api/admin/news");
+export const recommendedApi = createContentApi("/api/admin/recommended");
 
 export const mediaApi = {
   upload: (file: File, folder = "news") => {

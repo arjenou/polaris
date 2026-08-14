@@ -1,7 +1,7 @@
 import { createPostAdminHandlers } from "../../../_lib/postsApi";
 
 export const { onRequestGet, onRequestPut, onRequestDelete } = createPostAdminHandlers(
-  "news_posts",
-  "news",
-  "新闻",
+  "recommended_posts",
+  "recommended",
+  "推荐信息",
 );

@@ -10,10 +10,14 @@ export default function RecommendedSection({
   eyebrow = "おすすめ情報",
   title = "最新事例やお役立ち情報をピックアップ！",
   items = defaultItems,
+  moreHref = "/recommended",
+  moreLabel = "More",
 }: {
   eyebrow?: string;
   title?: string;
   items?: RecommendedItem[];
+  moreHref?: string;
+  moreLabel?: string;
 }) {
   return (
     <section className={styles.section}>
@@ -25,15 +29,17 @@ export default function RecommendedSection({
         <div className={styles.grid}>
           {items.map((item) => (
             <Link key={item.href} href={item.href} className={styles.card}>
-              <div className={styles.imageWrap}>
-                <Image
-                  src={item.image}
-                  alt=""
-                  fill
-                  sizes="(max-width: 768px) 100vw, 33vw"
-                  className={styles.image}
-                />
-              </div>
+              {item.image && (
+                <div className={styles.imageWrap}>
+                  <Image
+                    src={item.image}
+                    alt=""
+                    fill
+                    sizes="(max-width: 768px) 100vw, 33vw"
+                    className={styles.image}
+                  />
+                </div>
+              )}
               <div className={styles.cardBody}>
                 <span className={styles.tag}>{item.tag}</span>
                 <h3 className={styles.cardTitle}>{item.title}</h3>
@@ -42,6 +48,9 @@ export default function RecommendedSection({
             </Link>
           ))}
         </div>
+        <Link href={moreHref} className={styles.more}>
+          {moreLabel} ›
+        </Link>
       </div>
     </section>
   );

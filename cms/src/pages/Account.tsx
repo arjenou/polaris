@@ -2,10 +2,12 @@ import { useEffect, useState, type FormEvent } from "react";
 import { useNavigate } from "react-router-dom";
 import { ApiError, accountApi, usersApi, type AdminUser } from "../lib/api";
 import { useAuth } from "../lib/AuthContext";
+import { useToast } from "../lib/ToastContext";
 
 export default function Account() {
   const { username: currentUsername } = useAuth();
   const navigate = useNavigate();
+  const { showToast } = useToast();
 
   const [passwordForm, setPasswordForm] = useState({ currentPassword: "", newPassword: "", confirmPassword: "" });
   const [passwordError, setPasswordError] = useState<string | null>(null);
@@ -44,12 +46,15 @@ export default function Account() {
     setChangingPassword(true);
     try {
       await accountApi.changePassword(passwordForm.currentPassword, passwordForm.newPassword);
-      alert("密码已修改，请重新登录");
-      navigate("/login", { replace: true });
-      window.location.reload();
+      showToast("密码已修改，请重新登录");
+      setTimeout(() => {
+        navigate("/login", { replace: true });
+        window.location.reload();
+      }, 1200);
     } catch (err) {
-      setPasswordError(err instanceof ApiError ? err.message : "修改失败");
-    } finally {
+      const message = err instanceof ApiError ? err.message : "修改失败";
+      setPasswordError(message);
+      showToast(message, "error");
       setChangingPassword(false);
     }
   }
@@ -61,9 +66,12 @@ export default function Account() {
     try {
       await usersApi.create(newUser.username, newUser.password);
       setNewUser({ username: "", password: "" });
+      showToast("账号创建成功");
       refreshUsers();
     } catch (err) {
-      setUsersError(err instanceof ApiError ? err.message : "创建失败");
+      const message = err instanceof ApiError ? err.message : "创建失败";
+      setUsersError(message);
+      showToast(message, "error");
     } finally {
       setCreatingUser(false);
     }
@@ -73,9 +81,12 @@ export default function Account() {
     if (!confirm(`确认删除账号「${user.username}」？`)) return;
     try {
       await usersApi.remove(user.id);
+      showToast("账号删除成功");
       refreshUsers();
     } catch (err) {
-      setUsersError(err instanceof ApiError ? err.message : "删除失败");
+      const message = err instanceof ApiError ? err.message : "删除失败";
+      setUsersError(message);
+      showToast(message, "error");
     }
   }
 

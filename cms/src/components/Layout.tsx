@@ -18,6 +18,9 @@ export default function Layout() {
           <NavLink to="/news" className={({ isActive }) => (isActive ? "active" : "")}>
             新闻公告
           </NavLink>
+          <NavLink to="/recommended" className={({ isActive }) => (isActive ? "active" : "")}>
+            推荐信息
+          </NavLink>
           <NavLink to="/account" className={({ isActive }) => (isActive ? "active" : "")}>
             账号设置
           </NavLink>

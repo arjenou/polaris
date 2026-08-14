@@ -34,7 +34,7 @@ export interface RecommendedItem {
   tag: string;
   title: string;
   excerpt: string;
-  image: string;
+  image: string | null;
   href: string;
 }
 

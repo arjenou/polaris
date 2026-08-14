@@ -1,11 +1,15 @@
 import { useEffect, useState, type FormEvent } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { mediaApi, newsApi, type NewsPostInput } from "../lib/api";
+import { mediaApi, type ContentPostInput } from "../lib/api";
 import RichTextEditor from "../components/RichTextEditor";
+import { useToast } from "../lib/ToastContext";
+import { generateSlug } from "../lib/slug";
+import { datetimeLocalToIso, isoToDatetimeLocal } from "../lib/datetime";
+import { CONTENT_TYPES, type ContentTypeKey } from "../lib/contentTypes";
 
 const EXCERPT_MAX_LENGTH = 120;
 
-const EMPTY_FORM: NewsPostInput = {
+const EMPTY_FORM: ContentPostInput = {
   locale: "ja",
   slug: "",
   title: "",
@@ -17,12 +21,15 @@ const EMPTY_FORM: NewsPostInput = {
   imageWidth: null,
   imageHeight: null,
   published: true,
+  scheduledAt: null,
 };
 
-export default function NewsEditor({ mode }: { mode: "create" | "edit" }) {
+export default function PostEditor({ resource, mode }: { resource: ContentTypeKey; mode: "create" | "edit" }) {
+  const config = CONTENT_TYPES[resource];
   const { id } = useParams();
   const navigate = useNavigate();
-  const [form, setForm] = useState<NewsPostInput>(EMPTY_FORM);
+  const { showToast } = useToast();
+  const [form, setForm] = useState<ContentPostInput>(EMPTY_FORM);
   const [imageUrl, setImageUrl] = useState<string | null>(null);
   const [loading, setLoading] = useState(mode === "edit");
   const [saving, setSaving] = useState(false);
@@ -31,7 +38,7 @@ export default function NewsEditor({ mode }: { mode: "create" | "edit" }) {
 
   useEffect(() => {
     if (mode === "edit" && id) {
-      newsApi
+      config.api
         .get(Number(id))
         .then((post) => {
           setForm(post);
@@ -40,9 +47,10 @@ export default function NewsEditor({ mode }: { mode: "create" | "edit" }) {
         .catch((err) => setError(err.message))
         .finally(() => setLoading(false));
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [mode, id]);
 
-  function update<K extends keyof NewsPostInput>(key: K, value: NewsPostInput[K]) {
+  function update<K extends keyof ContentPostInput>(key: K, value: ContentPostInput[K]) {
     setForm((f) => ({ ...f, [key]: value }));
   }
 
@@ -52,11 +60,12 @@ export default function NewsEditor({ mode }: { mode: "create" | "edit" }) {
     setUploading(true);
     setError(null);
     try {
-      const res = await mediaApi.upload(file, "news");
+      const res = await mediaApi.upload(file, config.mediaFolder);
       update("imageKey", res.key);
       update("imageWidth", res.width);
       update("imageHeight", res.height);
       setImageUrl(res.url);
+      showToast("图片上传成功");
     } catch (err) {
       setError(err instanceof Error ? err.message : "上传失败");
     } finally {
@@ -70,13 +79,18 @@ export default function NewsEditor({ mode }: { mode: "create" | "edit" }) {
     setError(null);
     try {
       if (mode === "create") {
-        const created = await newsApi.create(form);
-        navigate(`/news/${created.id}/edit`, { replace: true });
+        const slug = generateSlug(form.title, form.date);
+        const created = await config.api.create({ ...form, slug });
+        showToast("创建成功");
+        navigate(`${config.basePath}/${created.id}/edit`, { replace: true });
       } else {
-        await newsApi.update(Number(id), form);
+        await config.api.update(Number(id), form);
+        showToast("保存成功");
       }
     } catch (err) {
-      setError(err instanceof Error ? err.message : "保存失败");
+      const message = err instanceof Error ? err.message : "保存失败";
+      setError(message);
+      showToast(message, "error");
     } finally {
       setSaving(false);
     }
@@ -87,7 +101,7 @@ export default function NewsEditor({ mode }: { mode: "create" | "edit" }) {
   return (
     <div>
       <div className="page-header">
-        <h1>{mode === "create" ? "新建新闻" : "编辑新闻"}</h1>
+        <h1>{mode === "create" ? config.labels.createTitle : config.labels.editTitle}</h1>
       </div>
 
       <form className="editor-form" onSubmit={handleSubmit}>
@@ -100,8 +114,8 @@ export default function NewsEditor({ mode }: { mode: "create" | "edit" }) {
             </select>
           </label>
           <label>
-            Slug（英文/数字/连字符）
-            <input value={form.slug} onChange={(e) => update("slug", e.target.value)} required />
+            Slug（系统自动生成）
+            <input value={mode === "create" ? "保存后自动生成" : form.slug} disabled />
           </label>
           <label>
             日期（YYYY.MM.DD）
@@ -123,11 +137,26 @@ export default function NewsEditor({ mode }: { mode: "create" | "edit" }) {
             <input
               type="checkbox"
               checked={form.published}
-              onChange={(e) => update("published", e.target.checked)}
+              onChange={(e) => {
+                const published = e.target.checked;
+                update("published", published);
+                if (published) update("scheduledAt", null);
+              }}
             />
             已发布（前台可见）
           </label>
         </div>
+
+        {!form.published && (
+          <label>
+            预约发布时间（可选，到点后自动发布，最多延迟约 5 分钟生效）
+            <input
+              type="datetime-local"
+              value={isoToDatetimeLocal(form.scheduledAt)}
+              onChange={(e) => update("scheduledAt", datetimeLocalToIso(e.target.value))}
+            />
+          </label>
+        )}
 
         <label>
           标题
@@ -149,7 +178,7 @@ export default function NewsEditor({ mode }: { mode: "create" | "edit" }) {
         </label>
 
         <label>
-          配图（新闻卡片图）
+          配图
           <input type="file" accept="image/png,image/jpeg,image/webp,image/gif" onChange={handleImageChange} />
         </label>
         {uploading && <p>上传中…</p>}

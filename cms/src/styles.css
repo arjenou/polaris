@@ -52,6 +52,12 @@ body {
   font-family: inherit;
 }
 
+.editor-form input:disabled {
+  background: #f5f6f8;
+  color: #8a93a6;
+  cursor: not-allowed;
+}
+
 .login-card button,
 .btn-primary {
   background: #1e6fd9;
@@ -275,6 +281,46 @@ body {
 .form-error {
   color: #c0392b;
   font-size: 13px;
+}
+
+.toast-stack {
+  position: fixed;
+  top: 24px;
+  right: 24px;
+  z-index: 1000;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  pointer-events: none;
+}
+
+.toast {
+  padding: 12px 20px;
+  border-radius: 6px;
+  font-size: 14px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+  animation: toast-in 0.2s ease-out;
+}
+
+.toast-success {
+  background: #1f9d55;
+  color: #fff;
+}
+
+.toast-error {
+  background: #c0392b;
+  color: #fff;
+}
+
+@keyframes toast-in {
+  from {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .form-actions {

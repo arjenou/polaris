@@ -2,8 +2,8 @@ import { Navigate, Route, Routes } from "react-router-dom";
 import { useAuth } from "./lib/AuthContext";
 import Layout from "./components/Layout";
 import Login from "./pages/Login";
-import NewsList from "./pages/NewsList";
-import NewsEditor from "./pages/NewsEditor";
+import PostList from "./pages/PostList";
+import PostEditor from "./pages/PostEditor";
 import Account from "./pages/Account";
 
 function RequireAuth({ children }: { children: React.ReactNode }) {
@@ -26,9 +26,12 @@ export default function App() {
         }
       >
         <Route index element={<Navigate to="/news" replace />} />
-        <Route path="news" element={<NewsList />} />
-        <Route path="news/new" element={<NewsEditor mode="create" />} />
-        <Route path="news/:id/edit" element={<NewsEditor mode="edit" />} />
+        <Route path="news" element={<PostList resource="news" />} />
+        <Route path="news/new" element={<PostEditor resource="news" mode="create" />} />
+        <Route path="news/:id/edit" element={<PostEditor resource="news" mode="edit" />} />
+        <Route path="recommended" element={<PostList resource="recommended" />} />
+        <Route path="recommended/new" element={<PostEditor resource="recommended" mode="create" />} />
+        <Route path="recommended/:id/edit" element={<PostEditor resource="recommended" mode="edit" />} />
         <Route path="account" element={<Account />} />
       </Route>
       <Route path="*" element={<Navigate to="/" replace />} />

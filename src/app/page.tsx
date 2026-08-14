@@ -1,7 +1,7 @@
 import PageShell from "@/components/layout/PageShell";
 import Hero from "@/components/home/Hero";
 import LatestNewsSection from "@/components/home/LatestNewsSection";
-import RecommendedSection from "@/components/home/RecommendedSection";
+import LatestRecommendedSection from "@/components/home/LatestRecommendedSection";
 import TeamCarousel from "@/components/home/TeamCarousel";
 import EventsCarousel from "@/components/home/EventsCarousel";
 // GroupCompanies section is temporarily hidden on the homepage (kept for possible future re-enable).
@@ -12,7 +12,7 @@ export default function HomePage() {
     <PageShell locale="ja">
       <Hero />
       <LatestNewsSection locale="ja" />
-      <RecommendedSection />
+      <LatestRecommendedSection locale="ja" />
       <TeamCarousel />
       <EventsCarousel />
       {/* <GroupCompanies /> */}

@@ -14,6 +14,7 @@
     "d1:migrate:local": "wrangler d1 migrations apply polaris-cms --local",
     "d1:migrate:remote": "wrangler d1 migrations apply polaris-cms --remote",
     "migrate:news": "tsx scripts/migrate-news.ts",
+    "migrate:recommended": "tsx scripts/migrate-recommended.ts",
     "bootstrap:admin": "tsx scripts/bootstrap-admin.ts",
     "migrate:content-to-html": "tsx scripts/migrate-content-to-html.ts"
   },
