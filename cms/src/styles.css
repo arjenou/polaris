@@ -220,7 +220,12 @@ body {
   color: #b5bccb;
   width: 24px;
   text-align: center;
+  font-size: 16px;
   user-select: none;
+}
+
+.data-table tr:hover .drag-handle {
+  color: #1e6fd9;
 }
 
 .dragging-row {
@@ -228,17 +233,21 @@ body {
   opacity: 0.7;
 }
 
+.dragging-row .drag-handle {
+  cursor: grabbing;
+}
+
 .avatar-thumb {
-  width: 36px;
-  height: 36px;
+  width: 40px;
+  height: 40px;
   border-radius: 50%;
   object-fit: cover;
   display: block;
 }
 
 .avatar-placeholder {
-  width: 36px;
-  height: 36px;
+  width: 40px;
+  height: 40px;
   border-radius: 50%;
   background: #eef0f3;
   display: block;
@@ -248,6 +257,125 @@ body {
   max-width: 280px;
   white-space: pre-wrap;
   word-break: break-word;
+}
+
+/* Team member list */
+.team-table th,
+.team-table td {
+  vertical-align: middle;
+  padding-top: 10px;
+  padding-bottom: 10px;
+}
+
+.team-table .col-drag {
+  width: 28px;
+}
+
+.team-table .col-avatar {
+  width: 64px;
+}
+
+.team-table .col-name {
+  width: 140px;
+}
+
+.team-table .col-role {
+  width: 260px;
+}
+
+.team-table .col-status {
+  width: 92px;
+}
+
+.team-table .col-count {
+  width: 92px;
+}
+
+.team-table .col-actions {
+  width: 96px;
+}
+
+.team-table th {
+  white-space: nowrap;
+}
+
+.member-name {
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.member-kana {
+  font-size: 12px;
+  color: #8a93a6;
+  margin-top: 2px;
+  white-space: nowrap;
+}
+
+.member-department {
+  font-weight: 600;
+}
+
+.member-position {
+  font-size: 12px;
+  color: #8a93a6;
+  margin-top: 2px;
+}
+
+.tags-cell {
+  max-width: 240px;
+}
+
+.tag-chip {
+  display: inline-block;
+  padding: 3px 10px;
+  margin: 2px 6px 2px 0;
+  border-radius: 999px;
+  background: #eaf1fb;
+  color: #1e6fd9;
+  font-size: 12px;
+  white-space: nowrap;
+}
+
+.status-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  white-space: nowrap;
+  color: #4a5468;
+}
+
+.status-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #b5bccb;
+  flex-shrink: 0;
+}
+
+.status-published .status-dot {
+  background: #1f9d55;
+}
+
+.status-draft {
+  color: #8a93a6;
+}
+
+.count-cell {
+  text-align: center;
+}
+
+.count-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 28px;
+  padding: 3px 10px;
+  border-radius: 999px;
+  background: #f0f1f3;
+  color: #4a5468;
+  font-size: 13px;
+  font-weight: 700;
 }
 
 .panel {

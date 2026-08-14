@@ -82,7 +82,17 @@ export default function TeamList() {
       {loading ? (
         <p>加载中…</p>
       ) : (
-        <table className="data-table">
+        <table className="data-table team-table">
+          <colgroup>
+            <col className="col-drag" />
+            <col className="col-avatar" />
+            <col className="col-name" />
+            <col className="col-role" />
+            <col className="col-tags" />
+            <col className="col-status" />
+            <col className="col-count" />
+            <col className="col-actions" />
+          </colgroup>
           <thead>
             <tr>
               <th />
@@ -91,7 +101,7 @@ export default function TeamList() {
               <th>部门 / 职位</th>
               <th>标签</th>
               <th>状态</th>
-              <th>咨询提交次数</th>
+              <th>咨询次数</th>
               <th />
             </tr>
           </thead>
@@ -116,16 +126,37 @@ export default function TeamList() {
                   )}
                 </td>
                 <td>
-                  {member.lastName}
-                  {member.firstName}
+                  <div className="member-name">
+                    {member.lastName} {member.firstName}
+                  </div>
+                  {(member.lastNameKana || member.firstNameKana) && (
+                    <div className="member-kana">
+                      {member.lastNameKana} {member.firstNameKana}
+                    </div>
+                  )}
                 </td>
                 <td>
-                  {member.department}
-                  {member.position ? ` / ${member.position.replace(/^\/\s*/, "")}` : ""}
+                  <div className="member-department">{member.department}</div>
+                  {member.position && (
+                    <div className="member-position">{member.position.replace(/^\/\s*/, "")}</div>
+                  )}
                 </td>
-                <td>{member.tags.join("、")}</td>
-                <td>{member.published ? "已发布" : "草稿"}</td>
-                <td>{member.submissionCount}</td>
+                <td className="tags-cell">
+                  {member.tags.map((tag) => (
+                    <span key={tag} className="tag-chip">
+                      {tag}
+                    </span>
+                  ))}
+                </td>
+                <td>
+                  <span className={`status-badge ${member.published ? "status-published" : "status-draft"}`}>
+                    <span className="status-dot" />
+                    {member.published ? "已发布" : "草稿"}
+                  </span>
+                </td>
+                <td className="count-cell">
+                  <span className="count-badge">{member.submissionCount}</span>
+                </td>
                 <td className="table-actions">
                   <Link to={`/team/${member.id}/edit`}>编辑</Link>
                   <button className="btn-link danger" onClick={() => handleDelete(member)}>
