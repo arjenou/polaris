@@ -28,9 +28,6 @@ export const assetsManagementZh = {
     },
   ],
   galleryTitle: "不动产管理",
-  gallery: [
-    { src: "/images/pages/assets-management/gallery/slide-1.jpg" },
-    { src: "/images/pages/assets-management/gallery/slide-2.jpg" },
-    { src: "/images/pages/assets-management/gallery/slide-3.jpg" },
-  ],
+  // Gallery images are now managed via the CMS admin (page-galleries), see
+  // src/lib/pageGalleries.ts.
 };

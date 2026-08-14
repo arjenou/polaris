@@ -6,12 +6,14 @@ import AdvantageList from "@/components/pages/AdvantageList";
 import PhotoCoverflow from "@/components/pages/PhotoCoverflow";
 import LatestNewsSection from "@/components/home/LatestNewsSection";
 import { assetsManagementZh } from "@/data/pages/assetsManagement.zh";
+import { getPageGallery } from "@/lib/pageGalleries";
 
 export const metadata: Metadata = {
   title: "资产管理 | Polaris Group",
 };
 
-export default function Page() {
+export default async function Page() {
+  const gallery = await getPageGallery("asset-management");
   return (
     <PageShell locale="zh" subsidiary="property">
       <PageHero image={assetsManagementZh.heroImage} title={assetsManagementZh.heroTitle} />
@@ -21,10 +23,7 @@ export default function Page() {
         title={assetsManagementZh.advantagesTitle}
         items={assetsManagementZh.advantages}
       />
-      <PhotoCoverflow
-        title={assetsManagementZh.galleryTitle}
-        images={assetsManagementZh.gallery}
-      />
+      <PhotoCoverflow title={assetsManagementZh.galleryTitle} images={gallery} />
     </PageShell>
   );
 }

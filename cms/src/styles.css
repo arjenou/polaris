@@ -458,6 +458,24 @@ body {
   display: block;
 }
 
+.gallery-preview-grid-draggable .gallery-preview-item {
+  cursor: grab;
+}
+
+.gallery-preview-grid-draggable .gallery-preview-item.dragging-item {
+  opacity: 0.5;
+  cursor: grabbing;
+}
+
+.upload-label {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: 13px;
+  color: #4a5468;
+  margin-bottom: 16px;
+}
+
 .gallery-remove-btn {
   position: absolute;
   top: 4px;

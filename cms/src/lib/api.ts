@@ -178,6 +178,35 @@ export const contactSubmissionsApi = {
   list: () => request<ContactSubmission[]>("/api/admin/contact-submissions"),
 };
 
+/** The three fixed content pages whose bottom photo carousel is managed here. */
+export type PageGalleryKey = "real-estate" | "renovation" | "asset-management";
+
+export interface PageGalleryImage {
+  id: number;
+  pageKey: PageGalleryKey;
+  imageKey: string;
+  imageUrl: string;
+  imageWidth: number | null;
+  imageHeight: number | null;
+  sortOrder: number;
+}
+
+export const pageGalleriesApi = {
+  list: (pageKey: PageGalleryKey) => request<PageGalleryImage[]>(`/api/admin/page-galleries/${pageKey}`),
+  add: (pageKey: PageGalleryKey, imageKey: string, imageWidth: number | null, imageHeight: number | null) =>
+    request<PageGalleryImage>(`/api/admin/page-galleries/${pageKey}`, {
+      method: "POST",
+      body: JSON.stringify({ imageKey, imageWidth, imageHeight }),
+    }),
+  remove: (pageKey: PageGalleryKey, id: number) =>
+    request<{ ok: true }>(`/api/admin/page-galleries/${pageKey}/${id}`, { method: "DELETE" }),
+  reorder: (pageKey: PageGalleryKey, orderedIds: number[]) =>
+    request<{ ok: true }>("/api/admin/page-galleries/reorder", {
+      method: "POST",
+      body: JSON.stringify({ pageKey, orderedIds }),
+    }),
+};
+
 export interface EventOverview {
   eventName: string;
   datetime: string;

@@ -1,7 +1,7 @@
 import { revalidatePath } from "next/cache";
 import { NextRequest, NextResponse } from "next/server";
 
-type RevalidateKind = "news" | "recommended" | "team" | "events";
+type RevalidateKind = "news" | "recommended" | "team" | "events" | "gallery";
 
 /** Pages (besides the content type's own list/detail pages) that render a
  * card fed by the CMS, and therefore also need revalidating on every change. */
@@ -24,12 +24,27 @@ const PAGES_WITH_CARD: Record<RevalidateKind, { ja: string[]; zh: string[] }> = 
     ja: ["/"],
     zh: ["/zh"],
   },
+  // "gallery" is handled separately below via GALLERY_PAGES (keyed by pageKey,
+  // not locale) — this entry only exists to satisfy the Record type.
+  gallery: {
+    ja: [],
+    zh: [],
+  },
 };
 
 const BASE_PATH: Partial<Record<RevalidateKind, { ja: string; zh: string }>> = {
   news: { ja: "/news", zh: "/zh/news" },
   recommended: { ja: "/recommended", zh: "/zh/recommended" },
   events: { ja: "/events", zh: "/zh/events" },
+};
+
+/** The three fixed pages whose bottom photo carousel is managed from the CMS.
+ * Images are shared across ja/zh, so both language pages are always
+ * revalidated together regardless of the request's `locale` field. */
+const GALLERY_PAGES: Record<string, { ja: string; zh: string }> = {
+  "real-estate": { ja: "/business-headquarters", zh: "/zh/business-headquarters" },
+  renovation: { ja: "/business-headquarters-2", zh: "/zh/business-headquarters-2" },
+  "asset-management": { ja: "/assets-management", zh: "/zh/assets-management" },
 };
 
 /**
@@ -43,7 +58,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  let body: { kind?: RevalidateKind; locale?: "ja" | "zh"; slug?: string } = {};
+  let body: { kind?: RevalidateKind; locale?: "ja" | "zh"; slug?: string; pageKey?: string } = {};
   try {
     body = await request.json();
   } catch {
@@ -57,7 +72,17 @@ export async function POST(request: NextRequest) {
         ? "team"
         : body.kind === "events"
           ? "events"
-          : "news";
+          : body.kind === "gallery"
+            ? "gallery"
+            : "news";
+
+  if (kind === "gallery") {
+    const galleryPaths = body.pageKey ? GALLERY_PAGES[body.pageKey] : undefined;
+    const paths = galleryPaths ? [galleryPaths.ja, galleryPaths.zh] : [];
+    for (const path of paths) revalidatePath(path);
+    return NextResponse.json({ revalidated: true, paths });
+  }
+
   const { locale, slug } = body;
   const locales = locale === "ja" || locale === "zh" ? [locale] : (["ja", "zh"] as const);
 

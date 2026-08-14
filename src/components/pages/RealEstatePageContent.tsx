@@ -6,6 +6,7 @@ import PhotoCoverflow from "@/components/pages/PhotoCoverflow";
 import LatestNewsSection from "@/components/home/LatestNewsSection";
 import { realEstate } from "@/data/pages/realEstate";
 import { realEstateZh } from "@/data/pages/realEstate.zh";
+import { getPageGallery } from "@/lib/pageGalleries";
 
 export default async function RealEstatePageContent({
   locale = "ja",
@@ -17,6 +18,7 @@ export default async function RealEstatePageContent({
   const data = locale === "zh" ? realEstateZh : realEstate;
   const galleryTitle =
     variant === "renovation" ? data.renovationGalleryTitle : data.galleryTitle;
+  const gallery = await getPageGallery(variant === "renovation" ? "renovation" : "real-estate");
   return (
     <PageShell locale={locale} subsidiary="next">
       <PageHero image={data.heroImage} title={data.heroTitle} />
@@ -27,7 +29,7 @@ export default async function RealEstatePageContent({
         moreLabel={locale === "zh" ? "查看全部" : undefined}
       />
       <AdvantageList title={data.advantagesTitle} items={data.advantages} />
-      <PhotoCoverflow title={galleryTitle} images={data.gallery} />
+      <PhotoCoverflow title={galleryTitle} images={gallery} />
     </PageShell>
   );
 }

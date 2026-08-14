@@ -33,11 +33,6 @@ export const realEstate = {
   ],
   galleryTitle: "不動産取引",
   renovationGalleryTitle: "工事内装",
-  gallery: [
-    { src: "/images/pages/real-estate/gallery/slide-1.jpg" },
-    { src: "/images/pages/real-estate/gallery/slide-2.jpg" },
-    { src: "/images/pages/real-estate/gallery/slide-3.jpg" },
-    { src: "/images/pages/real-estate/gallery/slide-4.jpg" },
-    { src: "/images/pages/real-estate/gallery/slide-5.jpg" },
-  ],
+  // Gallery images are now managed via the CMS admin (page-galleries), see
+  // src/lib/pageGalleries.ts.
 };

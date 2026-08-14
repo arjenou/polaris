@@ -8,6 +8,7 @@ import TeamList from "./pages/TeamList";
 import TeamEditor from "./pages/TeamEditor";
 import EventList from "./pages/EventList";
 import EventEditor from "./pages/EventEditor";
+import PageGalleries from "./pages/PageGalleries";
 import ContactSubmissions from "./pages/ContactSubmissions";
 import Account from "./pages/Account";
 
@@ -43,6 +44,7 @@ export default function App() {
         <Route path="events" element={<EventList />} />
         <Route path="events/new" element={<EventEditor mode="create" />} />
         <Route path="events/:id/edit" element={<EventEditor mode="edit" />} />
+        <Route path="page-galleries" element={<PageGalleries />} />
         <Route path="contact-submissions" element={<ContactSubmissions />} />
         <Route path="account" element={<Account />} />
       </Route>
