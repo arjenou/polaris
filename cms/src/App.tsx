@@ -4,6 +4,9 @@ import Layout from "./components/Layout";
 import Login from "./pages/Login";
 import PostList from "./pages/PostList";
 import PostEditor from "./pages/PostEditor";
+import TeamList from "./pages/TeamList";
+import TeamEditor from "./pages/TeamEditor";
+import ContactSubmissions from "./pages/ContactSubmissions";
 import Account from "./pages/Account";
 
 function RequireAuth({ children }: { children: React.ReactNode }) {
@@ -32,6 +35,10 @@ export default function App() {
         <Route path="recommended" element={<PostList resource="recommended" />} />
         <Route path="recommended/new" element={<PostEditor resource="recommended" mode="create" />} />
         <Route path="recommended/:id/edit" element={<PostEditor resource="recommended" mode="edit" />} />
+        <Route path="team" element={<TeamList />} />
+        <Route path="team/new" element={<TeamEditor mode="create" />} />
+        <Route path="team/:id/edit" element={<TeamEditor mode="edit" />} />
+        <Route path="contact-submissions" element={<ContactSubmissions />} />
         <Route path="account" element={<Account />} />
       </Route>
       <Route path="*" element={<Navigate to="/" replace />} />

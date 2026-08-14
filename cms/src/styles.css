@@ -209,6 +209,47 @@ body {
   color: #8a93a6;
 }
 
+.hint {
+  font-size: 13px;
+  color: #8a93a6;
+  margin: 0 0 16px;
+}
+
+.drag-handle {
+  cursor: grab;
+  color: #b5bccb;
+  width: 24px;
+  text-align: center;
+  user-select: none;
+}
+
+.dragging-row {
+  background: #eef4ff;
+  opacity: 0.7;
+}
+
+.avatar-thumb {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  object-fit: cover;
+  display: block;
+}
+
+.avatar-placeholder {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: #eef0f3;
+  display: block;
+}
+
+.submission-message {
+  max-width: 280px;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
 .panel {
   background: #fff;
   padding: 24px;

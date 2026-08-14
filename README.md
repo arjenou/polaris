@@ -10,7 +10,9 @@ Polaris Group 官网。Next.js + TypeScript（App Router），支持日文（`/`
 
 后台管理界面 / API 地址：`https://polaris.api.yingmu-tech.com`（自定义域名，绑定在 `yingmu-tech.com` 这个 Cloudflare 账号下，实际由 Cloudflare Pages 项目 `polaris-cms` 提供服务，原始地址 `https://polaris-cms.pages.dev` 仍可作为备用访问入口）。详见 `cms/` 目录（其自身是一个独立的 Vite + Cloudflare Pages Functions 项目，与本 Next.js 项目分开构建/部署）。
 
-当前仅 News 模块接入 CMS；Team / Events / Subsidiaries / 联系与退租表单等模块仍为静态数据，计划后续按相同模式迁移。
+News / おすすめ情報 / 社员介绍（Team）均已接入 CMS；联系表单（/contact）的提交也存储在 D1（`contact_submissions` 表），可在后台按团队成员统计实际提交次数。Events / Subsidiaries / 退租表单等模块仍为静态数据，计划后续按相同模式迁移。
+
+联系表单在浏览器端直接向 CMS 的 `/api/contact` 提交，因此需要 `NEXT_PUBLIC_CMS_API_URL` 环境变量（同样默认 `https://polaris.api.yingmu-tech.com`，未设置时也可正常工作）。
 
 ## Getting Started
 

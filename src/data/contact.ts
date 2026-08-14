@@ -27,6 +27,7 @@ export interface ContactCopy {
   editButton: string;
   submitButton: string;
   submittingNote: string;
+  errorNote: string;
   successTitle: string;
   successBody: string;
   continueLabel: string;
@@ -78,11 +79,11 @@ export const contactCopyJa: ContactCopy = {
   confirmButton: "確認する",
   editButton: "修正する",
   submitButton: "送信する",
-  submittingNote:
-    "※ このフォームは現在デモ表示のみです。送信機能は今後実装予定です。",
+  submittingNote: "※ ご入力内容に誤りがないかご確認の上、送信してください。",
+  errorNote: "送信に失敗しました。しばらくしてから再度お試しください。",
   successTitle: "送信が完了しました",
   successBody:
-    "（デモ）お問い合わせ内容を確認しました。実際の送信機能は準備中です。担当者より折り返しご連絡いたします。",
+    "お問い合わせ内容を受け付けました。担当者より折り返しご連絡いたします。",
   continueLabel: "引き続き相談する",
   homeLabel: "ホームに戻る",
   qr: {
@@ -132,10 +133,10 @@ export const contactCopyZh: ContactCopy = {
   confirmButton: "确认内容",
   editButton: "返回修改",
   submitButton: "提交",
-  submittingNote: "※ 当前表单仅为演示效果，提交功能将在后续版本中实现。",
+  submittingNote: "※ 请确认填写内容无误后提交。",
+  errorNote: "提交失败，请稍后重试。",
   successTitle: "提交成功",
-  successBody:
-    "（演示）我们已收到您的咨询内容，实际提交功能正在开发中。我们的负责人将尽快与您联系。",
+  successBody: "我们已收到您的咨询内容，负责人将尽快与您联系。",
   continueLabel: "继续咨询",
   homeLabel: "返回首页",
   qr: {

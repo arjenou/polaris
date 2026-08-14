@@ -1,16 +1,19 @@
 import type { Env } from "./env";
 
-export type RevalidateKind = "news" | "recommended";
+export type RevalidateKind = "news" | "recommended" | "team";
 
 /**
  * Best-effort on-demand revalidation call to the Next.js site so content edits
  * show up immediately instead of waiting for its 5-minute timed ISR window.
  * Never throws — a revalidation failure (site down, misconfigured secret,
  * etc.) must not prevent the CMS save/delete itself from succeeding.
+ *
+ * `slug` is optional because "team" has no dedicated list/detail page — it
+ * only ever revalidates the homepage carousel.
  */
 export async function triggerRevalidate(
   env: Env,
-  params: { kind?: RevalidateKind; locale: string; slug: string },
+  params: { kind?: RevalidateKind; locale: string; slug?: string },
 ): Promise<void> {
   if (!env.SITE_URL || !env.REVALIDATE_SECRET) return;
 

@@ -21,6 +21,12 @@ export default function Layout() {
           <NavLink to="/recommended" className={({ isActive }) => (isActive ? "active" : "")}>
             推荐信息
           </NavLink>
+          <NavLink to="/team" className={({ isActive }) => (isActive ? "active" : "")}>
+            社员介绍
+          </NavLink>
+          <NavLink to="/contact-submissions" className={({ isActive }) => (isActive ? "active" : "")}>
+            咨询记录
+          </NavLink>
           <NavLink to="/account" className={({ isActive }) => (isActive ? "active" : "")}>
             账号设置
           </NavLink>

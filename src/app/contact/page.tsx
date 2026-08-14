@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { Suspense } from "react";
 import PageShell from "@/components/layout/PageShell";
 import ContactForm from "@/components/contact/ContactForm";
 import { contactCopyJa } from "@/data/contact";
@@ -10,7 +11,9 @@ export const metadata: Metadata = {
 export default function Page() {
   return (
     <PageShell locale="ja">
-      <ContactForm copy={contactCopyJa} homeHref="/" />
+      <Suspense fallback={null}>
+        <ContactForm copy={contactCopyJa} homeHref="/" locale="ja" />
+      </Suspense>
     </PageShell>
   );
 }

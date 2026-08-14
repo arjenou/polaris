@@ -1,9 +1,11 @@
 import { revalidatePath } from "next/cache";
 import { NextRequest, NextResponse } from "next/server";
 
+type RevalidateKind = "news" | "recommended" | "team";
+
 /** Pages (besides the content type's own list/detail pages) that render a
  * card fed by the CMS, and therefore also need revalidating on every change. */
-const PAGES_WITH_CARD: Record<"news" | "recommended", { ja: string[]; zh: string[] }> = {
+const PAGES_WITH_CARD: Record<RevalidateKind, { ja: string[]; zh: string[] }> = {
   news: {
     ja: ["/", "/assets-management", "/business-headquarters", "/business-headquarters-2"],
     zh: ["/zh", "/zh/assets-management", "/zh/business-headquarters", "/zh/business-headquarters-2"],
@@ -12,9 +14,15 @@ const PAGES_WITH_CARD: Record<"news" | "recommended", { ja: string[]; zh: string
     ja: ["/"],
     zh: ["/zh"],
   },
+  // "team" has no dedicated list/detail page — it only ever appears in the
+  // homepage carousel.
+  team: {
+    ja: ["/"],
+    zh: ["/zh"],
+  },
 };
 
-const BASE_PATH: Record<"news" | "recommended", { ja: string; zh: string }> = {
+const BASE_PATH: Partial<Record<RevalidateKind, { ja: string; zh: string }>> = {
   news: { ja: "/news", zh: "/zh/news" },
   recommended: { ja: "/recommended", zh: "/zh/recommended" },
 };
@@ -30,22 +38,25 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  let body: { kind?: "news" | "recommended"; locale?: "ja" | "zh"; slug?: string } = {};
+  let body: { kind?: RevalidateKind; locale?: "ja" | "zh"; slug?: string } = {};
   try {
     body = await request.json();
   } catch {
     // no body — fall back to revalidating both news lists below
   }
 
-  const kind = body.kind === "recommended" ? "recommended" : "news";
+  const kind: RevalidateKind =
+    body.kind === "recommended" ? "recommended" : body.kind === "team" ? "team" : "news";
   const { locale, slug } = body;
   const locales = locale === "ja" || locale === "zh" ? [locale] : (["ja", "zh"] as const);
 
   const paths = new Set<string>();
   for (const l of locales) {
-    const prefix = BASE_PATH[kind][l];
-    paths.add(prefix);
-    if (slug) paths.add(`${prefix}/${slug}`);
+    const prefix = BASE_PATH[kind]?.[l];
+    if (prefix) {
+      paths.add(prefix);
+      if (slug) paths.add(`${prefix}/${slug}`);
+    }
     for (const page of PAGES_WITH_CARD[kind][l]) {
       paths.add(page);
     }

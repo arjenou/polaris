@@ -118,3 +118,62 @@ export const accountApi = {
       body: JSON.stringify({ currentPassword, newPassword }),
     }),
 };
+
+export interface TeamMember {
+  id: number;
+  locale: "ja" | "zh";
+  lastName: string;
+  firstName: string;
+  lastNameKana: string;
+  firstNameKana: string;
+  department: string;
+  position: string;
+  description: string;
+  tags: string[];
+  languages: string[];
+  imageKey: string | null;
+  imageUrl: string | null;
+  imageWidth: number | null;
+  imageHeight: number | null;
+  sortOrder: number;
+  published: boolean;
+  submissionCount: number;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export type TeamMemberInput = Omit<
+  TeamMember,
+  "id" | "imageUrl" | "sortOrder" | "submissionCount" | "createdAt" | "updatedAt"
+>;
+
+export const teamApi = {
+  list: (locale?: "ja" | "zh") => request<TeamMember[]>(`/api/admin/team${locale ? `?locale=${locale}` : ""}`),
+  get: (id: number) => request<TeamMember>(`/api/admin/team/${id}`),
+  create: (input: TeamMemberInput) =>
+    request<TeamMember>("/api/admin/team", { method: "POST", body: JSON.stringify(input) }),
+  update: (id: number, input: TeamMemberInput) =>
+    request<TeamMember>(`/api/admin/team/${id}`, { method: "PUT", body: JSON.stringify(input) }),
+  remove: (id: number) => request<{ ok: true }>(`/api/admin/team/${id}`, { method: "DELETE" }),
+  reorder: (locale: "ja" | "zh", orderedIds: number[]) =>
+    request<{ ok: true }>("/api/admin/team/reorder", { method: "POST", body: JSON.stringify({ locale, orderedIds }) }),
+};
+
+export interface ContactSubmission {
+  id: number;
+  locale: "ja" | "zh";
+  memberId: number | null;
+  memberName: string | null;
+  name: string;
+  furigana: string;
+  email: string;
+  phone: string;
+  inquiryType: string;
+  message: string;
+  contactMethod: string;
+  createdAt: string;
+}
+
+export const contactSubmissionsApi = {
+  list: () => request<ContactSubmission[]>("/api/admin/contact-submissions"),
+};

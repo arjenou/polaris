@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import { useEffect, useMemo, useState } from "react";
-import { MEMBER_CONTACT_URL, teamMembers } from "@/data/team";
+import type { TeamMemberCard } from "@/lib/team";
 import styles from "./TeamCarousel.module.css";
 
 function mod(n: number, m: number) {
@@ -10,6 +10,7 @@ function mod(n: number, m: number) {
 }
 
 const AUTOPLAY_INTERVAL_MS = 3000;
+const FALLBACK_IMAGE = "/images/team/placeholder.svg";
 
 interface TeamCarouselLabels {
   eyebrow: string;
@@ -30,23 +31,28 @@ const defaultLabels: TeamCarouselLabels = {
 };
 
 export default function TeamCarousel({
+  members,
+  contactHref = "/contact",
   labels = defaultLabels,
 }: {
+  members: TeamMemberCard[];
+  /** Base /contact path for this locale; the member's id is appended as
+   * `?member=` so a completed submission can be attributed to them. */
+  contactHref?: string;
   labels?: TeamCarouselLabels;
 }) {
   const [activeIndex, setActiveIndex] = useState(0);
-  const [modalMember, setModalMember] = useState<(typeof teamMembers)[number] | null>(
-    null
-  );
+  const [modalMember, setModalMember] = useState<TeamMemberCard | null>(null);
   const [isPaused, setIsPaused] = useState(false);
-  const total = teamMembers.length;
+  const total = members.length;
 
   const visible = useMemo(() => {
-    const prev = teamMembers[mod(activeIndex - 1, total)];
-    const active = teamMembers[activeIndex];
-    const next = teamMembers[mod(activeIndex + 1, total)];
+    if (total === 0) return null;
+    const prev = members[mod(activeIndex - 1, total)];
+    const active = members[activeIndex];
+    const next = members[mod(activeIndex + 1, total)];
     return { prev, active, next };
-  }, [activeIndex, total]);
+  }, [activeIndex, total, members]);
 
   const goPrev = () => setActiveIndex((i) => mod(i - 1, total));
   const goNext = () => setActiveIndex((i) => mod(i + 1, total));
@@ -60,6 +66,11 @@ export default function TeamCarousel({
     }, AUTOPLAY_INTERVAL_MS);
     return () => clearInterval(timer);
   }, [isPaused, modalMember, total, activeIndex]);
+
+  if (!visible) return null;
+
+  const memberContactHref = (member: TeamMemberCard) =>
+    `${contactHref}?member=${member.id}`;
 
   return (
     <section className={styles.section}>
@@ -84,7 +95,7 @@ export default function TeamCarousel({
             >
               <div key={visible.prev.id} className={styles.cardImageWrap}>
                 <Image
-                  src={visible.prev.image}
+                  src={visible.prev.image ?? FALLBACK_IMAGE}
                   alt=""
                   fill
                   sizes="140px"
@@ -100,7 +111,7 @@ export default function TeamCarousel({
             >
               <div key={visible.active.id} className={styles.cardImageWrap}>
                 <Image
-                  src={visible.active.image}
+                  src={visible.active.image ?? FALLBACK_IMAGE}
                   alt={`${visible.active.lastName} ${visible.active.firstName}`}
                   fill
                   sizes="(max-width: 600px) 60vw, 240px"
@@ -118,7 +129,7 @@ export default function TeamCarousel({
             >
               <div key={visible.next.id} className={styles.cardImageWrap}>
                 <Image
-                  src={visible.next.image}
+                  src={visible.next.image ?? FALLBACK_IMAGE}
                   alt=""
                   fill
                   sizes="140px"
@@ -132,11 +143,11 @@ export default function TeamCarousel({
             <div key={visible.active.id} className={styles.infoContent}>
               <div className={styles.nameRow}>
                 <div className={styles.nameBlock}>
-                  <span className={styles.kana}>{visible.active.lastNameJp}</span>
+                  <span className={styles.kana}>{visible.active.lastNameKana}</span>
                   <span className={styles.kanji}>{visible.active.lastName}</span>
                 </div>
                 <div className={styles.nameBlock}>
-                  <span className={styles.kana}>{visible.active.firstNameJp}</span>
+                  <span className={styles.kana}>{visible.active.firstNameKana}</span>
                   <span className={styles.kanji}>{visible.active.firstName}</span>
                 </div>
                 <span className={styles.position}>
@@ -184,7 +195,7 @@ export default function TeamCarousel({
             </button>
             <div className={styles.modalPhoto}>
               <Image
-                src={modalMember.image}
+                src={modalMember.image ?? FALLBACK_IMAGE}
                 alt={`${modalMember.lastName} ${modalMember.firstName}`}
                 fill
                 sizes="220px"
@@ -194,11 +205,11 @@ export default function TeamCarousel({
             <div className={styles.modalBody}>
               <div className={styles.nameRow}>
                 <div className={styles.nameBlock}>
-                  <span className={styles.kana}>{modalMember.lastNameJp}</span>
+                  <span className={styles.kana}>{modalMember.lastNameKana}</span>
                   <span className={styles.kanji}>{modalMember.lastName}</span>
                 </div>
                 <div className={styles.nameBlock}>
-                  <span className={styles.kana}>{modalMember.firstNameJp}</span>
+                  <span className={styles.kana}>{modalMember.firstNameKana}</span>
                   <span className={styles.kanji}>{modalMember.firstName}</span>
                 </div>
               </div>
@@ -219,7 +230,7 @@ export default function TeamCarousel({
               <p className={styles.modalDescription}>
                 {modalMember.languages.join(" / ")}
               </p>
-              <a className={styles.contactBtn} href={MEMBER_CONTACT_URL}>
+              <a className={styles.contactBtn} href={memberContactHref(modalMember)}>
                 <span>✉</span>
                 <span>{labels.contactBtn}</span>
                 <span>›</span>

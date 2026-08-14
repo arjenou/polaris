@@ -1,8 +1,11 @@
 "use client";
 
 import { useState, type FormEvent } from "react";
+import { useSearchParams } from "next/navigation";
 import type { ContactCopy } from "@/data/contact";
 import styles from "./ContactForm.module.css";
+
+const CMS_API_URL = process.env.NEXT_PUBLIC_CMS_API_URL ?? "https://polaris.api.yingmu-tech.com";
 
 interface FormData {
   name: string;
@@ -29,12 +32,23 @@ type Step = "input" | "confirm" | "complete";
 export default function ContactForm({
   copy,
   homeHref,
+  locale,
 }: {
   copy: ContactCopy;
   homeHref: string;
+  locale: "ja" | "zh";
 }) {
+  const searchParams = useSearchParams();
+  const memberIdParam = searchParams.get("member");
+  // A member id in the URL only means the visitor arrived via that member's
+  // "consult" button — it's attributed on the backend only once this form is
+  // actually submitted, not merely for having clicked through.
+  const memberId = memberIdParam && /^\d+$/.test(memberIdParam) ? Number(memberIdParam) : null;
+
   const [step, setStep] = useState<Step>("input");
   const [formData, setFormData] = useState<FormData>(emptyFormData);
+  const [submitting, setSubmitting] = useState(false);
+  const [submitError, setSubmitError] = useState<string | null>(null);
 
   const handleInputSubmit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -52,10 +66,33 @@ export default function ContactForm({
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
-  const handleConfirmSubmit = () => {
-    // No backend yet — the form is UI-only per the current project scope.
-    setStep("complete");
-    window.scrollTo({ top: 0, behavior: "smooth" });
+  const handleConfirmSubmit = async () => {
+    setSubmitting(true);
+    setSubmitError(null);
+    try {
+      const res = await fetch(`${CMS_API_URL}/api/contact`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          locale,
+          memberId,
+          name: formData.name,
+          furigana: formData.furigana,
+          email: formData.email,
+          phone: formData.phone,
+          inquiryType: formData.inquiryType,
+          message: formData.message,
+          contactMethod: formData.contactMethod,
+        }),
+      });
+      if (!res.ok) throw new Error("submit failed");
+      setStep("complete");
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    } catch {
+      setSubmitError(copy.errorNote);
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   const handleReset = () => {
@@ -237,17 +274,24 @@ export default function ContactForm({
                 </table>
 
                 <p className={styles.note}>{copy.submittingNote}</p>
+                {submitError && <p className={styles.errorNote}>{submitError}</p>}
 
                 <div className={styles.confirmActions}>
                   <button
                     type="button"
                     className={styles.secondaryBtn}
                     onClick={() => setStep("input")}
+                    disabled={submitting}
                   >
                     {copy.editButton}
                   </button>
-                  <button type="button" className={styles.submitBtn} onClick={handleConfirmSubmit}>
-                    {copy.submitButton}
+                  <button
+                    type="button"
+                    className={styles.submitBtn}
+                    onClick={handleConfirmSubmit}
+                    disabled={submitting}
+                  >
+                    {submitting ? "…" : copy.submitButton}
                   </button>
                 </div>
               </div>
