@@ -178,6 +178,28 @@ export const contactSubmissionsApi = {
   list: () => request<ContactSubmission[]>("/api/admin/contact-submissions"),
 };
 
+export type ContactQrType = "wechat" | "line";
+
+export interface ContactQr {
+  type: ContactQrType;
+  imageKey: string | null;
+  imageUrl: string | null;
+  imageWidth: number | null;
+  imageHeight: number | null;
+  updatedAt: string;
+}
+
+export const contactQrApi = {
+  list: () => request<ContactQr[]>("/api/admin/contact-qr"),
+  update: (type: ContactQrType, imageKey: string, imageWidth: number | null, imageHeight: number | null) =>
+    request<ContactQr>(`/api/admin/contact-qr/${type}`, {
+      method: "PUT",
+      body: JSON.stringify({ imageKey, imageWidth, imageHeight }),
+    }),
+  remove: (type: ContactQrType) =>
+    request<ContactQr>(`/api/admin/contact-qr/${type}`, { method: "DELETE" }),
+};
+
 /** The three fixed content pages whose bottom photo carousel is managed here. */
 export type PageGalleryKey = "real-estate" | "renovation" | "asset-management";
 

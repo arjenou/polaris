@@ -39,6 +39,9 @@ export default function Layout() {
           <NavLink to="/contact-submissions" className={({ isActive }) => (isActive ? "active" : "")}>
             咨询记录
           </NavLink>
+          <NavLink to="/contact-qr" className={({ isActive }) => (isActive ? "active" : "")}>
+            联系二维码
+          </NavLink>
           <NavLink to="/account" className={({ isActive }) => (isActive ? "active" : "")}>
             账号设置
           </NavLink>

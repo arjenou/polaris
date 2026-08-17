@@ -2,7 +2,9 @@
 
 import { useState, type FormEvent } from "react";
 import { useSearchParams } from "next/navigation";
+import Image from "next/image";
 import type { ContactCopy } from "@/data/contact";
+import type { ContactQrImages } from "@/lib/contactQr";
 import styles from "./ContactForm.module.css";
 
 const CMS_API_URL = process.env.NEXT_PUBLIC_CMS_API_URL ?? "https://polaris.api.yingmu-tech.com";
@@ -33,10 +35,12 @@ export default function ContactForm({
   copy,
   homeHref,
   locale,
+  qrImages,
 }: {
   copy: ContactCopy;
   homeHref: string;
   locale: "ja" | "zh";
+  qrImages?: ContactQrImages;
 }) {
   const searchParams = useSearchParams();
   const memberIdParam = searchParams.get("member");
@@ -317,12 +321,24 @@ export default function ContactForm({
             <h2 className={styles.qrTitle}>{copy.qr.title}</h2>
             <div className={styles.qrGrid}>
               <div className={styles.qrCard}>
-                <div className={styles.qrPlaceholder}>{copy.qr.comingSoon}</div>
+                {qrImages?.wechat ? (
+                  <div className={styles.qrImageWrap}>
+                    <Image src={qrImages.wechat} alt={copy.qr.wechatLabel} fill sizes="160px" className={styles.qrImage} />
+                  </div>
+                ) : (
+                  <div className={styles.qrPlaceholder}>{copy.qr.comingSoon}</div>
+                )}
                 <div className={styles.qrLabel}>{copy.qr.wechatLabel}</div>
                 <div className={styles.qrNote}>{copy.qr.wechatNote}</div>
               </div>
               <div className={styles.qrCard}>
-                <div className={styles.qrPlaceholder}>{copy.qr.comingSoon}</div>
+                {qrImages?.line ? (
+                  <div className={styles.qrImageWrap}>
+                    <Image src={qrImages.line} alt={copy.qr.lineLabel} fill sizes="160px" className={styles.qrImage} />
+                  </div>
+                ) : (
+                  <div className={styles.qrPlaceholder}>{copy.qr.comingSoon}</div>
+                )}
                 <div className={styles.qrLabel}>{copy.qr.lineLabel}</div>
                 <div className={styles.qrNote}>{copy.qr.lineNote}</div>
               </div>

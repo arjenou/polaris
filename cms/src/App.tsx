@@ -14,6 +14,7 @@ import PageAdvantageEditor from "./pages/PageAdvantageEditor";
 import GroupCompaniesList from "./pages/GroupCompaniesList";
 import GroupCompanyEditor from "./pages/GroupCompanyEditor";
 import ContactSubmissions from "./pages/ContactSubmissions";
+import ContactQrSettings from "./pages/ContactQrSettings";
 import Account from "./pages/Account";
 
 function RequireAuth({ children }: { children: React.ReactNode }) {
@@ -56,6 +57,7 @@ export default function App() {
         <Route path="group-companies/:locale/:region/new" element={<GroupCompanyEditor mode="create" />} />
         <Route path="group-companies/:locale/:region/:id/edit" element={<GroupCompanyEditor mode="edit" />} />
         <Route path="contact-submissions" element={<ContactSubmissions />} />
+        <Route path="contact-qr" element={<ContactQrSettings />} />
         <Route path="account" element={<Account />} />
       </Route>
       <Route path="*" element={<Navigate to="/" replace />} />

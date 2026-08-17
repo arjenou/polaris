@@ -335,6 +335,21 @@
   padding: 8px;
 }
 
+.qrImageWrap {
+  position: relative;
+  width: 160px;
+  height: 160px;
+  margin: 0 0 12px;
+  border: 1px solid var(--color-border);
+  border-radius: 6px;
+  overflow: hidden;
+  background: #fff;
+}
+
+.qrImage {
+  object-fit: contain;
+}
+
 .qrLabel {
   font-size: 15px;
   font-weight: 700;
@@ -380,7 +395,8 @@
     text-align: center;
   }
 
-  .qrPlaceholder {
+  .qrPlaceholder,
+  .qrImageWrap {
     margin: 0 auto 12px;
   }
 }
