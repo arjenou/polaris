@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import { eventsApi, type EventItem } from "../lib/api";
 import { useToast } from "../lib/ToastContext";
 import { formatDateTime } from "../lib/datetime";
+import { SkeletonTableRows } from "../components/Skeleton";
 
 function statusLabel(event: EventItem): string {
   if (event.published) return "已发布";
@@ -62,27 +63,28 @@ export default function EventList() {
       </div>
 
       {error && <p className="form-error">{error}</p>}
-      {loading ? (
-        <p>加载中…</p>
-      ) : (
-        <table className="data-table events-table">
-          <colgroup>
-            <col className="col-cover" />
-            <col />
-            <col className="col-badge" />
-            <col className="col-status" />
-            <col className="col-actions" />
-          </colgroup>
-          <thead>
-            <tr>
-              <th>封面</th>
-              <th>活动</th>
-              <th>标签</th>
-              <th>状态</th>
-              <th />
-            </tr>
-          </thead>
-          <tbody>
+      <table className="data-table events-table">
+        <colgroup>
+          <col className="col-cover" />
+          <col />
+          <col className="col-badge" />
+          <col className="col-status" />
+          <col className="col-actions" />
+        </colgroup>
+        <thead>
+          <tr>
+            <th>封面</th>
+            <th>活动</th>
+            <th>标签</th>
+            <th>状态</th>
+            <th />
+          </tr>
+        </thead>
+        <tbody>
+          {loading ? (
+            <SkeletonTableRows columns={["cover", "text-block", "badge", "badge", "actions"]} />
+          ) : (
+            <>
             {events.map((event) => (
               <tr key={event.id}>
                 <td>
@@ -117,9 +119,10 @@ export default function EventList() {
                 </td>
               </tr>
             )}
-          </tbody>
-        </table>
-      )}
+            </>
+          )}
+        </tbody>
+      </table>
     </div>
   );
 }

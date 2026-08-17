@@ -2,6 +2,7 @@ import { useEffect, useState, type DragEvent } from "react";
 import { Link } from "react-router-dom";
 import { teamApi, type TeamMember } from "../lib/api";
 import { useToast } from "../lib/ToastContext";
+import { SkeletonTableRows } from "../components/Skeleton";
 
 export default function TeamList() {
   const { showToast } = useToast();
@@ -79,33 +80,36 @@ export default function TeamList() {
       <p className="hint">拖动左侧手柄可调整首页轮播中的显示顺序（拖动后自动保存）。</p>
 
       {error && <p className="form-error">{error}</p>}
-      {loading ? (
-        <p>加载中…</p>
-      ) : (
-        <table className="data-table team-table">
-          <colgroup>
-            <col className="col-drag" />
-            <col className="col-avatar" />
-            <col className="col-name" />
-            <col className="col-role" />
-            <col className="col-tags" />
-            <col className="col-status" />
-            <col className="col-count" />
-            <col className="col-actions" />
-          </colgroup>
-          <thead>
-            <tr>
-              <th />
-              <th>头像</th>
-              <th>姓名</th>
-              <th>部门 / 职位</th>
-              <th>标签</th>
-              <th>状态</th>
-              <th>咨询次数</th>
-              <th />
-            </tr>
-          </thead>
-          <tbody>
+      <table className="data-table team-table">
+        <colgroup>
+          <col className="col-drag" />
+          <col className="col-avatar" />
+          <col className="col-name" />
+          <col className="col-role" />
+          <col className="col-tags" />
+          <col className="col-status" />
+          <col className="col-count" />
+          <col className="col-actions" />
+        </colgroup>
+        <thead>
+          <tr>
+            <th />
+            <th>头像</th>
+            <th>姓名</th>
+            <th>部门 / 职位</th>
+            <th>标签</th>
+            <th>状态</th>
+            <th>咨询次数</th>
+            <th />
+          </tr>
+        </thead>
+        <tbody>
+          {loading ? (
+            <SkeletonTableRows
+              columns={["drag", "thumb", "text-block", "text-block", "badge", "badge", "badge", "actions"]}
+            />
+          ) : (
+            <>
             {members.map((member, index) => (
               <tr
                 key={member.id}
@@ -172,9 +176,10 @@ export default function TeamList() {
                 </td>
               </tr>
             )}
-          </tbody>
-        </table>
-      )}
+            </>
+          )}
+        </tbody>
+      </table>
     </div>
   );
 }

@@ -1,6 +1,7 @@
 import { useEffect, useState, type ChangeEvent, type DragEvent } from "react";
 import { mediaApi, pageGalleriesApi, type PageGalleryImage, type PageGalleryKey } from "../lib/api";
 import { useToast } from "../lib/ToastContext";
+import { SkeletonGrid } from "../components/Skeleton";
 
 const TABS: { key: PageGalleryKey; label: string }[] = [
   { key: "real-estate", label: "不動産取引" },
@@ -117,7 +118,7 @@ export default function PageGalleries() {
         {error && <p className="form-error">{error}</p>}
 
         {loading ? (
-          <p>加载中…</p>
+          <SkeletonGrid count={6} />
         ) : images.length === 0 ? (
           <p className="empty-row">暂无图片</p>
         ) : (

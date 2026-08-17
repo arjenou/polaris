@@ -4,6 +4,7 @@ import type { ContentPost } from "../lib/api";
 import { useToast } from "../lib/ToastContext";
 import { formatDateTime } from "../lib/datetime";
 import { CONTENT_TYPES, type ContentTypeKey } from "../lib/contentTypes";
+import { SkeletonTableRows } from "../components/Skeleton";
 
 function statusLabel(post: ContentPost): string {
   if (post.published) return "已发布";
@@ -64,20 +65,21 @@ export default function PostList({ resource }: { resource: ContentTypeKey }) {
       </div>
 
       {error && <p className="form-error">{error}</p>}
-      {loading ? (
-        <p>加载中…</p>
-      ) : (
-        <table className="data-table">
-          <thead>
-            <tr>
-              <th>日期</th>
-              <th>标签</th>
-              <th>标题</th>
-              <th>状态</th>
-              <th />
-            </tr>
-          </thead>
-          <tbody>
+      <table className="data-table">
+        <thead>
+          <tr>
+            <th>日期</th>
+            <th>标签</th>
+            <th>标题</th>
+            <th>状态</th>
+            <th />
+          </tr>
+        </thead>
+        <tbody>
+          {loading ? (
+            <SkeletonTableRows columns={["text", "badge", "text", "badge", "actions"]} />
+          ) : (
+            <>
             {posts.map((post) => (
               <tr key={post.id}>
                 <td>{post.date}</td>
@@ -99,9 +101,10 @@ export default function PostList({ resource }: { resource: ContentTypeKey }) {
                 </td>
               </tr>
             )}
-          </tbody>
-        </table>
-      )}
+            </>
+          )}
+        </tbody>
+      </table>
     </div>
   );
 }

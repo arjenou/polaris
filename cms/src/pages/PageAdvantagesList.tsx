@@ -2,6 +2,7 @@ import { useEffect, useState, type DragEvent } from "react";
 import { Link } from "react-router-dom";
 import { pageAdvantagesApi, type PageAdvantage, type PageGalleryKey } from "../lib/api";
 import { useToast } from "../lib/ToastContext";
+import { SkeletonTableRows } from "../components/Skeleton";
 
 const PAGE_TABS: { key: PageGalleryKey; label: string }[] = [
   { key: "real-estate", label: "不動産取引" },
@@ -97,25 +98,26 @@ export default function PageAdvantagesList() {
       </div>
 
       {error && <p className="form-error">{error}</p>}
-      {loading ? (
-        <p>加载中…</p>
-      ) : (
-        <table className="data-table team-table">
-          <colgroup>
-            <col className="col-drag" />
-            <col className="col-avatar" />
-            <col />
-            <col className="col-actions" />
-          </colgroup>
-          <thead>
-            <tr>
-              <th />
-              <th>图片</th>
-              <th>标签 / 标题 / 内容</th>
-              <th />
-            </tr>
-          </thead>
-          <tbody>
+      <table className="data-table team-table">
+        <colgroup>
+          <col className="col-drag" />
+          <col className="col-avatar" />
+          <col />
+          <col className="col-actions" />
+        </colgroup>
+        <thead>
+          <tr>
+            <th />
+            <th>图片</th>
+            <th>标签 / 标题 / 内容</th>
+            <th />
+          </tr>
+        </thead>
+        <tbody>
+          {loading ? (
+            <SkeletonTableRows columns={["drag", "thumb", "text-block", "actions"]} />
+          ) : (
+            <>
             {items.map((item, index) => (
               <tr
                 key={item.id}
@@ -155,9 +157,10 @@ export default function PageAdvantagesList() {
                 </td>
               </tr>
             )}
-          </tbody>
-        </table>
-      )}
+            </>
+          )}
+        </tbody>
+      </table>
     </div>
   );
 }

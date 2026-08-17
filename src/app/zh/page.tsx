@@ -1,3 +1,4 @@
+import { Suspense } from "react";
 import type { Metadata } from "next";
 import PageShell from "@/components/layout/PageShell";
 import Hero from "@/components/home/Hero";
@@ -5,6 +6,10 @@ import LatestNewsSection from "@/components/home/LatestNewsSection";
 import LatestRecommendedSection from "@/components/home/LatestRecommendedSection";
 import TeamSection from "@/components/home/TeamSection";
 import EventsSection from "@/components/home/EventsSection";
+import NewsSectionSkeleton from "@/components/home/NewsSectionSkeleton";
+import RecommendedSectionSkeleton from "@/components/home/RecommendedSectionSkeleton";
+import TeamCarouselSkeleton from "@/components/home/TeamCarouselSkeleton";
+import EventsCarouselSkeleton from "@/components/home/EventsCarouselSkeleton";
 // GroupCompanies section is temporarily hidden on the homepage (kept for possible future re-enable).
 // import GroupCompanies from "@/components/home/GroupCompanies";
 import { heroHeadlineZh } from "@/data/home.zh";
@@ -32,16 +37,24 @@ export default function ZhHomePage() {
   return (
     <PageShell locale="zh" subsidiary="shanghai">
       <Hero headline={heroHeadlineZh} />
-      <LatestNewsSection locale="zh" moreHref="/zh/news" moreLabel="查看全部" />
-      <LatestRecommendedSection
-        locale="zh"
-        eyebrow="推荐信息"
-        title="精选最新案例与实用信息！"
-        moreHref="/zh/recommended"
-        moreLabel="查看全部"
-      />
-      <TeamSection locale="zh" labels={teamLabelsZh} />
-      <EventsSection locale="zh" labels={eventsLabelsZh} />
+      <Suspense fallback={<NewsSectionSkeleton />}>
+        <LatestNewsSection locale="zh" moreHref="/zh/news" moreLabel="查看全部" />
+      </Suspense>
+      <Suspense fallback={<RecommendedSectionSkeleton />}>
+        <LatestRecommendedSection
+          locale="zh"
+          eyebrow="推荐信息"
+          title="精选最新案例与实用信息！"
+          moreHref="/zh/recommended"
+          moreLabel="查看全部"
+        />
+      </Suspense>
+      <Suspense fallback={<TeamCarouselSkeleton />}>
+        <TeamSection locale="zh" labels={teamLabelsZh} />
+      </Suspense>
+      <Suspense fallback={<EventsCarouselSkeleton />}>
+        <EventsSection locale="zh" labels={eventsLabelsZh} />
+      </Suspense>
       {/* <GroupCompanies
         eyebrow="集团企业"
         title="欢迎了解Polaris集团旗下各企业官网！"

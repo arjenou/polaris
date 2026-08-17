@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { contactSubmissionsApi, type ContactSubmission } from "../lib/api";
 import { formatDateTime } from "../lib/datetime";
+import { SkeletonTableRows } from "../components/Skeleton";
 
 export default function ContactSubmissions() {
   const [submissions, setSubmissions] = useState<ContactSubmission[]>([]);
@@ -25,24 +26,27 @@ export default function ContactSubmissions() {
       </p>
 
       {error && <p className="form-error">{error}</p>}
-      {loading ? (
-        <p>加载中…</p>
-      ) : (
-        <table className="data-table">
-          <thead>
-            <tr>
-              <th>提交时间</th>
-              <th>语言</th>
-              <th>关联社员</th>
-              <th>姓名</th>
-              <th>邮箱</th>
-              <th>电话</th>
-              <th>咨询类型</th>
-              <th>内容</th>
-              <th>联系方式</th>
-            </tr>
-          </thead>
-          <tbody>
+      <table className="data-table">
+        <thead>
+          <tr>
+            <th>提交时间</th>
+            <th>语言</th>
+            <th>关联社员</th>
+            <th>姓名</th>
+            <th>邮箱</th>
+            <th>电话</th>
+            <th>咨询类型</th>
+            <th>内容</th>
+            <th>联系方式</th>
+          </tr>
+        </thead>
+        <tbody>
+          {loading ? (
+            <SkeletonTableRows
+              columns={["text", "badge", "text", "text", "text", "text", "text", "text", "text"]}
+            />
+          ) : (
+            <>
             {submissions.map((s) => (
               <tr key={s.id}>
                 <td>{formatDateTime(s.createdAt)}</td>
@@ -63,9 +67,10 @@ export default function ContactSubmissions() {
                 </td>
               </tr>
             )}
-          </tbody>
-        </table>
-      )}
+            </>
+          )}
+        </tbody>
+      </table>
     </div>
   );
 }

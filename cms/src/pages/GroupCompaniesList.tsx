@@ -2,6 +2,7 @@ import { useEffect, useState, type DragEvent } from "react";
 import { Link } from "react-router-dom";
 import { groupCompaniesApi, type GroupCompany, type GroupCompanyRegion } from "../lib/api";
 import { useToast } from "../lib/ToastContext";
+import { SkeletonTableRows } from "../components/Skeleton";
 
 export default function GroupCompaniesList() {
   const { showToast } = useToast();
@@ -91,27 +92,28 @@ export default function GroupCompaniesList() {
       </div>
 
       {error && <p className="form-error">{error}</p>}
-      {loading ? (
-        <p>加载中…</p>
-      ) : (
-        <table className="data-table company-table">
-          <colgroup>
-            <col className="col-drag" />
-            <col className="col-logo" />
-            <col />
-            <col className="col-status" />
-            <col className="col-actions" />
-          </colgroup>
-          <thead>
-            <tr>
-              <th />
-              <th>Logo</th>
-              <th>名称 / 业务内容 / 所在地</th>
-              <th>状态</th>
-              <th />
-            </tr>
-          </thead>
-          <tbody>
+      <table className="data-table company-table">
+        <colgroup>
+          <col className="col-drag" />
+          <col className="col-logo" />
+          <col />
+          <col className="col-status" />
+          <col className="col-actions" />
+        </colgroup>
+        <thead>
+          <tr>
+            <th />
+            <th>Logo</th>
+            <th>名称 / 业务内容 / 所在地</th>
+            <th>状态</th>
+            <th />
+          </tr>
+        </thead>
+        <tbody>
+          {loading ? (
+            <SkeletonTableRows columns={["drag", "thumb-wide", "text-block", "badge", "actions"]} />
+          ) : (
+            <>
             {items.map((item, index) => (
               <tr
                 key={item.id}
@@ -164,9 +166,10 @@ export default function GroupCompaniesList() {
                 </td>
               </tr>
             )}
-          </tbody>
-        </table>
-      )}
+            </>
+          )}
+        </tbody>
+      </table>
     </div>
   );
 }
