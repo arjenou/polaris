@@ -406,6 +406,43 @@ body {
   color: #8a93a6;
 }
 
+.visibility-select {
+  min-width: 92px;
+  height: 32px;
+  padding: 0 28px 0 12px;
+  border: 1px solid #d8dce3;
+  border-radius: 6px;
+  background-color: #fff;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.visibility-select.is-visible {
+  color: #168647;
+  border-color: #a7dfbd;
+  background-color: #effaf3;
+}
+
+.visibility-select.is-hidden {
+  color: #7b8496;
+  border-color: #d8dce3;
+  background-color: #f5f6f8;
+}
+
+.visibility-select:disabled {
+  opacity: 0.55;
+  cursor: wait;
+}
+
+.visibility-schedule {
+  margin-top: 5px;
+  color: #8a93a6;
+  font-size: 11px;
+  line-height: 1.35;
+  white-space: nowrap;
+}
+
 .count-cell {
   text-align: center;
 }

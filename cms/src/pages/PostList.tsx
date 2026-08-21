@@ -1,15 +1,18 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import type { ContentPost } from "../lib/api";
+import type { ContentPost, ContentPostInput } from "../lib/api";
 import { useToast } from "../lib/ToastContext";
 import { formatDateTime } from "../lib/datetime";
 import { CONTENT_TYPES, type ContentTypeKey } from "../lib/contentTypes";
 import { SkeletonTableRows } from "../components/Skeleton";
 
+function isVisible(post: ContentPost): boolean {
+  return post.published || Boolean(post.scheduledAt && new Date(post.scheduledAt) <= new Date());
+}
+
 function statusLabel(post: ContentPost): string {
-  if (post.published) return "已发布";
+  if (isVisible(post)) return "已发布";
   if (post.scheduledAt) {
-    if (new Date(post.scheduledAt) <= new Date()) return "已发布";
     return `定时发布：${formatDateTime(post.scheduledAt)}`;
   }
   return "草稿";
@@ -22,6 +25,7 @@ export default function PostList({ resource }: { resource: ContentTypeKey }) {
   const [posts, setPosts] = useState<ContentPost[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [updatingId, setUpdatingId] = useState<number | null>(null);
 
   function refresh() {
     setLoading(true);
@@ -43,6 +47,40 @@ export default function PostList({ resource }: { resource: ContentTypeKey }) {
       refresh();
     } catch (err) {
       showToast(err instanceof Error ? err.message : "删除失败", "error");
+    }
+  }
+
+  async function handleVisibilityChange(post: ContentPost, published: boolean) {
+    const input: ContentPostInput = {
+      locale: post.locale,
+      slug: post.slug,
+      title: post.title,
+      date: post.date,
+      tag: post.tag,
+      excerpt: post.excerpt,
+      content: post.content,
+      imageKey: post.imageKey,
+      imageWidth: post.imageWidth,
+      imageHeight: post.imageHeight,
+      published,
+      // Choosing "显示" must publish immediately. When hiding, retain an
+      // existing future schedule. An elapsed schedule must be cleared when
+      // hiding, otherwise the public API would still treat the item as live.
+      scheduledAt:
+        !published && post.scheduledAt && new Date(post.scheduledAt) > new Date()
+          ? post.scheduledAt
+          : null,
+    };
+
+    setUpdatingId(post.id);
+    try {
+      const updated = await config.api.update(post.id, input);
+      setPosts((current) => current.map((item) => (item.id === post.id ? updated : item)));
+      showToast(published ? "已设为显示" : "已设为不显示");
+    } catch (err) {
+      showToast(err instanceof Error ? err.message : "状态更新失败", "error");
+    } finally {
+      setUpdatingId(null);
     }
   }
 
@@ -94,7 +132,21 @@ export default function PostList({ resource }: { resource: ContentTypeKey }) {
                 <td>{post.date}</td>
                 <td>{post.tag}</td>
                 <td>{post.title}</td>
-                <td>{statusLabel(post)}</td>
+                <td>
+                  <select
+                    className={`visibility-select ${isVisible(post) ? "is-visible" : "is-hidden"}`}
+                    value={isVisible(post) ? "visible" : "hidden"}
+                    disabled={updatingId === post.id}
+                    aria-label={`设置「${post.title}」的显示状态`}
+                    onChange={(e) => handleVisibilityChange(post, e.target.value === "visible")}
+                  >
+                    <option value="visible">显示</option>
+                    <option value="hidden">不显示</option>
+                  </select>
+                  {!post.published && post.scheduledAt && (
+                    <div className="visibility-schedule">{statusLabel(post)}</div>
+                  )}
+                </td>
                 <td className="table-actions">
                   <Link to={`${config.basePath}/${post.id}/edit`}>编辑</Link>
                   <button className="btn-link danger" onClick={() => handleDelete(post)}>

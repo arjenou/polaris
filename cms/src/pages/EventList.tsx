@@ -1,14 +1,17 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { eventsApi, type EventItem } from "../lib/api";
+import { eventsApi, type EventInput, type EventItem } from "../lib/api";
 import { useToast } from "../lib/ToastContext";
 import { formatDateTime } from "../lib/datetime";
 import { SkeletonTableRows } from "../components/Skeleton";
 
+function isVisible(event: EventItem): boolean {
+  return event.published || Boolean(event.scheduledAt && new Date(event.scheduledAt) <= new Date());
+}
+
 function statusLabel(event: EventItem): string {
-  if (event.published) return "已发布";
+  if (isVisible(event)) return "已发布";
   if (event.scheduledAt) {
-    if (new Date(event.scheduledAt) <= new Date()) return "已发布";
     return `定时发布：${formatDateTime(event.scheduledAt)}`;
   }
   return "草稿";
@@ -20,6 +23,7 @@ export default function EventList() {
   const [events, setEvents] = useState<EventItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [updatingId, setUpdatingId] = useState<number | null>(null);
 
   function refresh() {
     setLoading(true);
@@ -41,6 +45,44 @@ export default function EventList() {
       refresh();
     } catch (err) {
       showToast(err instanceof Error ? err.message : "删除失败", "error");
+    }
+  }
+
+  async function handleVisibilityChange(event: EventItem, published: boolean) {
+    const input: EventInput = {
+      locale: event.locale,
+      slug: event.slug,
+      title: event.title,
+      date: event.date,
+      dateRange: event.dateRange,
+      badge: event.badge,
+      badgeColor: event.badgeColor,
+      summary: event.summary,
+      coverImageKey: event.coverImageKey,
+      coverImageWidth: event.coverImageWidth,
+      coverImageHeight: event.coverImageHeight,
+      heroImageKey: event.heroImageKey,
+      heroImageWidth: event.heroImageWidth,
+      heroImageHeight: event.heroImageHeight,
+      videoUrl: event.videoUrl,
+      overview: event.overview,
+      gallery: event.gallery.map((image) => image.key),
+      published,
+      scheduledAt:
+        !published && event.scheduledAt && new Date(event.scheduledAt) > new Date()
+          ? event.scheduledAt
+          : null,
+    };
+
+    setUpdatingId(event.id);
+    try {
+      const updated = await eventsApi.update(event.id, input);
+      setEvents((current) => current.map((item) => (item.id === event.id ? updated : item)));
+      showToast(published ? "已设为显示" : "已设为不显示");
+    } catch (err) {
+      showToast(err instanceof Error ? err.message : "状态更新失败", "error");
+    } finally {
+      setUpdatingId(null);
     }
   }
 
@@ -105,7 +147,21 @@ export default function EventList() {
                     {event.badge}
                   </span>
                 </td>
-                <td>{statusLabel(event)}</td>
+                <td>
+                  <select
+                    className={`visibility-select ${isVisible(event) ? "is-visible" : "is-hidden"}`}
+                    value={isVisible(event) ? "visible" : "hidden"}
+                    disabled={updatingId === event.id}
+                    aria-label={`设置「${event.title}」的显示状态`}
+                    onChange={(e) => handleVisibilityChange(event, e.target.value === "visible")}
+                  >
+                    <option value="visible">显示</option>
+                    <option value="hidden">不显示</option>
+                  </select>
+                  {!event.published && event.scheduledAt && (
+                    <div className="visibility-schedule">{statusLabel(event)}</div>
+                  )}
+                </td>
                 <td className="table-actions">
                   <Link to={`/events/${event.id}/edit`}>编辑</Link>
                   <button className="btn-link danger" onClick={() => handleDelete(event)}>
