@@ -18,3 +18,16 @@ export const onRequestGet: PagesFunction<Env> = async ({ env, params }) => {
 
   return json(toContactSubmissionApiShape(row));
 };
+
+export const onRequestDelete: PagesFunction<Env> = async ({ env, params }) => {
+  const id = Number(params.id);
+  if (!Number.isInteger(id)) return errorJson("无效的 id", 400);
+
+  const existing = await env.DB.prepare("SELECT id FROM contact_submissions WHERE id = ?")
+    .bind(id)
+    .first<{ id: number }>();
+  if (!existing) return errorJson("未找到该咨询记录", 404);
+
+  await env.DB.prepare("DELETE FROM contact_submissions WHERE id = ?").bind(id).run();
+  return json({ ok: true });
+};

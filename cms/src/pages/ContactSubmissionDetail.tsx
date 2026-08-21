@@ -1,7 +1,8 @@
 import { useEffect, useState } from "react";
-import { Link, useParams } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import { contactSubmissionsApi, type ContactSubmission } from "../lib/api";
 import { formatDateTime } from "../lib/datetime";
+import { useToast } from "../lib/ToastContext";
 import { SkeletonBlock } from "../components/Skeleton";
 
 function Field({ label, value }: { label: string; value: string }) {
@@ -15,8 +16,11 @@ function Field({ label, value }: { label: string; value: string }) {
 
 export default function ContactSubmissionDetail() {
   const { id } = useParams<{ id: string }>();
+  const navigate = useNavigate();
+  const { showToast } = useToast();
   const [item, setItem] = useState<ContactSubmission | null>(null);
   const [loading, setLoading] = useState(true);
+  const [deleting, setDeleting] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
@@ -28,6 +32,20 @@ export default function ContactSubmissionDetail() {
       .catch((err) => setError(err.message))
       .finally(() => setLoading(false));
   }, [id]);
+
+  async function handleDelete() {
+    if (!item) return;
+    if (!confirm(`确认删除「${item.name}」的这条咨询记录？此操作不可撤销。`)) return;
+    setDeleting(true);
+    try {
+      await contactSubmissionsApi.remove(item.id);
+      showToast("删除成功");
+      navigate("/contact-submissions", { replace: true });
+    } catch (err) {
+      showToast(err instanceof Error ? err.message : "删除失败", "error");
+      setDeleting(false);
+    }
+  }
 
   return (
     <div>
@@ -63,6 +81,11 @@ export default function ContactSubmissionDetail() {
           <div className="detail-field detail-field-block">
             <dt>咨询内容</dt>
             <dd className="detail-message">{item.message || "—"}</dd>
+          </div>
+          <div className="form-actions detail-actions">
+            <button type="button" className="btn-danger" onClick={handleDelete} disabled={deleting}>
+              {deleting ? "删除中…" : "删除"}
+            </button>
           </div>
         </dl>
       ) : null}

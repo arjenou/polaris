@@ -177,6 +177,7 @@ export interface ContactSubmission {
 export const contactSubmissionsApi = {
   list: () => request<ContactSubmission[]>("/api/admin/contact-submissions"),
   get: (id: number) => request<ContactSubmission>(`/api/admin/contact-submissions/${id}`),
+  remove: (id: number) => request<{ ok: true }>(`/api/admin/contact-submissions/${id}`, { method: "DELETE" }),
 };
 
 export type ContactQrType = "wechat" | "line";
