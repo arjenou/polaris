@@ -42,8 +42,6 @@ export default function ContactSubmissions() {
             <th>关联社员</th>
             <th>姓名</th>
             <th>邮箱</th>
-            <th>电话</th>
-            <th>咨询类型</th>
             <th>内容</th>
             <th />
           </tr>
@@ -51,7 +49,7 @@ export default function ContactSubmissions() {
         <tbody>
           {loading ? (
             <SkeletonTableRows
-              columns={["text", "badge", "text", "text", "text", "text", "text", "text", "actions"]}
+              columns={["text", "badge", "text", "text", "text", "text", "actions"]}
             />
           ) : (
             <>
@@ -66,8 +64,6 @@ export default function ContactSubmissions() {
                 <td>{s.memberName ?? "—"}</td>
                 <td>{s.name}</td>
                 <td>{s.email}</td>
-                <td>{s.phone || "—"}</td>
-                <td>{s.inquiryType || "—"}</td>
                 <td className="submission-message">{previewMessage(s.message)}</td>
                 <td className="table-actions">
                   <Link to={`/contact-submissions/${s.id}`} onClick={(e) => e.stopPropagation()}>
@@ -78,7 +74,7 @@ export default function ContactSubmissions() {
             ))}
             {submissions.length === 0 && (
               <tr>
-                <td colSpan={9} className="empty-row">
+                <td colSpan={7} className="empty-row">
                   暂无数据
                 </td>
               </tr>
