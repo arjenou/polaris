@@ -64,22 +64,24 @@ export default function GroupCompaniesList() {
     <div>
       <div className="page-header">
         <h1>グループ企業紹介</h1>
-        <Link to={`/group-companies/${locale}/${region}/new`} className="btn-primary">
-          + 新建
-        </Link>
       </div>
 
       <p className="hint">
         管理「グループ情報」页面的「グループ企業紹介」板块。ja/zh 内容各自独立填写。拖动可调整顺序（拖动后自动保存）。
       </p>
 
-      <div className="tabs">
-        <button className={locale === "ja" ? "active" : ""} onClick={() => setLocale("ja")}>
-          日语
-        </button>
-        <button className={locale === "zh" ? "active" : ""} onClick={() => setLocale("zh")}>
-          中文
-        </button>
+      <div className="tabs-bar">
+        <div className="tabs">
+          <button className={locale === "ja" ? "active" : ""} onClick={() => setLocale("ja")}>
+            日语
+          </button>
+          <button className={locale === "zh" ? "active" : ""} onClick={() => setLocale("zh")}>
+            中文
+          </button>
+        </div>
+        <Link to={`/group-companies/${locale}/${region}/new`} className="btn-primary">
+          + 新建
+        </Link>
       </div>
 
       <div className="tabs">

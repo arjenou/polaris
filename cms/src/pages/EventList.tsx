@@ -48,18 +48,20 @@ export default function EventList() {
     <div>
       <div className="page-header">
         <h1>社内イベント</h1>
+      </div>
+
+      <div className="tabs-bar">
+        <div className="tabs">
+          <button className={locale === "ja" ? "active" : ""} onClick={() => setLocale("ja")}>
+            日语
+          </button>
+          <button className={locale === "zh" ? "active" : ""} onClick={() => setLocale("zh")}>
+            中文
+          </button>
+        </div>
         <Link to="/events/new" className="btn-primary">
           + 新建
         </Link>
-      </div>
-
-      <div className="tabs">
-        <button className={locale === "ja" ? "active" : ""} onClick={() => setLocale("ja")}>
-          日语
-        </button>
-        <button className={locale === "zh" ? "active" : ""} onClick={() => setLocale("zh")}>
-          中文
-        </button>
       </div>
 
       {error && <p className="form-error">{error}</p>}

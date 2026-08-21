@@ -50,18 +50,20 @@ export default function PostList({ resource }: { resource: ContentTypeKey }) {
     <div>
       <div className="page-header">
         <h1>{config.labels.listTitle}</h1>
+      </div>
+
+      <div className="tabs-bar">
+        <div className="tabs">
+          <button className={locale === "ja" ? "active" : ""} onClick={() => setLocale("ja")}>
+            日语
+          </button>
+          <button className={locale === "zh" ? "active" : ""} onClick={() => setLocale("zh")}>
+            中文
+          </button>
+        </div>
         <Link to={`${config.basePath}/new`} className="btn-primary">
           {config.labels.newButtonLabel}
         </Link>
-      </div>
-
-      <div className="tabs">
-        <button className={locale === "ja" ? "active" : ""} onClick={() => setLocale("ja")}>
-          日语
-        </button>
-        <button className={locale === "zh" ? "active" : ""} onClick={() => setLocale("zh")}>
-          中文
-        </button>
       </div>
 
       {error && <p className="form-error">{error}</p>}

@@ -70,9 +70,6 @@ export default function PageAdvantagesList() {
     <div>
       <div className="page-header">
         <h1>私たちが選ばれる理由</h1>
-        <Link to={`/page-advantages/${pageKey}/${locale}/new`} className="btn-primary">
-          + 新建
-        </Link>
       </div>
 
       <p className="hint">
@@ -88,13 +85,18 @@ export default function PageAdvantagesList() {
         ))}
       </div>
 
-      <div className="tabs">
-        <button className={locale === "ja" ? "active" : ""} onClick={() => setLocale("ja")}>
-          日语
-        </button>
-        <button className={locale === "zh" ? "active" : ""} onClick={() => setLocale("zh")}>
-          中文
-        </button>
+      <div className="tabs-bar">
+        <div className="tabs">
+          <button className={locale === "ja" ? "active" : ""} onClick={() => setLocale("ja")}>
+            日语
+          </button>
+          <button className={locale === "zh" ? "active" : ""} onClick={() => setLocale("zh")}>
+            中文
+          </button>
+        </div>
+        <Link to={`/page-advantages/${pageKey}/${locale}/new`} className="btn-primary">
+          + 新建
+        </Link>
       </div>
 
       {error && <p className="form-error">{error}</p>}

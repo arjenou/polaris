@@ -168,6 +168,21 @@ body {
   margin-bottom: 16px;
 }
 
+/* Tabs row that also hosts the page's primary action ("+ 新建"), keeping the
+   action next to the locale switch instead of up in the title row. */
+.tabs-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+  margin-bottom: 16px;
+}
+
+.tabs-bar .tabs {
+  margin-bottom: 0;
+}
+
 .tabs button {
   padding: 6px 16px;
   border-radius: 999px;
