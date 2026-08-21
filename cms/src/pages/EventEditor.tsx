@@ -38,6 +38,7 @@ export default function EventEditor({ mode }: { mode: "create" | "edit" }) {
   const [loading, setLoading] = useState(mode === "edit");
   const [saving, setSaving] = useState(false);
   const [uploadingCover, setUploadingCover] = useState(false);
+  const [uploadingVideo, setUploadingVideo] = useState(false);
   const [uploadingHero, setUploadingHero] = useState(false);
   const [uploadingGallery, setUploadingGallery] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -69,6 +70,23 @@ export default function EventEditor({ mode }: { mode: "create" | "edit" }) {
   async function handleCoverChange(e: ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0];
     if (!file) return;
+
+    if (file.type.startsWith("video/")) {
+      setUploadingVideo(true);
+      setError(null);
+      try {
+        const res = await mediaApi.upload(file, "event-videos");
+        update("videoUrl", res.url);
+        showToast("视频上传成功");
+      } catch (err) {
+        setError(err instanceof Error ? err.message : "视频上传失败");
+      } finally {
+        setUploadingVideo(false);
+        e.target.value = "";
+      }
+      return;
+    }
+
     setUploadingCover(true);
     setError(null);
     try {
@@ -82,6 +100,7 @@ export default function EventEditor({ mode }: { mode: "create" | "edit" }) {
       setError(err instanceof Error ? err.message : "上传失败");
     } finally {
       setUploadingCover(false);
+      e.target.value = "";
     }
   }
 
@@ -155,7 +174,7 @@ export default function EventEditor({ mode }: { mode: "create" | "edit" }) {
 
   if (loading) return <p>加载中…</p>;
 
-  const uploading = uploadingCover || uploadingHero || uploadingGallery;
+  const uploading = uploadingCover || uploadingVideo || uploadingHero || uploadingGallery;
 
   return (
     <div>
@@ -239,20 +258,30 @@ export default function EventEditor({ mode }: { mode: "create" | "edit" }) {
         </label>
 
         <label>
-          视频链接（可选，支持 YouTube / Vimeo 嵌入链接或直接的视频文件地址）
+          封面图 / 详情视频
+          <span className="field-hint">
+            上传图片时用于首页轮播和列表封面；上传视频时用于活动详情页播放（支持 MP4 / WebM / OGG，最大 100MB）。
+          </span>
           <input
-            value={form.videoUrl}
-            placeholder="https://www.youtube.com/embed/xxxxxxxx"
-            onChange={(e) => update("videoUrl", e.target.value)}
+            type="file"
+            accept="image/png,image/jpeg,image/webp,image/gif,video/mp4,video/webm,video/ogg"
+            onChange={handleCoverChange}
           />
         </label>
-
-        <label>
-          封面图（首页轮播卡片 / 列表页使用）
-          <input type="file" accept="image/png,image/jpeg,image/webp,image/gif" onChange={handleCoverChange} />
-        </label>
-        {uploadingCover && <p>上传中…</p>}
+        {(uploadingCover || uploadingVideo) && <p>{uploadingVideo ? "视频上传中…" : "图片上传中…"}</p>}
         {coverUrl && <img src={coverUrl} alt="" className="image-preview" />}
+        {form.videoUrl && (
+          <div className="video-preview-wrap">
+            {/\.(mp4|webm|ogg)(\?.*)?$/i.test(form.videoUrl) ? (
+              <video src={form.videoUrl} controls preload="metadata" className="video-preview" />
+            ) : (
+              <p className="hint">当前为旧的外部视频链接；上传视频文件后会自动替换。</p>
+            )}
+            <button type="button" className="btn-link danger" onClick={() => update("videoUrl", "")}>
+              移除视频
+            </button>
+          </div>
+        )}
 
         <label>
           详情大图（可选，详情页顶部大图，留空则使用封面图）

@@ -6,8 +6,7 @@ const DIRECT_FILE_RE = /\.(mp4|webm|ogg)(\?.*)?$/i;
  * or an <iframe> for embeddable player links (YouTube/Vimeo "embed" URLs). */
 export default function EventVideo({ url, title }: { url: string; title: string }) {
   if (DIRECT_FILE_RE.test(url)) {
-    // eslint-disable-next-line jsx-a11y/media-has-caption
-    return <video src={url} controls className={styles.media} />;
+    return <video src={url} controls playsInline preload="metadata" className={styles.media} />;
   }
 
   return (
