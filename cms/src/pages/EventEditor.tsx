@@ -30,7 +30,7 @@ const EMPTY_FORM: EventInput = {
 export default function EventEditor({ mode }: { mode: "create" | "edit" }) {
   const { id } = useParams();
   const navigate = useNavigate();
-  const { showToast } = useToast();
+  const { showToast, showSuccessDialog } = useToast();
   const [form, setForm] = useState<EventInput>(EMPTY_FORM);
   const [coverUrl, setCoverUrl] = useState<string | null>(null);
   const [heroUrl, setHeroUrl] = useState<string | null>(null);
@@ -138,11 +138,11 @@ export default function EventEditor({ mode }: { mode: "create" | "edit" }) {
       if (mode === "create") {
         const slug = generateSlug(form.title, form.date);
         const created = await eventsApi.create({ ...payload, slug });
-        showToast("创建成功");
+        showSuccessDialog("创建成功");
         navigate(`/events/${created.id}/edit`, { replace: true });
       } else {
         await eventsApi.update(Number(id), payload);
-        showToast("保存成功");
+        showSuccessDialog("保存成功");
       }
     } catch (err) {
       const message = err instanceof Error ? err.message : "保存失败";

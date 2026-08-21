@@ -22,7 +22,7 @@ const EMPTY_FORM: PageAdvantageInput = {
 export default function PageAdvantageEditor({ mode }: { mode: "create" | "edit" }) {
   const { pageKey, locale, id } = useParams<{ pageKey: PageGalleryKey; locale: "ja" | "zh"; id: string }>();
   const navigate = useNavigate();
-  const { showToast } = useToast();
+  const { showToast, showSuccessDialog } = useToast();
   const [form, setForm] = useState<PageAdvantageInput>({ ...EMPTY_FORM, locale: locale ?? "ja" });
   const [imageUrl, setImageUrl] = useState<string | null>(null);
   const [loading, setLoading] = useState(mode === "edit");
@@ -75,11 +75,11 @@ export default function PageAdvantageEditor({ mode }: { mode: "create" | "edit" 
     try {
       if (mode === "create") {
         const created = await pageAdvantagesApi.create(pageKey, form);
-        showToast("创建成功");
+        showSuccessDialog("创建成功");
         navigate(`/page-advantages/${pageKey}/${form.locale}/${created.id}/edit`, { replace: true });
       } else if (id) {
         await pageAdvantagesApi.update(pageKey, Number(id), form);
-        showToast("保存成功");
+        showSuccessDialog("保存成功");
       }
     } catch (err) {
       const message = err instanceof Error ? err.message : "保存失败";

@@ -26,7 +26,7 @@ function emptyForm(locale: "ja" | "zh", region: GroupCompanyRegion): GroupCompan
 export default function GroupCompanyEditor({ mode }: { mode: "create" | "edit" }) {
   const { locale, region, id } = useParams<{ locale: "ja" | "zh"; region: GroupCompanyRegion; id: string }>();
   const navigate = useNavigate();
-  const { showToast } = useToast();
+  const { showToast, showSuccessDialog } = useToast();
   const [form, setForm] = useState<GroupCompanyInput>(emptyForm(locale ?? "ja", region ?? "domestic"));
   const [imageUrl, setImageUrl] = useState<string | null>(null);
   const [loading, setLoading] = useState(mode === "edit");
@@ -78,11 +78,11 @@ export default function GroupCompanyEditor({ mode }: { mode: "create" | "edit" }
     try {
       if (mode === "create") {
         const created = await groupCompaniesApi.create(form);
-        showToast("创建成功");
+        showSuccessDialog("创建成功");
         navigate(`/group-companies/${form.locale}/${form.region}/${created.id}/edit`, { replace: true });
       } else if (id) {
         await groupCompaniesApi.update(Number(id), form);
-        showToast("保存成功");
+        showSuccessDialog("保存成功");
       }
     } catch (err) {
       const message = err instanceof Error ? err.message : "保存失败";

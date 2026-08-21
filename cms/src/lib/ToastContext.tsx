@@ -10,6 +10,7 @@ interface ToastItem {
 
 interface ToastContextValue {
   showToast: (message: string, type?: ToastType) => void;
+  showSuccessDialog: (message: string) => void;
 }
 
 const ToastContext = createContext<ToastContextValue | null>(null);
@@ -18,6 +19,7 @@ const TOAST_DURATION_MS = 2500;
 
 export function ToastProvider({ children }: { children: ReactNode }) {
   const [toasts, setToasts] = useState<ToastItem[]>([]);
+  const [dialogMessage, setDialogMessage] = useState<string | null>(null);
   const nextId = useRef(0);
 
   const showToast = useCallback((message: string, type: ToastType = "success") => {
@@ -28,8 +30,16 @@ export function ToastProvider({ children }: { children: ReactNode }) {
     }, TOAST_DURATION_MS);
   }, []);
 
+  const showSuccessDialog = useCallback((message: string) => {
+    setDialogMessage(message);
+  }, []);
+
+  const closeDialog = useCallback(() => {
+    setDialogMessage(null);
+  }, []);
+
   return (
-    <ToastContext.Provider value={{ showToast }}>
+    <ToastContext.Provider value={{ showToast, showSuccessDialog }}>
       {children}
       <div className="toast-stack">
         {toasts.map((t) => (
@@ -38,6 +48,27 @@ export function ToastProvider({ children }: { children: ReactNode }) {
           </div>
         ))}
       </div>
+      {dialogMessage && (
+        <div className="dialog-overlay" onClick={closeDialog} role="presentation">
+          <div
+            className="dialog"
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="success-dialog-title"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="dialog-icon" aria-hidden="true">
+              ✓
+            </div>
+            <p id="success-dialog-title" className="dialog-title">
+              {dialogMessage}
+            </p>
+            <button type="button" className="btn-primary" onClick={closeDialog}>
+              确定
+            </button>
+          </div>
+        </div>
+      )}
     </ToastContext.Provider>
   );
 }

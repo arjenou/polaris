@@ -30,7 +30,7 @@ function splitList(text: string): string[] {
 export default function TeamEditor({ mode }: { mode: "create" | "edit" }) {
   const { id } = useParams();
   const navigate = useNavigate();
-  const { showToast } = useToast();
+  const { showToast, showSuccessDialog } = useToast();
   const [form, setForm] = useState<TeamMemberInput>(EMPTY_FORM);
   const [tagsText, setTagsText] = useState("");
   const [languagesText, setLanguagesText] = useState("");
@@ -91,11 +91,11 @@ export default function TeamEditor({ mode }: { mode: "create" | "edit" }) {
     try {
       if (mode === "create") {
         const created = await teamApi.create(payload);
-        showToast("创建成功");
+        showSuccessDialog("创建成功");
         navigate(`/team/${created.id}/edit`, { replace: true });
       } else {
         await teamApi.update(Number(id), payload);
-        showToast("保存成功");
+        showSuccessDialog("保存成功");
       }
     } catch (err) {
       const message = err instanceof Error ? err.message : "保存失败";

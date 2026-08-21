@@ -28,7 +28,7 @@ export default function PostEditor({ resource, mode }: { resource: ContentTypeKe
   const config = CONTENT_TYPES[resource];
   const { id } = useParams();
   const navigate = useNavigate();
-  const { showToast } = useToast();
+  const { showToast, showSuccessDialog } = useToast();
   const [form, setForm] = useState<ContentPostInput>(EMPTY_FORM);
   const [imageUrl, setImageUrl] = useState<string | null>(null);
   const [loading, setLoading] = useState(mode === "edit");
@@ -81,11 +81,11 @@ export default function PostEditor({ resource, mode }: { resource: ContentTypeKe
       if (mode === "create") {
         const slug = generateSlug(form.title, form.date);
         const created = await config.api.create({ ...form, slug });
-        showToast("创建成功");
+        showSuccessDialog("创建成功");
         navigate(`${config.basePath}/${created.id}/edit`, { replace: true });
       } else {
         await config.api.update(Number(id), form);
-        showToast("保存成功");
+        showSuccessDialog("保存成功");
       }
     } catch (err) {
       const message = err instanceof Error ? err.message : "保存失败";
