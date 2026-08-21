@@ -146,8 +146,8 @@ body {
 
 .main-content {
   flex: 1;
+  min-width: 0;
   padding: 32px 40px;
-  max-width: 960px;
 }
 
 .page-header {
@@ -461,6 +461,27 @@ body {
   color: #8a93a6;
   margin-top: 3px;
   line-height: 1.5;
+}
+
+/* News / recommended list */
+.posts-table .col-date {
+  width: 120px;
+}
+
+.posts-table .col-badge {
+  width: 140px;
+}
+
+.posts-table .col-status {
+  width: 180px;
+}
+
+.posts-table .col-actions {
+  width: 120px;
+}
+
+.posts-table th {
+  white-space: nowrap;
 }
 
 /* Events list */

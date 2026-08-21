@@ -65,7 +65,14 @@ export default function PostList({ resource }: { resource: ContentTypeKey }) {
       </div>
 
       {error && <p className="form-error">{error}</p>}
-      <table className="data-table">
+      <table className="data-table posts-table">
+        <colgroup>
+          <col className="col-date" />
+          <col className="col-badge" />
+          <col />
+          <col className="col-status" />
+          <col className="col-actions" />
+        </colgroup>
         <thead>
           <tr>
             <th>日期</th>
