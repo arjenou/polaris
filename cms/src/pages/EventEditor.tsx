@@ -70,23 +70,6 @@ export default function EventEditor({ mode }: { mode: "create" | "edit" }) {
   async function handleCoverChange(e: ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0];
     if (!file) return;
-
-    if (file.type.startsWith("video/")) {
-      setUploadingVideo(true);
-      setError(null);
-      try {
-        const res = await mediaApi.upload(file, "event-videos");
-        update("videoUrl", res.url);
-        showToast("视频上传成功");
-      } catch (err) {
-        setError(err instanceof Error ? err.message : "视频上传失败");
-      } finally {
-        setUploadingVideo(false);
-        e.target.value = "";
-      }
-      return;
-    }
-
     setUploadingCover(true);
     setError(null);
     try {
@@ -107,19 +90,38 @@ export default function EventEditor({ mode }: { mode: "create" | "edit" }) {
   async function handleHeroChange(e: ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0];
     if (!file) return;
+
+    if (file.type.startsWith("video/")) {
+      setUploadingVideo(true);
+      setError(null);
+      try {
+        const res = await mediaApi.upload(file, "event-videos");
+        update("videoUrl", res.url);
+        showToast("详情视频上传成功");
+      } catch (err) {
+        setError(err instanceof Error ? err.message : "视频上传失败");
+      } finally {
+        setUploadingVideo(false);
+        e.target.value = "";
+      }
+      return;
+    }
+
     setUploadingHero(true);
     setError(null);
     try {
       const res = await mediaApi.upload(file, "events");
+      update("videoUrl", "");
       update("heroImageKey", res.key);
       update("heroImageWidth", res.width);
       update("heroImageHeight", res.height);
       setHeroUrl(res.url);
-      showToast("详情大图上传成功");
+      showToast("详情图片上传成功");
     } catch (err) {
       setError(err instanceof Error ? err.message : "上传失败");
     } finally {
       setUploadingHero(false);
+      e.target.value = "";
     }
   }
 
@@ -258,18 +260,26 @@ export default function EventEditor({ mode }: { mode: "create" | "edit" }) {
         </label>
 
         <label>
-          封面图 / 详情视频
+          封面图（首页轮播卡片 / 列表页使用）
+          <span className="field-hint">仅支持图片（jpg / png / webp / gif）。</span>
+          <input type="file" accept="image/png,image/jpeg,image/webp,image/gif" onChange={handleCoverChange} />
+        </label>
+        {uploadingCover && <p>封面上传中…</p>}
+        {coverUrl && <img src={coverUrl} alt="" className="image-preview" />}
+
+        <label>
+          详情图 / 视频（可选，详情页顶部展示）
           <span className="field-hint">
-            上传图片时用于首页轮播和列表封面；上传视频时用于活动详情页播放（支持 MP4 / WebM / OGG，最大 100MB）。
+            可上传图片或视频。上传视频后详情页会直接播放（MP4 / WebM / OGG，最大 100MB）；上传图片则显示该图。都不上传时使用封面图。
           </span>
           <input
             type="file"
             accept="image/png,image/jpeg,image/webp,image/gif,video/mp4,video/webm,video/ogg"
-            onChange={handleCoverChange}
+            onChange={handleHeroChange}
           />
         </label>
-        {(uploadingCover || uploadingVideo) && <p>{uploadingVideo ? "视频上传中…" : "图片上传中…"}</p>}
-        {coverUrl && <img src={coverUrl} alt="" className="image-preview" />}
+        {(uploadingHero || uploadingVideo) && <p>{uploadingVideo ? "视频上传中…" : "图片上传中…"}</p>}
+        {heroUrl && !form.videoUrl && <img src={heroUrl} alt="" className="image-preview" />}
         {form.videoUrl && (
           <div className="video-preview-wrap">
             {/\.(mp4|webm|ogg)(\?.*)?$/i.test(form.videoUrl) ? (
@@ -282,13 +292,6 @@ export default function EventEditor({ mode }: { mode: "create" | "edit" }) {
             </button>
           </div>
         )}
-
-        <label>
-          详情大图（可选，详情页顶部大图，留空则使用封面图）
-          <input type="file" accept="image/png,image/jpeg,image/webp,image/gif" onChange={handleHeroChange} />
-        </label>
-        {uploadingHero && <p>上传中…</p>}
-        {heroUrl && <img src={heroUrl} alt="" className="image-preview" />}
 
         <fieldset className="overview-fieldset">
           <legend>开催概要（选填，用于详情页右侧信息表）</legend>
