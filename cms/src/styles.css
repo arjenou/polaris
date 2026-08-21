@@ -162,6 +162,12 @@ body {
   margin: 0;
 }
 
+.back-link {
+  font-size: 13px;
+  color: #1e6fd9;
+  text-decoration: none;
+}
+
 .tabs {
   display: flex;
   gap: 8px;
@@ -242,6 +248,14 @@ body {
 
 .data-table tr:hover .drag-handle {
   color: #1e6fd9;
+}
+
+.clickable-row {
+  cursor: pointer;
+}
+
+.clickable-row:hover td {
+  background: #f7f9fc;
 }
 
 .skeleton-block {
@@ -718,6 +732,42 @@ body {
 .form-error {
   color: #c0392b;
   font-size: 13px;
+}
+
+.detail-card {
+  background: #fff;
+  padding: 8px 28px 24px;
+  border-radius: 8px;
+  max-width: 720px;
+}
+
+.detail-field {
+  display: grid;
+  grid-template-columns: 96px 1fr;
+  gap: 12px 20px;
+  padding: 16px 0;
+  border-bottom: 1px solid #eef0f3;
+  font-size: 14px;
+}
+
+.detail-field dt {
+  color: #8a93a6;
+  font-size: 13px;
+}
+
+.detail-field dd {
+  margin: 0;
+  color: #1b2a4a;
+  word-break: break-word;
+}
+
+.detail-field-block {
+  grid-template-columns: 1fr;
+}
+
+.detail-message {
+  white-space: pre-wrap;
+  line-height: 1.7;
 }
 
 .toast-stack {

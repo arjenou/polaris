@@ -14,6 +14,7 @@ import PageAdvantageEditor from "./pages/PageAdvantageEditor";
 import GroupCompaniesList from "./pages/GroupCompaniesList";
 import GroupCompanyEditor from "./pages/GroupCompanyEditor";
 import ContactSubmissions from "./pages/ContactSubmissions";
+import ContactSubmissionDetail from "./pages/ContactSubmissionDetail";
 import ContactQrSettings from "./pages/ContactQrSettings";
 import Account from "./pages/Account";
 
@@ -57,6 +58,7 @@ export default function App() {
         <Route path="group-companies/:locale/:region/new" element={<GroupCompanyEditor mode="create" />} />
         <Route path="group-companies/:locale/:region/:id/edit" element={<GroupCompanyEditor mode="edit" />} />
         <Route path="contact-submissions" element={<ContactSubmissions />} />
+        <Route path="contact-submissions/:id" element={<ContactSubmissionDetail />} />
         <Route path="contact-qr" element={<ContactQrSettings />} />
         <Route path="account" element={<Account />} />
       </Route>
