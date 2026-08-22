@@ -203,12 +203,23 @@ export default function HomeHero() {
                 key={slide.id}
                 className={`gallery-preview-item ${dragIndex === index ? "dragging-item" : ""}`}
                 draggable
-                onDragStart={() => setDragIndex(index)}
+                onDragStart={(e) => {
+                  // Firefox/Safari refuse to start a drag unless data is set.
+                  e.dataTransfer.effectAllowed = "move";
+                  e.dataTransfer.setData("text/plain", String(index));
+                  setDragIndex(index);
+                }}
                 onDragOver={(e) => handleDragOver(e, index)}
+                onDrop={(e) => e.preventDefault()}
                 onDragEnd={handleDragEnd}
               >
-                <img src={slide.imageUrl} alt="" />
-                <button type="button" className="gallery-remove-btn" onClick={() => handleDelete(slide)}>
+                <img src={slide.imageUrl} alt="" draggable={false} />
+                <button
+                  type="button"
+                  className="gallery-remove-btn"
+                  onClick={() => handleDelete(slide)}
+                  onPointerDown={(e) => e.stopPropagation()}
+                >
                   删除
                 </button>
               </div>
