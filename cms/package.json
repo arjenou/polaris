@@ -21,6 +21,7 @@
     "migrate:page-galleries": "tsx scripts/migrate-page-galleries.ts",
     "migrate:page-advantages": "tsx scripts/migrate-page-advantages.ts",
     "migrate:group-companies": "tsx scripts/migrate-group-companies.ts",
+    "migrate:group-info": "tsx scripts/migrate-group-info.ts",
     "bootstrap:admin": "tsx scripts/bootstrap-admin.ts",
     "migrate:content-to-html": "tsx scripts/migrate-content-to-html.ts"
   },

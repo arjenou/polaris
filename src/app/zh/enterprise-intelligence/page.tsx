@@ -6,27 +6,37 @@ import GroupInfoIntro from "@/components/pages/GroupInfoIntro";
 import CompanyTimeline from "@/components/pages/CompanyTimeline";
 import CompanyCards from "@/components/pages/CompanyCards";
 import CompanyCardsSkeleton from "@/components/pages/CompanyCardsSkeleton";
-import { groupInfoZh } from "@/data/pages/groupInfo.zh";
+import { getGroupInfo } from "@/lib/groupInfo";
 import { getGroupCompanies } from "@/lib/groupCompanies";
 
 export const metadata: Metadata = {
   title: "集团介绍 | Polaris Group",
 };
 
-async function GroupCompanyCards() {
+async function GroupCompanyCards({
+  companiesTitle,
+  domesticTitle,
+  overseasTitle,
+}: {
+  companiesTitle: string;
+  domesticTitle: string;
+  overseasTitle: string;
+}) {
   const { domestic, overseas } = await getGroupCompanies("zh");
   return (
     <CompanyCards
-      companiesTitle={groupInfoZh.companiesTitle}
-      domesticTitle={groupInfoZh.domesticTitle}
-      overseasTitle={groupInfoZh.overseasTitle}
+      companiesTitle={companiesTitle}
+      domesticTitle={domesticTitle}
+      overseasTitle={overseasTitle}
       domestic={domestic}
       overseas={overseas}
     />
   );
 }
 
-export default function Page() {
+export default async function Page() {
+  const groupInfoZh = await getGroupInfo("zh");
+
   return (
     <PageShell locale="zh">
       <PageHero image={groupInfoZh.heroImage} title={groupInfoZh.heroTitle} />
@@ -45,7 +55,11 @@ export default function Page() {
           />
         }
       >
-        <GroupCompanyCards />
+        <GroupCompanyCards
+          companiesTitle={groupInfoZh.companiesTitle}
+          domesticTitle={groupInfoZh.domesticTitle}
+          overseasTitle={groupInfoZh.overseasTitle}
+        />
       </Suspense>
     </PageShell>
   );

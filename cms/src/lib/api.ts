@@ -354,6 +354,78 @@ export const groupCompaniesApi = {
     }),
 };
 
+export type GroupInfoLocale = "ja" | "zh";
+
+export interface GroupInfoContent {
+  locale: GroupInfoLocale;
+  heroTitle: string;
+  introTitle: string;
+  intro: string[];
+  timelineTitle: string;
+  companiesTitle: string;
+  domesticTitle: string;
+  overseasTitle: string;
+  updatedAt: string;
+}
+
+export type GroupInfoContentInput = Omit<GroupInfoContent, "locale" | "updatedAt">;
+
+export type GroupInfoAssetType = "hero" | "badge";
+
+export interface GroupInfoAsset {
+  type: GroupInfoAssetType;
+  imageKey: string | null;
+  imageUrl: string | null;
+  imageWidth: number | null;
+  imageHeight: number | null;
+  updatedAt: string;
+}
+
+export interface GroupTimelineEntry {
+  id: number;
+  locale: GroupInfoLocale;
+  date: string;
+  event: string;
+  published: boolean;
+  sortOrder: number;
+}
+
+export type GroupTimelineInput = Omit<GroupTimelineEntry, "id" | "sortOrder">;
+
+export const groupInfoApi = {
+  listContent: () => request<GroupInfoContent[]>("/api/admin/group-info/content"),
+  updateContent: (locale: GroupInfoLocale, input: GroupInfoContentInput) =>
+    request<GroupInfoContent>(`/api/admin/group-info/content/${locale}`, {
+      method: "PUT",
+      body: JSON.stringify(input),
+    }),
+  listAssets: () => request<GroupInfoAsset[]>("/api/admin/group-info/assets"),
+  updateAsset: (type: GroupInfoAssetType, imageKey: string, imageWidth: number | null, imageHeight: number | null) =>
+    request<GroupInfoAsset>(`/api/admin/group-info/assets/${type}`, {
+      method: "PUT",
+      body: JSON.stringify({ imageKey, imageWidth, imageHeight }),
+    }),
+  removeAsset: (type: GroupInfoAssetType) =>
+    request<GroupInfoAsset>(`/api/admin/group-info/assets/${type}`, { method: "DELETE" }),
+  listTimeline: (locale?: GroupInfoLocale) =>
+    request<GroupTimelineEntry[]>(`/api/admin/group-info/timeline${locale ? `?locale=${locale}` : ""}`),
+  getTimelineEntry: (id: number) => request<GroupTimelineEntry>(`/api/admin/group-info/timeline/${id}`),
+  createTimelineEntry: (input: GroupTimelineInput) =>
+    request<GroupTimelineEntry>("/api/admin/group-info/timeline", { method: "POST", body: JSON.stringify(input) }),
+  updateTimelineEntry: (id: number, input: GroupTimelineInput) =>
+    request<GroupTimelineEntry>(`/api/admin/group-info/timeline/${id}`, {
+      method: "PUT",
+      body: JSON.stringify(input),
+    }),
+  removeTimelineEntry: (id: number) =>
+    request<{ ok: true }>(`/api/admin/group-info/timeline/${id}`, { method: "DELETE" }),
+  reorderTimeline: (locale: GroupInfoLocale, orderedIds: number[]) =>
+    request<{ ok: true }>("/api/admin/group-info/timeline/reorder", {
+      method: "POST",
+      body: JSON.stringify({ locale, orderedIds }),
+    }),
+};
+
 export interface EventOverview {
   eventName: string;
   datetime: string;

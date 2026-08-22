@@ -14,6 +14,9 @@ import PageAdvantagesList from "./pages/PageAdvantagesList";
 import PageAdvantageEditor from "./pages/PageAdvantageEditor";
 import GroupCompaniesList from "./pages/GroupCompaniesList";
 import GroupCompanyEditor from "./pages/GroupCompanyEditor";
+import GroupInfo from "./pages/GroupInfo";
+import GroupTimeline from "./pages/GroupTimeline";
+import GroupTimelineEditor from "./pages/GroupTimelineEditor";
 import ContactSubmissions from "./pages/ContactSubmissions";
 import ContactSubmissionDetail from "./pages/ContactSubmissionDetail";
 import ContactQrSettings from "./pages/ContactQrSettings";
@@ -56,6 +59,10 @@ export default function App() {
         <Route path="page-advantages" element={<PageAdvantagesList />} />
         <Route path="page-advantages/:pageKey/:locale/new" element={<PageAdvantageEditor mode="create" />} />
         <Route path="page-advantages/:pageKey/:locale/:id/edit" element={<PageAdvantageEditor mode="edit" />} />
+        <Route path="group-info" element={<GroupInfo />} />
+        <Route path="group-timeline" element={<GroupTimeline />} />
+        <Route path="group-timeline/:locale/new" element={<GroupTimelineEditor mode="create" />} />
+        <Route path="group-timeline/:locale/:id/edit" element={<GroupTimelineEditor mode="edit" />} />
         <Route path="group-companies" element={<GroupCompaniesList />} />
         <Route path="group-companies/:locale/:region/new" element={<GroupCompanyEditor mode="create" />} />
         <Route path="group-companies/:locale/:region/:id/edit" element={<GroupCompanyEditor mode="edit" />} />

@@ -37,6 +37,12 @@ function SidebarNav() {
       <NavLink to="/page-advantages" className={({ isActive }) => (isActive ? "active" : "")}>
         选择理由管理
       </NavLink>
+      <NavLink to="/group-info" className={({ isActive }) => (isActive ? "active" : "")}>
+        グループ情報 页面管理
+      </NavLink>
+      <NavLink to="/group-timeline" className={({ isActive }) => (isActive ? "active" : "")}>
+        グループ沿革管理
+      </NavLink>
       <NavLink to="/group-companies" className={({ isActive }) => (isActive ? "active" : "")}>
         集团企业管理
       </NavLink>
