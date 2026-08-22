@@ -54,22 +54,6 @@ export default function Hero({
           />
         ))}
       </div>
-      <div className={styles.thumbnails}>
-        {slides.map((slide, index) => (
-          <button
-            key={`${slide.image}-${index}`}
-            type="button"
-            aria-label={`スライド${index + 1}へ切り替え`}
-            aria-current={index === active}
-            className={`${styles.thumbnail} ${
-              index === active ? styles.thumbnailActive : ""
-            }`}
-            onClick={() => goToSlide(index)}
-          >
-            <Image src={slide.image} alt="" fill sizes="160px" className={styles.thumbnailImage} />
-          </button>
-        ))}
-      </div>
     </section>
   );
 }
