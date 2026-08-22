@@ -172,12 +172,14 @@ export interface ContactSubmission {
   message: string;
   contactMethod: string;
   createdAt: string;
+  isRead: boolean;
 }
 
 export const contactSubmissionsApi = {
   list: () => request<ContactSubmission[]>("/api/admin/contact-submissions"),
   get: (id: number) => request<ContactSubmission>(`/api/admin/contact-submissions/${id}`),
   remove: (id: number) => request<{ ok: true }>(`/api/admin/contact-submissions/${id}`, { method: "DELETE" }),
+  unreadCount: () => request<{ count: number }>("/api/admin/contact-submissions/unread-count"),
 };
 
 export type ContactQrType = "wechat" | "line";

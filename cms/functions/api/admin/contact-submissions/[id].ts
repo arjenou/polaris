@@ -16,6 +16,13 @@ export const onRequestGet: PagesFunction<Env> = async ({ env, params }) => {
     .first<ContactSubmissionRow>();
   if (!row) return errorJson("未找到该咨询记录", 404);
 
+  // Opening the detail view is how an admin "reads" an inquiry, so clear its
+  // unread dot here rather than requiring a separate mark-as-read call.
+  if (!row.is_read) {
+    await env.DB.prepare("UPDATE contact_submissions SET is_read = 1 WHERE id = ?").bind(id).run();
+    row.is_read = 1;
+  }
+
   return json(toContactSubmissionApiShape(row));
 };
 

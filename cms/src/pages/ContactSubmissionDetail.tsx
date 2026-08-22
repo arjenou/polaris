@@ -3,6 +3,7 @@ import { Link, useNavigate, useParams } from "react-router-dom";
 import { contactSubmissionsApi, type ContactSubmission } from "../lib/api";
 import { formatDateTime } from "../lib/datetime";
 import { useToast } from "../lib/ToastContext";
+import { useContactUnread } from "../lib/ContactUnreadContext";
 import { SkeletonBlock } from "../components/Skeleton";
 
 function Field({ label, value }: { label: string; value: string }) {
@@ -18,6 +19,7 @@ export default function ContactSubmissionDetail() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const { showToast } = useToast();
+  const { refresh: refreshUnreadCount } = useContactUnread();
   const [item, setItem] = useState<ContactSubmission | null>(null);
   const [loading, setLoading] = useState(true);
   const [deleting, setDeleting] = useState(false);
@@ -28,10 +30,15 @@ export default function ContactSubmissionDetail() {
     setLoading(true);
     contactSubmissionsApi
       .get(Number(id))
-      .then(setItem)
+      .then((res) => {
+        setItem(res);
+        // The GET above marks the submission as read on the server; sync
+        // the sidebar dot right away instead of waiting for navigation.
+        refreshUnreadCount();
+      })
       .catch((err) => setError(err.message))
       .finally(() => setLoading(false));
-  }, [id]);
+  }, [id, refreshUnreadCount]);
 
   async function handleDelete() {
     if (!item) return;

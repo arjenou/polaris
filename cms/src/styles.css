@@ -132,6 +132,24 @@ body {
   color: #fff;
 }
 
+/* Unread indicator: a plain dot before a table row's date, or after a
+   sidebar nav label — new /contact submission(s) waiting to be viewed. */
+.nav-dot {
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  min-width: 8px;
+  border-radius: 50%;
+  background: #e5484d;
+  margin-right: 6px;
+  vertical-align: middle;
+}
+
+.sidebar-nav a .nav-dot {
+  margin-right: 0;
+  margin-left: 6px;
+}
+
 .sidebar-footer {
   display: flex;
   flex-direction: column;

@@ -59,7 +59,10 @@ export default function ContactSubmissions() {
                 className="clickable-row"
                 onClick={() => navigate(`/contact-submissions/${s.id}`)}
               >
-                <td>{formatDateTime(s.createdAt)}</td>
+                <td>
+                  {!s.isRead && <span className="nav-dot" title="新咨询" />}
+                  {formatDateTime(s.createdAt)}
+                </td>
                 <td>{s.locale === "ja" ? "日语" : "中文"}</td>
                 <td>{s.memberName ?? "—"}</td>
                 <td>{s.name}</td>
