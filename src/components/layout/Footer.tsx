@@ -31,8 +31,8 @@ export default function Footer({
             <Image
               src={sub.image}
               alt={companyName}
-              width={260}
-              height={102}
+              width={340}
+              height={133}
               className={styles.subsidiaryLogo}
             />
           )}
