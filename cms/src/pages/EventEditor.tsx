@@ -1,4 +1,4 @@
-import { useEffect, useState, type ChangeEvent, type FormEvent } from "react";
+import { useEffect, useState, type ChangeEvent, type DragEvent, type FormEvent } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { eventsApi, mediaApi, type EventGalleryImage, type EventInput } from "../lib/api";
 import { useToast } from "../lib/ToastContext";
@@ -41,6 +41,7 @@ export default function EventEditor({ mode }: { mode: "create" | "edit" }) {
   const [uploadingVideo, setUploadingVideo] = useState(false);
   const [uploadingHero, setUploadingHero] = useState(false);
   const [uploadingGallery, setUploadingGallery] = useState(false);
+  const [galleryDragIndex, setGalleryDragIndex] = useState<number | null>(null);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
@@ -148,6 +149,19 @@ export default function EventEditor({ mode }: { mode: "create" | "edit" }) {
 
   function removeGalleryImage(key: string) {
     setGalleryItems((items) => items.filter((item) => item.key !== key));
+  }
+
+  function handleGalleryDragOver(e: DragEvent, index: number) {
+    e.preventDefault();
+    e.dataTransfer.dropEffect = "move";
+    if (galleryDragIndex === null || galleryDragIndex === index) return;
+    setGalleryItems((prev) => {
+      const next = [...prev];
+      const [moved] = next.splice(galleryDragIndex, 1);
+      next.splice(index, 0, moved);
+      return next;
+    });
+    setGalleryDragIndex(index);
   }
 
   async function handleSubmit(e: FormEvent) {
@@ -347,14 +361,36 @@ export default function EventEditor({ mode }: { mode: "create" | "edit" }) {
             accept="image/png,image/jpeg,image/webp,image/gif"
             onChange={handleGalleryChange}
           />
+          <span className="field-hint">拖动缩略图可调整显示顺序，保存后前台照片墙按此顺序展示。</span>
         </label>
         {uploadingGallery && <p>上传中…</p>}
         {galleryItems.length > 0 && (
-          <div className="gallery-preview-grid">
-            {galleryItems.map((item) => (
-              <div key={item.key} className="gallery-preview-item">
-                {item.url && <img src={item.url} alt="" />}
-                <button type="button" className="gallery-remove-btn" onClick={() => removeGalleryImage(item.key)}>
+          <div className="gallery-preview-grid gallery-preview-grid-draggable">
+            {galleryItems.map((item, index) => (
+              <div
+                key={item.key}
+                className={`gallery-preview-item ${galleryDragIndex === index ? "dragging-item" : ""}`}
+                draggable
+                onDragStart={(e) => {
+                  // Firefox/Safari refuse to start a drag unless data is set.
+                  e.dataTransfer.effectAllowed = "move";
+                  e.dataTransfer.setData("text/plain", String(index));
+                  setGalleryDragIndex(index);
+                }}
+                onDragOver={(e) => handleGalleryDragOver(e, index)}
+                onDrop={(e) => {
+                  e.preventDefault();
+                  setGalleryDragIndex(null);
+                }}
+                onDragEnd={() => setGalleryDragIndex(null)}
+              >
+                {item.url && <img src={item.url} alt="" draggable={false} />}
+                <button
+                  type="button"
+                  className="gallery-remove-btn"
+                  onClick={() => removeGalleryImage(item.key)}
+                  onPointerDown={(e) => e.stopPropagation()}
+                >
                   删除
                 </button>
               </div>
