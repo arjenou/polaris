@@ -27,6 +27,9 @@ export default function Layout() {
           <NavLink to="/events" className={({ isActive }) => (isActive ? "active" : "")}>
             社内イベント
           </NavLink>
+          <NavLink to="/home-hero" className={({ isActive }) => (isActive ? "active" : "")}>
+            首页页面管理
+          </NavLink>
           <NavLink to="/page-galleries" className={({ isActive }) => (isActive ? "active" : "")}>
             页面图片管理
           </NavLink>

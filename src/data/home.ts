@@ -1,4 +1,8 @@
-export const heroSlides = [
+export interface HeroSlide {
+  image: string;
+}
+
+export const heroSlides: HeroSlide[] = [
   { image: "/images/home/hero-1.jpg" },
   { image: "/images/home/hero-2.jpg" },
   { image: "/images/home/hero-3.jpg" },

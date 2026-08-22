@@ -8,6 +8,7 @@ import TeamList from "./pages/TeamList";
 import TeamEditor from "./pages/TeamEditor";
 import EventList from "./pages/EventList";
 import EventEditor from "./pages/EventEditor";
+import HomeHero from "./pages/HomeHero";
 import PageGalleries from "./pages/PageGalleries";
 import PageAdvantagesList from "./pages/PageAdvantagesList";
 import PageAdvantageEditor from "./pages/PageAdvantageEditor";
@@ -50,6 +51,7 @@ export default function App() {
         <Route path="events" element={<EventList />} />
         <Route path="events/new" element={<EventEditor mode="create" />} />
         <Route path="events/:id/edit" element={<EventEditor mode="edit" />} />
+        <Route path="home-hero" element={<HomeHero />} />
         <Route path="page-galleries" element={<PageGalleries />} />
         <Route path="page-advantages" element={<PageAdvantagesList />} />
         <Route path="page-advantages/:pageKey/:locale/new" element={<PageAdvantageEditor mode="create" />} />

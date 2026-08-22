@@ -17,6 +17,7 @@
     "migrate:recommended": "tsx scripts/migrate-recommended.ts",
     "migrate:team": "tsx scripts/migrate-team.ts",
     "migrate:events": "tsx scripts/migrate-events.ts",
+    "migrate:home-hero": "tsx scripts/migrate-home-hero.ts",
     "migrate:page-galleries": "tsx scripts/migrate-page-galleries.ts",
     "migrate:page-advantages": "tsx scripts/migrate-page-advantages.ts",
     "migrate:group-companies": "tsx scripts/migrate-group-companies.ts",

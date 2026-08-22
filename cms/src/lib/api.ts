@@ -202,6 +202,44 @@ export const contactQrApi = {
     request<ContactQr>(`/api/admin/contact-qr/${type}`, { method: "DELETE" }),
 };
 
+export type HomeHeroLocale = "ja" | "zh";
+
+export interface HomeHeroHeadline {
+  locale: HomeHeroLocale;
+  headline: string;
+  updatedAt: string;
+}
+
+export interface HomeHeroSlide {
+  id: number;
+  imageKey: string;
+  imageUrl: string;
+  imageWidth: number | null;
+  imageHeight: number | null;
+  sortOrder: number;
+}
+
+export const homeHeroApi = {
+  listHeadlines: () => request<HomeHeroHeadline[]>("/api/admin/home-hero/headlines"),
+  updateHeadline: (locale: HomeHeroLocale, headline: string) =>
+    request<HomeHeroHeadline>(`/api/admin/home-hero/headlines/${locale}`, {
+      method: "PUT",
+      body: JSON.stringify({ headline }),
+    }),
+  listSlides: () => request<HomeHeroSlide[]>("/api/admin/home-hero/slides"),
+  addSlide: (imageKey: string, imageWidth: number | null, imageHeight: number | null) =>
+    request<HomeHeroSlide>("/api/admin/home-hero/slides", {
+      method: "POST",
+      body: JSON.stringify({ imageKey, imageWidth, imageHeight }),
+    }),
+  removeSlide: (id: number) => request<{ ok: true }>(`/api/admin/home-hero/slides/${id}`, { method: "DELETE" }),
+  reorderSlides: (orderedIds: number[]) =>
+    request<{ ok: true }>("/api/admin/home-hero/slides/reorder", {
+      method: "POST",
+      body: JSON.stringify({ orderedIds }),
+    }),
+};
+
 /** The three fixed content pages whose bottom photo carousel is managed here. */
 export type PageGalleryKey = "real-estate" | "renovation" | "asset-management";
 

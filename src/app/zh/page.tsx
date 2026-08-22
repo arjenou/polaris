@@ -12,7 +12,7 @@ import TeamCarouselSkeleton from "@/components/home/TeamCarouselSkeleton";
 import EventsCarouselSkeleton from "@/components/home/EventsCarouselSkeleton";
 // GroupCompanies section is temporarily hidden on the homepage (kept for possible future re-enable).
 // import GroupCompanies from "@/components/home/GroupCompanies";
-import { heroHeadlineZh } from "@/data/home.zh";
+import { getHomeHero } from "@/lib/homeHero";
 
 export const metadata: Metadata = {
   title: "Polaris Group｜妙見川禾",
@@ -33,10 +33,12 @@ const eventsLabelsZh = {
   more: "查看全部",
 };
 
-export default function ZhHomePage() {
+export default async function ZhHomePage() {
+  const { headline, slides } = await getHomeHero("zh");
+
   return (
     <PageShell locale="zh" subsidiary="shanghai">
-      <Hero headline={heroHeadlineZh} />
+      <Hero headline={headline} slides={slides} />
       <Suspense fallback={<NewsSectionSkeleton />}>
         <LatestNewsSection locale="zh" moreHref="/zh/news" moreLabel="查看全部" />
       </Suspense>

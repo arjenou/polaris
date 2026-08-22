@@ -2,26 +2,33 @@
 
 import Image from "next/image";
 import { useEffect, useState } from "react";
-import { heroHeadline as defaultHeadline, heroSlides } from "@/data/home";
+import { heroHeadline as defaultHeadline, heroSlides as defaultSlides, type HeroSlide } from "@/data/home";
 import styles from "./Hero.module.css";
 
-export default function Hero({ headline = defaultHeadline }: { headline?: string }) {
+export default function Hero({
+  headline = defaultHeadline,
+  slides = defaultSlides,
+}: {
+  headline?: string;
+  slides?: HeroSlide[];
+}) {
   const [active, setActive] = useState(0);
 
   useEffect(() => {
+    if (slides.length <= 1) return;
     const timer = setInterval(() => {
-      setActive((prev) => (prev + 1) % heroSlides.length);
+      setActive((prev) => (prev + 1) % slides.length);
     }, 5000);
     return () => clearInterval(timer);
-  }, [active]);
+  }, [active, slides.length]);
 
   const goToSlide = (index: number) => setActive(index);
 
   return (
     <section className={styles.hero}>
-      {heroSlides.map((slide, index) => (
+      {slides.map((slide, index) => (
         <div
-          key={slide.image}
+          key={`${slide.image}-${index}`}
           className={`${styles.slide} ${index === active ? styles.slideActive : ""}`}
         >
           <Image
@@ -37,9 +44,9 @@ export default function Hero({ headline = defaultHeadline }: { headline?: string
       <div className={styles.overlay} />
       <h1 className={styles.headline}>{headline}</h1>
       <div className={styles.dots}>
-        {heroSlides.map((slide, index) => (
+        {slides.map((slide, index) => (
           <button
-            key={slide.image}
+            key={`${slide.image}-${index}`}
             type="button"
             aria-label={`スライド${index + 1}へ`}
             className={`${styles.dot} ${index === active ? styles.dotActive : ""}`}
@@ -48,9 +55,9 @@ export default function Hero({ headline = defaultHeadline }: { headline?: string
         ))}
       </div>
       <div className={styles.thumbnails}>
-        {heroSlides.map((slide, index) => (
+        {slides.map((slide, index) => (
           <button
-            key={slide.image}
+            key={`${slide.image}-${index}`}
             type="button"
             aria-label={`スライド${index + 1}へ切り替え`}
             aria-current={index === active}

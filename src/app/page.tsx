@@ -11,11 +11,14 @@ import TeamCarouselSkeleton from "@/components/home/TeamCarouselSkeleton";
 import EventsCarouselSkeleton from "@/components/home/EventsCarouselSkeleton";
 // GroupCompanies section is temporarily hidden on the homepage (kept for possible future re-enable).
 // import GroupCompanies from "@/components/home/GroupCompanies";
+import { getHomeHero } from "@/lib/homeHero";
 
-export default function HomePage() {
+export default async function HomePage() {
+  const { headline, slides } = await getHomeHero("ja");
+
   return (
     <PageShell locale="ja">
-      <Hero />
+      <Hero headline={headline} slides={slides} />
       <Suspense fallback={<NewsSectionSkeleton />}>
         <LatestNewsSection locale="ja" />
       </Suspense>

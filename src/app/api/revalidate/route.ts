@@ -9,7 +9,8 @@ type RevalidateKind =
   | "gallery"
   | "advantages"
   | "group-companies"
-  | "contact";
+  | "contact"
+  | "home-hero";
 
 /** Pages (besides the content type's own list/detail pages) that render a
  * card fed by the CMS, and therefore also need revalidating on every change. */
@@ -53,6 +54,12 @@ const PAGES_WITH_CARD: Record<RevalidateKind, { ja: string[]; zh: string[] }> = 
   // paths, shared across locales like "gallery") — this entry only exists
   // to satisfy the Record type.
   contact: {
+    ja: [],
+    zh: [],
+  },
+  // "home-hero" is handled directly below (fixed / + /zh paths) — this
+  // entry only exists to satisfy the Record type.
+  "home-hero": {
     ja: [],
     zh: [],
   },
@@ -105,10 +112,20 @@ export async function POST(request: NextRequest) {
                 ? "group-companies"
                 : body.kind === "contact"
                   ? "contact"
-                  : "news";
+                  : body.kind === "home-hero"
+                    ? "home-hero"
+                    : "news";
 
   if (kind === "contact") {
     const paths = ["/contact", "/zh/contact"];
+    for (const path of paths) revalidatePath(path);
+    return NextResponse.json({ revalidated: true, paths });
+  }
+
+  // Headline text differs per locale but slides are shared, so simplest to
+  // always revalidate both homepage paths together on any hero change.
+  if (kind === "home-hero") {
+    const paths = ["/", "/zh"];
     for (const path of paths) revalidatePath(path);
     return NextResponse.json({ revalidated: true, paths });
   }

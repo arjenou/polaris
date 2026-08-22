@@ -8,7 +8,8 @@ export type RevalidateKind =
   | "gallery"
   | "advantages"
   | "group-companies"
-  | "contact";
+  | "contact"
+  | "home-hero";
 
 /**
  * Best-effort on-demand revalidation call to the Next.js site so content edits
