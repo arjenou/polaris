@@ -25,6 +25,7 @@ async function GroupCompanyCards({
   const { domestic, overseas } = await getGroupCompanies("zh");
   return (
     <CompanyCards
+      locale="zh"
       companiesTitle={companiesTitle}
       domesticTitle={domesticTitle}
       overseasTitle={overseasTitle}

@@ -17,6 +17,10 @@ function emptyForm(locale: "ja" | "zh", region: GroupCompanyRegion): GroupCompan
     name: "",
     business: "",
     address: "",
+    phone: null,
+    established: null,
+    capital: null,
+    representative: null,
     imageKey: null,
     imageWidth: null,
     imageHeight: null,
@@ -129,13 +133,33 @@ export default function GroupCompanyEditor({ mode }: { mode: "create" | "edit" }
         </label>
 
         <label>
-          业务内容
+          事業内容
           <input value={form.business} onChange={(e) => update("business", e.target.value)} />
         </label>
 
         <label>
           所在地
           <input value={form.address} onChange={(e) => update("address", e.target.value)} />
+        </label>
+
+        <label>
+          電話番号（可选，前台留空则不显示该行）
+          <input value={form.phone ?? ""} onChange={(e) => update("phone", e.target.value || null)} />
+        </label>
+
+        <label>
+          設立（可选，如 2018年4月）
+          <input value={form.established ?? ""} onChange={(e) => update("established", e.target.value || null)} />
+        </label>
+
+        <label>
+          資本金（可选）
+          <input value={form.capital ?? ""} onChange={(e) => update("capital", e.target.value || null)} />
+        </label>
+
+        <label>
+          代表取締役（可选）
+          <input value={form.representative ?? ""} onChange={(e) => update("representative", e.target.value || null)} />
         </label>
 
         <label>

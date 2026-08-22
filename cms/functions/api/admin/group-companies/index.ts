@@ -55,8 +55,9 @@ export const onRequestPost: PagesFunction<Env> = async ({ request, env }) => {
 
   const result = await env.DB.prepare(
     `INSERT INTO group_companies
-       (locale, region, name, business, address, image_key, image_width, image_height, href, coming_soon, published, sort_order, updated_at)
-     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, datetime('now'))`,
+       (locale, region, name, business, address, phone, established, capital, representative,
+        image_key, image_width, image_height, href, coming_soon, published, sort_order, updated_at)
+     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, datetime('now'))`,
   )
     .bind(
       input.locale,
@@ -64,6 +65,10 @@ export const onRequestPost: PagesFunction<Env> = async ({ request, env }) => {
       input.name,
       input.business ?? "",
       input.address ?? "",
+      input.phone ?? null,
+      input.established ?? null,
+      input.capital ?? null,
+      input.representative ?? null,
       input.imageKey ?? null,
       input.imageWidth ?? null,
       input.imageHeight ?? null,

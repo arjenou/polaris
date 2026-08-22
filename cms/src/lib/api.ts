@@ -321,6 +321,10 @@ export interface GroupCompany {
   name: string;
   business: string;
   address: string;
+  phone: string | null;
+  established: string | null;
+  capital: string | null;
+  representative: string | null;
   imageKey: string | null;
   imageUrl: string | null;
   imageWidth: number | null;

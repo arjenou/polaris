@@ -14,6 +14,10 @@ export interface GroupCompanyRow {
   name: string;
   business: string;
   address: string;
+  phone: string | null;
+  established: string | null;
+  capital: string | null;
+  representative: string | null;
   image_key: string | null;
   image_width: number | null;
   image_height: number | null;
@@ -31,6 +35,10 @@ export interface GroupCompanyInput {
   name?: string;
   business?: string;
   address?: string;
+  phone?: string | null;
+  established?: string | null;
+  capital?: string | null;
+  representative?: string | null;
   imageKey?: string | null;
   imageWidth?: number | null;
   imageHeight?: number | null;
@@ -47,6 +55,10 @@ export function toGroupCompanyApiShape(row: GroupCompanyRow, origin: string) {
     name: row.name,
     business: row.business,
     address: row.address,
+    phone: row.phone,
+    established: row.established,
+    capital: row.capital,
+    representative: row.representative,
     imageKey: row.image_key,
     imageUrl: row.image_key ? `${origin}/media/${row.image_key}` : null,
     imageWidth: row.image_width,

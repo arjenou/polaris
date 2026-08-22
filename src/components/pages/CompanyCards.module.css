@@ -105,7 +105,7 @@
 
 .infoLabel {
   flex-shrink: 0;
-  width: 90px;
+  width: 108px;
   font-weight: 700;
   color: var(--color-text);
 }
@@ -136,6 +136,6 @@
   }
 
   .infoLabel {
-    width: 76px;
+    width: 92px;
   }
 }

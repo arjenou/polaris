@@ -35,7 +35,8 @@ export const onRequestPut: PagesFunction<Env> = async ({ request, env, params })
 
   await env.DB.prepare(
     `UPDATE group_companies SET
-       locale = ?, region = ?, name = ?, business = ?, address = ?, image_key = ?, image_width = ?, image_height = ?,
+       locale = ?, region = ?, name = ?, business = ?, address = ?, phone = ?, established = ?, capital = ?,
+       representative = ?, image_key = ?, image_width = ?, image_height = ?,
        href = ?, coming_soon = ?, published = ?, updated_at = datetime('now')
      WHERE id = ?`,
   )
@@ -45,6 +46,10 @@ export const onRequestPut: PagesFunction<Env> = async ({ request, env, params })
       input.name,
       input.business ?? "",
       input.address ?? "",
+      input.phone ?? null,
+      input.established ?? null,
+      input.capital ?? null,
+      input.representative ?? null,
       input.imageKey ?? null,
       input.imageWidth ?? null,
       input.imageHeight ?? null,

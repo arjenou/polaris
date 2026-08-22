@@ -10,6 +10,10 @@ interface GroupCompanyApiShape {
   name: string;
   business: string;
   address: string;
+  phone: string | null;
+  established: string | null;
+  capital: string | null;
+  representative: string | null;
   image: string | null;
   href: string | null;
   comingSoon: boolean;
@@ -21,6 +25,10 @@ function toCompanyCard(item: GroupCompanyApiShape): CompanyCard {
     name: item.name,
     business: item.business,
     address: item.address,
+    phone: item.phone ?? undefined,
+    established: item.established ?? undefined,
+    capital: item.capital ?? undefined,
+    representative: item.representative ?? undefined,
     image: item.image ?? "",
     href: item.href ?? undefined,
     comingSoon: item.comingSoon,

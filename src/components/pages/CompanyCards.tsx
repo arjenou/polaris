@@ -5,22 +5,49 @@ import styles from "./CompanyCards.module.css";
 export interface CompanyCard {
   id?: number;
   name: string;
-  business: string;
-  address: string;
+  business?: string;
+  address?: string;
+  phone?: string;
+  established?: string;
+  capital?: string;
+  representative?: string;
   image: string;
   href?: string;
   comingSoon?: boolean;
 }
 
-function Row({
-  item,
-  businessLabel,
-  addressLabel,
-}: {
-  item: CompanyCard;
-  businessLabel: string;
-  addressLabel: string;
-}) {
+const LABELS: Record<
+  "ja" | "zh",
+  { address: string; phone: string; established: string; capital: string; representative: string; business: string }
+> = {
+  ja: {
+    address: "所在地",
+    phone: "電話番号",
+    established: "設立",
+    capital: "資本金",
+    representative: "代表取締役",
+    business: "事業内容",
+  },
+  zh: {
+    address: "所在地",
+    phone: "电话号码",
+    established: "成立时间",
+    capital: "注册资本",
+    representative: "法定代表人",
+    business: "经营内容",
+  },
+};
+
+function Row({ item, labels }: { item: CompanyCard; labels: (typeof LABELS)["ja"] }) {
+  const fields: { label: string; value: string | undefined }[] = [
+    { label: labels.address, value: item.address },
+    { label: labels.phone, value: item.phone },
+    { label: labels.established, value: item.established },
+    { label: labels.capital, value: item.capital },
+    { label: labels.representative, value: item.representative },
+    { label: labels.business, value: item.business },
+  ].filter((field) => field.value && field.value.trim());
+
   const body = (
     <>
       <div className={styles.logoBox}>
@@ -37,14 +64,12 @@ function Row({
       </div>
       <div className={styles.divider} />
       <div className={styles.infoList}>
-        <div className={styles.infoRow}>
-          <span className={styles.infoLabel}>{businessLabel}</span>
-          <span className={styles.infoValue}>{item.business}</span>
-        </div>
-        <div className={styles.infoRow}>
-          <span className={styles.infoLabel}>{addressLabel}</span>
-          <span className={styles.infoValue}>{item.address}</span>
-        </div>
+        {fields.map((field) => (
+          <div key={field.label} className={styles.infoRow}>
+            <span className={styles.infoLabel}>{field.label}</span>
+            <span className={styles.infoValue}>{field.value}</span>
+          </div>
+        ))}
       </div>
     </>
   );
@@ -64,22 +89,22 @@ function Row({
 }
 
 export default function CompanyCards({
+  locale = "ja",
   companiesTitle,
   domesticTitle,
   overseasTitle,
   domestic,
   overseas,
-  businessLabel = "業務内容",
-  addressLabel = "所在地",
 }: {
+  locale?: "ja" | "zh";
   companiesTitle?: string;
   domesticTitle: string;
   overseasTitle: string;
   domestic: CompanyCard[];
   overseas: CompanyCard[];
-  businessLabel?: string;
-  addressLabel?: string;
 }) {
+  const labels = LABELS[locale];
+
   return (
     <section className={styles.section}>
       <div className={styles.inner}>
@@ -87,23 +112,13 @@ export default function CompanyCards({
         <h3 className={styles.subTitle}>{domesticTitle}</h3>
         <div className={styles.list}>
           {domestic.map((item) => (
-            <Row
-              key={item.id ?? item.name}
-              item={item}
-              businessLabel={businessLabel}
-              addressLabel={addressLabel}
-            />
+            <Row key={item.id ?? item.name} item={item} labels={labels} />
           ))}
         </div>
         <h3 className={styles.subTitle}>{overseasTitle}</h3>
         <div className={styles.list}>
           {overseas.map((item) => (
-            <Row
-              key={item.id ?? item.name}
-              item={item}
-              businessLabel={businessLabel}
-              addressLabel={addressLabel}
-            />
+            <Row key={item.id ?? item.name} item={item} labels={labels} />
           ))}
         </div>
       </div>
