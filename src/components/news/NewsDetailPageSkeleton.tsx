@@ -15,10 +15,6 @@ export default function NewsDetailPageSkeleton() {
 
         <Skeleton width="70%" height={30} style={{ margin: "16px 0 24px" }} />
 
-        <div className={styles.imageWrap}>
-          <Skeleton width="100%" height={360} radius={0} />
-        </div>
-
         <Skeleton width="100%" height={16} style={{ marginBottom: 14 }} />
         <Skeleton width="100%" height={16} style={{ marginBottom: 14 }} />
         <Skeleton width="90%" height={16} style={{ marginBottom: 14 }} />

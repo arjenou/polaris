@@ -2,6 +2,8 @@ import { useEffect, useState, type FormEvent } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { mediaApi, type ContentPostInput } from "../lib/api";
 import RichTextEditor from "../components/RichTextEditor";
+import ImageCropper from "../components/ImageCropper";
+import { COVER_ASPECT_RATIO } from "../lib/coverImage";
 import { useToast } from "../lib/ToastContext";
 import { generateSlug } from "../lib/slug";
 import { datetimeLocalToIso, isoToDatetimeLocal } from "../lib/datetime";
@@ -31,6 +33,7 @@ export default function PostEditor({ resource, mode }: { resource: ContentTypeKe
   const { showToast, showSuccessDialog } = useToast();
   const [form, setForm] = useState<ContentPostInput>(EMPTY_FORM);
   const [imageUrl, setImageUrl] = useState<string | null>(null);
+  const [cropSource, setCropSource] = useState<File | null>(null);
   const [loading, setLoading] = useState(mode === "edit");
   const [saving, setSaving] = useState(false);
   const [uploading, setUploading] = useState(false);
@@ -54,23 +57,37 @@ export default function PostEditor({ resource, mode }: { resource: ContentTypeKe
     setForm((f) => ({ ...f, [key]: value }));
   }
 
-  async function handleImageChange(e: React.ChangeEvent<HTMLInputElement>) {
+  function handleImageChange(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0];
+    e.target.value = "";
     if (!file) return;
+    setError(null);
+    setCropSource(file);
+  }
+
+  async function handleCropConfirm(croppedFile: File) {
     setUploading(true);
     setError(null);
     try {
-      const res = await mediaApi.upload(file, config.mediaFolder);
+      const res = await mediaApi.upload(croppedFile, config.mediaFolder);
       update("imageKey", res.key);
       update("imageWidth", res.width);
       update("imageHeight", res.height);
       setImageUrl(res.url);
-      showToast("图片上传成功");
+      setCropSource(null);
+      showToast("封面图上传成功");
     } catch (err) {
       setError(err instanceof Error ? err.message : "上传失败");
     } finally {
       setUploading(false);
     }
+  }
+
+  function handleImageRemove() {
+    update("imageKey", null);
+    update("imageWidth", null);
+    update("imageHeight", null);
+    setImageUrl(null);
   }
 
   async function handleSubmit(e: FormEvent) {
@@ -178,11 +195,24 @@ export default function PostEditor({ resource, mode }: { resource: ContentTypeKe
         </label>
 
         <label>
-          配图
+          卡片封面图
           <input type="file" accept="image/png,image/jpeg,image/webp,image/gif" onChange={handleImageChange} />
+          <span className="field-hint">
+            仅用于列表页与首页的卡片封面，不会显示在文章正文中；正文里的图片请在下方正文编辑器中插入。选择图片后会弹出
+            16:10 的裁剪框，与前台封面显示比例一致。
+          </span>
         </label>
         {uploading && <p>上传中…</p>}
-        {imageUrl && <img src={imageUrl} alt="" className="image-preview" />}
+        {imageUrl && (
+          <div className="cover-preview-wrap">
+            <div className="cover-preview" style={{ aspectRatio: `${COVER_ASPECT_RATIO}` }}>
+              <img src={imageUrl} alt="" />
+            </div>
+            <button type="button" className="btn-link danger" onClick={handleImageRemove} disabled={uploading}>
+              移除封面图
+            </button>
+          </div>
+        )}
 
         <label>
           正文
@@ -197,6 +227,17 @@ export default function PostEditor({ resource, mode }: { resource: ContentTypeKe
           </button>
         </div>
       </form>
+
+      {cropSource && (
+        <ImageCropper
+          file={cropSource}
+          aspectRatio={COVER_ASPECT_RATIO}
+          busy={uploading}
+          hint="前台卡片封面按 16:10 显示，请拖动选框选择要作为封面的区域，可拖动四角调整大小。"
+          onCancel={() => setCropSource(null)}
+          onConfirm={handleCropConfirm}
+        />
+      )}
     </div>
   );
 }

@@ -750,6 +750,170 @@ body {
   border: 1px solid #eef0f3;
 }
 
+.cover-preview-wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 8px;
+}
+
+.cover-preview {
+  width: 280px;
+  max-width: 100%;
+  overflow: hidden;
+  border-radius: 6px;
+  border: 1px solid #eef0f3;
+  background: #f5f6f8;
+}
+
+.cover-preview img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.cropper-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 1200;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  background: rgba(15, 23, 42, 0.5);
+}
+
+.cropper-dialog {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  max-width: 100%;
+  max-height: 100%;
+  overflow: auto;
+  padding: 24px;
+  border-radius: 12px;
+  background: #fff;
+  box-shadow: 0 16px 48px rgba(0, 0, 0, 0.18);
+}
+
+.cropper-title {
+  margin: 0;
+  font-size: 17px;
+  font-weight: 700;
+  color: #1b2a4a;
+}
+
+.cropper-hint {
+  margin: 0;
+  max-width: 640px;
+  font-size: 12px;
+  line-height: 1.6;
+  color: #8a93a6;
+}
+
+.cropper-stage {
+  position: relative;
+  align-self: center;
+  min-width: 200px;
+  min-height: 120px;
+  overflow: hidden;
+  border-radius: 6px;
+  background: #111;
+  touch-action: none;
+  user-select: none;
+}
+
+.cropper-image {
+  display: block;
+  max-width: none;
+  pointer-events: none;
+}
+
+.cropper-box {
+  position: absolute;
+  box-sizing: border-box;
+  border: 1px solid #fff;
+  box-shadow: 0 0 0 9999px rgba(0, 0, 0, 0.5);
+  cursor: move;
+}
+
+.cropper-handle {
+  position: absolute;
+  width: 14px;
+  height: 14px;
+  background: #fff;
+  border: 1px solid #1e6fd9;
+  border-radius: 2px;
+}
+
+.cropper-handle-nw {
+  top: -7px;
+  left: -7px;
+  cursor: nwse-resize;
+}
+
+.cropper-handle-ne {
+  top: -7px;
+  right: -7px;
+  cursor: nesw-resize;
+}
+
+.cropper-handle-sw {
+  bottom: -7px;
+  left: -7px;
+  cursor: nesw-resize;
+}
+
+.cropper-handle-se {
+  bottom: -7px;
+  right: -7px;
+  cursor: nwse-resize;
+}
+
+.cropper-meta {
+  margin: 0;
+  font-size: 12px;
+  color: #8a93a6;
+}
+
+.cropper-actions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.cropper-actions-right {
+  display: flex;
+  gap: 12px;
+}
+
+.cropper-reset {
+  background: none;
+  border: none;
+  padding: 0;
+  font-size: 13px;
+  color: #1e6fd9;
+  cursor: pointer;
+}
+
+.btn-ghost {
+  background: #fff;
+  color: #4a5568;
+  border: 1px solid #d7dbe2;
+  border-radius: 6px;
+  padding: 10px 16px;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.btn-ghost:disabled,
+.cropper-reset:disabled {
+  opacity: 0.6;
+  cursor: default;
+}
+
 .video-preview-wrap {
   display: flex;
   flex-direction: column;
@@ -958,35 +1122,45 @@ body {
   padding: 12px 14px;
   min-height: 320px;
   font-size: 14px;
-  line-height: 1.7;
+  line-height: 1.75;
 }
 
 .rich-text-content:focus {
   outline: none;
 }
 
+/* Paragraph spacing mirrors the published article (1em), so the editor shows
+ * roughly what the reader gets. Shift+Enter inserts a tight line break. */
 .rich-text-content p {
-  margin: 0 0 12px;
+  margin: 0 0 1em;
+}
+
+.rich-text-content p:last-child {
+  margin-bottom: 0;
 }
 
 .rich-text-content h2 {
   font-size: 20px;
-  margin: 20px 0 10px;
+  margin: 1.6em 0 0.8em;
 }
 
 .rich-text-content h3 {
   font-size: 17px;
-  margin: 18px 0 8px;
+  margin: 1.6em 0 0.8em;
 }
 
 .rich-text-content ul,
 .rich-text-content ol {
   padding-left: 24px;
-  margin: 0 0 12px;
+  margin: 0 0 1em;
+}
+
+.rich-text-content li {
+  margin-bottom: 0.25em;
 }
 
 .rich-text-content blockquote {
-  margin: 0 0 12px;
+  margin: 0 0 1em;
   padding-left: 12px;
   border-left: 3px solid #d8dce3;
   color: #4a5468;
@@ -998,7 +1172,7 @@ body {
   padding: 12px;
   border-radius: 6px;
   overflow-x: auto;
-  margin: 0 0 12px;
+  margin: 0 0 1em;
 }
 
 .rich-text-content img {

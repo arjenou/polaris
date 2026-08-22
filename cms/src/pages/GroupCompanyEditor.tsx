@@ -2,6 +2,8 @@ import { useEffect, useState, type ChangeEvent, type FormEvent } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { groupCompaniesApi, mediaApi, type GroupCompanyInput, type GroupCompanyRegion } from "../lib/api";
 import { useToast } from "../lib/ToastContext";
+import ImageCropper from "../components/ImageCropper";
+import { LOGO_ASPECT_RATIO } from "../lib/coverImage";
 
 const REGION_LABELS: Record<GroupCompanyRegion, string> = {
   domestic: "日本国内企業",
@@ -30,6 +32,7 @@ export default function GroupCompanyEditor({ mode }: { mode: "create" | "edit" }
   const { showToast, showSuccessDialog } = useToast();
   const [form, setForm] = useState<GroupCompanyInput>(emptyForm(locale ?? "ja", region ?? "domestic"));
   const [imageUrl, setImageUrl] = useState<string | null>(null);
+  const [cropSource, setCropSource] = useState<File | null>(null);
   const [loading, setLoading] = useState(mode === "edit");
   const [saving, setSaving] = useState(false);
   const [uploading, setUploading] = useState(false);
@@ -53,23 +56,37 @@ export default function GroupCompanyEditor({ mode }: { mode: "create" | "edit" }
     setForm((f) => ({ ...f, [key]: value }));
   }
 
-  async function handleImageChange(e: ChangeEvent<HTMLInputElement>) {
+  function handleImageChange(e: ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0];
+    e.target.value = "";
     if (!file) return;
+    setError(null);
+    setCropSource(file);
+  }
+
+  async function handleCropConfirm(croppedFile: File) {
     setUploading(true);
     setError(null);
     try {
-      const res = await mediaApi.upload(file, "group-companies");
+      const res = await mediaApi.upload(croppedFile, "group-companies");
       update("imageKey", res.key);
       update("imageWidth", res.width);
       update("imageHeight", res.height);
       setImageUrl(res.url);
+      setCropSource(null);
       showToast("图片上传成功");
     } catch (err) {
       setError(err instanceof Error ? err.message : "上传失败");
     } finally {
       setUploading(false);
     }
+  }
+
+  function handleImageRemove() {
+    update("imageKey", null);
+    update("imageWidth", null);
+    update("imageHeight", null);
+    setImageUrl(null);
   }
 
   async function handleSubmit(e: FormEvent) {
@@ -147,9 +164,22 @@ export default function GroupCompanyEditor({ mode }: { mode: "create" | "edit" }
         <label>
           企业 Logo
           <input type="file" accept="image/png,image/jpeg,image/webp,image/gif" onChange={handleImageChange} />
+          <span className="field-hint">
+            前台 logo 展示框比例约为 2.54:1，选择图片后会弹出对应比例的裁剪框，请拖动选框选取要展示的区域，避免
+            logo 被截断。
+          </span>
         </label>
         {uploading && <p>上传中…</p>}
-        {imageUrl && <img src={imageUrl} alt="" className="image-preview" />}
+        {imageUrl && (
+          <div className="cover-preview-wrap">
+            <div className="cover-preview" style={{ aspectRatio: `${LOGO_ASPECT_RATIO}` }}>
+              <img src={imageUrl} alt="" />
+            </div>
+            <button type="button" className="btn-link danger" onClick={handleImageRemove} disabled={uploading}>
+              移除 Logo
+            </button>
+          </div>
+        )}
 
         {error && <p className="form-error">{error}</p>}
 
@@ -159,6 +189,18 @@ export default function GroupCompanyEditor({ mode }: { mode: "create" | "edit" }
           </button>
         </div>
       </form>
+
+      {cropSource && (
+        <ImageCropper
+          file={cropSource}
+          aspectRatio={LOGO_ASPECT_RATIO}
+          busy={uploading}
+          title="调整 Logo 裁剪范围"
+          hint="前台 logo 按约 2.54:1 显示，请拖动选框选择要展示的区域，可拖动四角调整大小。"
+          onCancel={() => setCropSource(null)}
+          onConfirm={handleCropConfirm}
+        />
+      )}
     </div>
   );
 }
