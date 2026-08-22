@@ -50,8 +50,8 @@ export const onRequestPost: PagesFunction<Env> = async ({ request, env, params }
   const nextOrder = (maxOrder?.maxOrder ?? -1) + 1;
 
   const result = await env.DB.prepare(
-    `INSERT INTO page_advantages (page_key, locale, badge, heading, body, image_key, image_width, image_height, sort_order, updated_at)
-     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, datetime('now'))`,
+    `INSERT INTO page_advantages (page_key, locale, badge, heading, body, image_key, image_width, image_height, sort_order, published, updated_at)
+     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, datetime('now'))`,
   )
     .bind(
       pageKey,
@@ -63,6 +63,7 @@ export const onRequestPost: PagesFunction<Env> = async ({ request, env, params }
       input.imageWidth ?? null,
       input.imageHeight ?? null,
       nextOrder,
+      input.published === false ? 0 : 1,
     )
     .run();
 

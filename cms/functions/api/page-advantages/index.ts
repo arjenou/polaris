@@ -15,7 +15,7 @@ export const onRequestGet: PagesFunction<Env> = async ({ request, env }) => {
   if (locale !== "ja" && locale !== "zh") return errorJson("locale 参数不正确", 400, PUBLIC_CORS_HEADERS);
 
   const { results } = await env.DB.prepare(
-    "SELECT * FROM page_advantages WHERE page_key = ? AND locale = ? ORDER BY sort_order ASC",
+    "SELECT * FROM page_advantages WHERE page_key = ? AND locale = ? AND published = 1 ORDER BY sort_order ASC",
   )
     .bind(pageKey, locale)
     .all<PageAdvantageRow>();

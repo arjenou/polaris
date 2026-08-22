@@ -16,7 +16,7 @@ export const onRequestGet: PagesFunction<Env> = async ({ request, env }) => {
   }
 
   const { results } = await env.DB.prepare(
-    "SELECT * FROM group_companies WHERE locale = ? ORDER BY region, sort_order ASC",
+    "SELECT * FROM group_companies WHERE locale = ? AND published = 1 ORDER BY region, sort_order ASC",
   )
     .bind(locale)
     .all<GroupCompanyRow>();

@@ -19,6 +19,7 @@ export interface GroupCompanyRow {
   image_height: number | null;
   href: string | null;
   coming_soon: number;
+  published: number;
   sort_order: number;
   created_at: string;
   updated_at: string;
@@ -35,6 +36,7 @@ export interface GroupCompanyInput {
   imageHeight?: number | null;
   href?: string | null;
   comingSoon?: boolean;
+  published?: boolean;
 }
 
 export function toGroupCompanyApiShape(row: GroupCompanyRow, origin: string) {
@@ -51,6 +53,7 @@ export function toGroupCompanyApiShape(row: GroupCompanyRow, origin: string) {
     imageHeight: row.image_height,
     href: row.href,
     comingSoon: Boolean(row.coming_soon),
+    published: row.published !== 0,
     sortOrder: row.sort_order,
   };
 }

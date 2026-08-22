@@ -15,6 +15,7 @@ export interface PageAdvantageRow {
   image_width: number | null;
   image_height: number | null;
   sort_order: number;
+  published: number;
   created_at: string;
   updated_at: string;
 }
@@ -27,6 +28,7 @@ export interface PageAdvantageInput {
   imageKey?: string | null;
   imageWidth?: number | null;
   imageHeight?: number | null;
+  published?: boolean;
 }
 
 export function toPageAdvantageApiShape(row: PageAdvantageRow, origin: string) {
@@ -42,6 +44,7 @@ export function toPageAdvantageApiShape(row: PageAdvantageRow, origin: string) {
     imageWidth: row.image_width,
     imageHeight: row.image_height,
     sortOrder: row.sort_order,
+    published: row.published !== 0,
   };
 }
 

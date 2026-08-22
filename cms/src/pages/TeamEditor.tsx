@@ -129,7 +129,7 @@ export default function TeamEditor({ mode }: { mode: "create" | "edit" }) {
               checked={form.published}
               onChange={(e) => update("published", e.target.checked)}
             />
-            已发布（首页可见）
+            显示（首页可见）
           </label>
         </div>
 

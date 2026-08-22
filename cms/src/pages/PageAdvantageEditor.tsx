@@ -17,6 +17,7 @@ const EMPTY_FORM: PageAdvantageInput = {
   imageKey: null,
   imageWidth: null,
   imageHeight: null,
+  published: true,
 };
 
 export default function PageAdvantageEditor({ mode }: { mode: "create" | "edit" }) {
@@ -103,6 +104,15 @@ export default function PageAdvantageEditor({ mode }: { mode: "create" | "edit" 
       </div>
 
       <form className="editor-form" onSubmit={handleSubmit}>
+        <label className="checkbox-label">
+          <input
+            type="checkbox"
+            checked={form.published !== false}
+            onChange={(e) => update("published", e.target.checked)}
+          />
+          显示（前台「私たちが選ばれる理由」可见）
+        </label>
+
         <div className="form-row">
           <label>
             标签（如「ADVANTAGE 1」，可选）

@@ -18,6 +18,7 @@ export default function PageAdvantagesList() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [dragIndex, setDragIndex] = useState<number | null>(null);
+  const [updatingId, setUpdatingId] = useState<number | null>(null);
 
   function refresh() {
     setLoading(true);
@@ -39,6 +40,28 @@ export default function PageAdvantagesList() {
       refresh();
     } catch (err) {
       showToast(err instanceof Error ? err.message : "删除失败", "error");
+    }
+  }
+
+  async function handleVisibilityChange(item: PageAdvantage, published: boolean) {
+    setUpdatingId(item.id);
+    try {
+      const updated = await pageAdvantagesApi.update(pageKey, item.id, {
+        locale: item.locale,
+        badge: item.badge,
+        heading: item.heading,
+        body: item.body,
+        imageKey: item.imageKey,
+        imageWidth: item.imageWidth,
+        imageHeight: item.imageHeight,
+        published,
+      });
+      setItems((current) => current.map((row) => (row.id === item.id ? updated : row)));
+      showToast(published ? "已设为显示" : "已设为不显示");
+    } catch (err) {
+      showToast(err instanceof Error ? err.message : "状态更新失败", "error");
+    } finally {
+      setUpdatingId(null);
     }
   }
 
@@ -105,6 +128,7 @@ export default function PageAdvantagesList() {
           <col className="col-drag" />
           <col className="col-avatar" />
           <col />
+          <col className="col-status" />
           <col className="col-actions" />
         </colgroup>
         <thead>
@@ -112,12 +136,13 @@ export default function PageAdvantagesList() {
             <th />
             <th>图片</th>
             <th>标签 / 标题 / 内容</th>
+            <th>显示</th>
             <th />
           </tr>
         </thead>
         <tbody>
           {loading ? (
-            <SkeletonTableRows columns={["drag", "thumb", "text-block", "actions"]} />
+            <SkeletonTableRows columns={["drag", "thumb", "text-block", "badge", "actions"]} />
           ) : (
             <>
             {items.map((item, index) => (
@@ -144,6 +169,20 @@ export default function PageAdvantagesList() {
                   <div className="member-name">{item.heading}</div>
                   <div className="member-kana">{item.body.slice(0, 60)}{item.body.length > 60 ? "…" : ""}</div>
                 </td>
+                <td>
+                  <select
+                    className={`visibility-select ${item.published ? "is-visible" : "is-hidden"}`}
+                    value={item.published ? "visible" : "hidden"}
+                    disabled={updatingId === item.id}
+                    aria-label={`设置「${item.heading}」的显示状态`}
+                    onMouseDown={(e) => e.stopPropagation()}
+                    onClick={(e) => e.stopPropagation()}
+                    onChange={(e) => handleVisibilityChange(item, e.target.value === "visible")}
+                  >
+                    <option value="visible">显示</option>
+                    <option value="hidden">不显示</option>
+                  </select>
+                </td>
                 <td className="table-actions">
                   <Link to={`/page-advantages/${pageKey}/${locale}/${item.id}/edit`}>编辑</Link>
                   <button className="btn-link danger" onClick={() => handleDelete(item)}>
@@ -154,7 +193,7 @@ export default function PageAdvantagesList() {
             ))}
             {items.length === 0 && (
               <tr>
-                <td colSpan={4} className="empty-row">
+                <td colSpan={5} className="empty-row">
                   暂无数据
                 </td>
               </tr>

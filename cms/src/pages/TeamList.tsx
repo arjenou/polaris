@@ -11,6 +11,7 @@ export default function TeamList() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [dragIndex, setDragIndex] = useState<number | null>(null);
+  const [updatingId, setUpdatingId] = useState<number | null>(null);
 
   function refresh() {
     setLoading(true);
@@ -32,6 +33,34 @@ export default function TeamList() {
       refresh();
     } catch (err) {
       showToast(err instanceof Error ? err.message : "删除失败", "error");
+    }
+  }
+
+  async function handleVisibilityChange(member: TeamMember, published: boolean) {
+    setUpdatingId(member.id);
+    try {
+      const updated = await teamApi.update(member.id, {
+        locale: member.locale,
+        lastName: member.lastName,
+        firstName: member.firstName,
+        lastNameKana: member.lastNameKana,
+        firstNameKana: member.firstNameKana,
+        department: member.department,
+        position: member.position,
+        description: member.description,
+        tags: member.tags,
+        languages: member.languages,
+        imageKey: member.imageKey,
+        imageWidth: member.imageWidth,
+        imageHeight: member.imageHeight,
+        published,
+      });
+      setMembers((current) => current.map((item) => (item.id === member.id ? updated : item)));
+      showToast(published ? "已设为显示" : "已设为不显示");
+    } catch (err) {
+      showToast(err instanceof Error ? err.message : "状态更新失败", "error");
+    } finally {
+      setUpdatingId(null);
     }
   }
 
@@ -100,7 +129,7 @@ export default function TeamList() {
             <th>姓名</th>
             <th>部门 / 职位</th>
             <th>标签</th>
-            <th>状态</th>
+            <th>显示</th>
             <th>咨询次数</th>
             <th />
           </tr>
@@ -155,10 +184,18 @@ export default function TeamList() {
                   ))}
                 </td>
                 <td>
-                  <span className={`status-badge ${member.published ? "status-published" : "status-draft"}`}>
-                    <span className="status-dot" />
-                    {member.published ? "已发布" : "草稿"}
-                  </span>
+                  <select
+                    className={`visibility-select ${member.published ? "is-visible" : "is-hidden"}`}
+                    value={member.published ? "visible" : "hidden"}
+                    disabled={updatingId === member.id}
+                    aria-label={`设置「${member.lastName}${member.firstName}」的显示状态`}
+                    onMouseDown={(e) => e.stopPropagation()}
+                    onClick={(e) => e.stopPropagation()}
+                    onChange={(e) => handleVisibilityChange(member, e.target.value === "visible")}
+                  >
+                    <option value="visible">显示</option>
+                    <option value="hidden">不显示</option>
+                  </select>
                 </td>
                 <td className="count-cell">
                   <span className="count-badge">{member.submissionCount}</span>

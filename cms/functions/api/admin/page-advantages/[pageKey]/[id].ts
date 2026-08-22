@@ -45,7 +45,7 @@ export const onRequestPut: PagesFunction<Env> = async ({ request, env, params })
   await env.DB.prepare(
     `UPDATE page_advantages SET
        locale = ?, badge = ?, heading = ?, body = ?, image_key = ?, image_width = ?, image_height = ?,
-       updated_at = datetime('now')
+       published = ?, updated_at = datetime('now')
      WHERE id = ? AND page_key = ?`,
   )
     .bind(
@@ -56,6 +56,7 @@ export const onRequestPut: PagesFunction<Env> = async ({ request, env, params })
       input.imageKey ?? null,
       input.imageWidth ?? null,
       input.imageHeight ?? null,
+      input.published === false ? 0 : 1,
       id,
       pageKey,
     )

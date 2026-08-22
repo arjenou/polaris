@@ -12,6 +12,7 @@ export default function GroupCompaniesList() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [dragIndex, setDragIndex] = useState<number | null>(null);
+  const [updatingId, setUpdatingId] = useState<number | null>(null);
 
   function refresh() {
     setLoading(true);
@@ -33,6 +34,31 @@ export default function GroupCompaniesList() {
       refresh();
     } catch (err) {
       showToast(err instanceof Error ? err.message : "删除失败", "error");
+    }
+  }
+
+  async function handleVisibilityChange(item: GroupCompany, published: boolean) {
+    setUpdatingId(item.id);
+    try {
+      const updated = await groupCompaniesApi.update(item.id, {
+        locale: item.locale,
+        region: item.region,
+        name: item.name,
+        business: item.business,
+        address: item.address,
+        imageKey: item.imageKey,
+        imageWidth: item.imageWidth,
+        imageHeight: item.imageHeight,
+        href: item.href,
+        comingSoon: item.comingSoon,
+        published,
+      });
+      setItems((current) => current.map((row) => (row.id === item.id ? updated : row)));
+      showToast(published ? "已设为显示" : "已设为不显示");
+    } catch (err) {
+      showToast(err instanceof Error ? err.message : "状态更新失败", "error");
+    } finally {
+      setUpdatingId(null);
     }
   }
 
@@ -100,6 +126,7 @@ export default function GroupCompaniesList() {
           <col className="col-logo" />
           <col />
           <col className="col-status" />
+          <col className="col-status" />
           <col className="col-actions" />
         </colgroup>
         <thead>
@@ -107,13 +134,14 @@ export default function GroupCompaniesList() {
             <th />
             <th>Logo</th>
             <th>名称 / 业务内容 / 所在地</th>
+            <th>显示</th>
             <th>状态</th>
             <th />
           </tr>
         </thead>
         <tbody>
           {loading ? (
-            <SkeletonTableRows columns={["drag", "thumb-wide", "text-block", "badge", "actions"]} />
+            <SkeletonTableRows columns={["drag", "thumb-wide", "text-block", "badge", "badge", "actions"]} />
           ) : (
             <>
             {items.map((item, index) => (
@@ -141,6 +169,20 @@ export default function GroupCompaniesList() {
                   <div className="company-info-detail">{item.address}</div>
                 </td>
                 <td>
+                  <select
+                    className={`visibility-select ${item.published ? "is-visible" : "is-hidden"}`}
+                    value={item.published ? "visible" : "hidden"}
+                    disabled={updatingId === item.id}
+                    aria-label={`设置「${item.name}」的显示状态`}
+                    onMouseDown={(e) => e.stopPropagation()}
+                    onClick={(e) => e.stopPropagation()}
+                    onChange={(e) => handleVisibilityChange(item, e.target.value === "visible")}
+                  >
+                    <option value="visible">显示</option>
+                    <option value="hidden">不显示</option>
+                  </select>
+                </td>
+                <td>
                   {item.comingSoon ? (
                     <span className="status-badge status-draft">
                       <span className="status-dot" />
@@ -163,7 +205,7 @@ export default function GroupCompaniesList() {
             ))}
             {items.length === 0 && (
               <tr>
-                <td colSpan={5} className="empty-row">
+                <td colSpan={6} className="empty-row">
                   暂无数据
                 </td>
               </tr>

@@ -20,6 +20,7 @@ function emptyForm(locale: "ja" | "zh", region: GroupCompanyRegion): GroupCompan
     imageHeight: null,
     href: null,
     comingSoon: false,
+    published: true,
   };
 }
 
@@ -123,6 +124,15 @@ export default function GroupCompanyEditor({ mode }: { mode: "create" | "edit" }
         <label>
           链接（可选，点击卡片跳转到的页面路径，如 /business-headquarters）
           <input value={form.href ?? ""} onChange={(e) => update("href", e.target.value || null)} />
+        </label>
+
+        <label className="checkbox-label">
+          <input
+            type="checkbox"
+            checked={form.published !== false}
+            onChange={(e) => update("published", e.target.checked)}
+          />
+          显示（前台「グループ企業紹介」可见）
         </label>
 
         <label className="checkbox-label">

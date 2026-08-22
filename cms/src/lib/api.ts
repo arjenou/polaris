@@ -243,6 +243,7 @@ export interface PageAdvantage {
   imageWidth: number | null;
   imageHeight: number | null;
   sortOrder: number;
+  published: boolean;
 }
 
 export type PageAdvantageInput = Omit<PageAdvantage, "id" | "pageKey" | "imageUrl" | "sortOrder">;
@@ -286,6 +287,7 @@ export interface GroupCompany {
   imageHeight: number | null;
   href: string | null;
   comingSoon: boolean;
+  published: boolean;
   sortOrder: number;
 }
 
