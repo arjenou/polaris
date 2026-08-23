@@ -1,5 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import { Noto_Sans_JP, Shippori_Mincho_B1 } from "next/font/google";
+import FloatingContactButtons from "@/components/layout/FloatingContactButtons";
+import { getContactQrImages } from "@/lib/contactQr";
 import "./globals.css";
 
 const notoSansJP = Noto_Sans_JP({
@@ -39,14 +41,19 @@ export const viewport: Viewport = {
   initialScale: 1,
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const qrImages = await getContactQrImages();
+
   return (
     <html lang="ja" className={`${notoSansJP.variable} ${shipporiMincho.variable}`}>
-      <body>{children}</body>
+      <body>
+        {children}
+        <FloatingContactButtons wechatImage={qrImages.wechat} lineImage={qrImages.line} />
+      </body>
     </html>
   );
 }
