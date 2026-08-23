@@ -1,8 +1,31 @@
+import { Extension } from "@tiptap/core";
 import { EditorContent, useEditor } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
 import Image from "@tiptap/extension-image";
 import { useRef, useState } from "react";
 import { ApiError, mediaApi } from "../lib/api";
+
+/**
+ * Swaps the default Enter / Shift+Enter behavior: plain Enter inserts a
+ * tight line break (small spacing, stays in the same paragraph) while
+ * Shift+Enter starts a new paragraph (large spacing). Enter still creates
+ * a new list item / code block line as usual.
+ */
+const SwappedEnterBehavior = Extension.create({
+  name: "swappedEnterBehavior",
+  priority: 1000,
+  addKeyboardShortcuts() {
+    return {
+      Enter: () => {
+        if (this.editor.isActive("listItem") || this.editor.isActive("codeBlock")) {
+          return false;
+        }
+        return this.editor.commands.setHardBreak();
+      },
+      "Shift-Enter": () => this.editor.commands.splitBlock(),
+    };
+  },
+});
 
 interface RichTextEditorProps {
   /** Initial HTML content. Only read on mount — this component owns its own
@@ -23,6 +46,7 @@ export default function RichTextEditor({ initialContent, onChange }: RichTextEdi
         link: { openOnClick: false, autolink: false },
       }),
       Image.configure({ inline: false }),
+      SwappedEnterBehavior,
     ],
     content: initialContent,
     onUpdate: ({ editor }) => onChange(editor.getHTML()),

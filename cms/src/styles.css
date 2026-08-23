@@ -1148,7 +1148,8 @@ body {
 }
 
 /* Paragraph spacing mirrors the published article (1em), so the editor shows
- * roughly what the reader gets. Shift+Enter inserts a tight line break. */
+ * roughly what the reader gets. Enter inserts a tight line break within the
+ * same paragraph; Shift+Enter starts a new paragraph. */
 .rich-text-content p {
   margin: 0 0 1em;
 }
