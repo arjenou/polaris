@@ -26,7 +26,7 @@ const COPY: Record<"ja" | "zh", Copy> = {
     lineTitle: "LINE相談",
     wechatScan: "微信二維碼をスキャンしてください",
     lineScan: "LINEのQRコードをスキャンしてください",
-    note: "サービスのご相談など、何でもお気軽にお聞きください",
+    note: "サービスのご相談など、\n何でもお気軽にお聞きください",
     comingSoon: "QRコード準備中",
   },
   zh: {
