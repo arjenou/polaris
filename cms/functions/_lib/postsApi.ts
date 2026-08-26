@@ -75,6 +75,7 @@ function validate(input: PostInput): string | null {
   if (!input.tag) return "标签不能为空";
   if (!input.excerpt) return "摘要不能为空";
   if (input.excerpt.length > EXCERPT_MAX_LENGTH) return `摘要不能超过 ${EXCERPT_MAX_LENGTH} 字`;
+  if (!input.imageKey) return "请上传封面图";
   if (input.scheduledAt && Number.isNaN(new Date(input.scheduledAt).getTime())) {
     return "预约发布时间格式不正确";
   }

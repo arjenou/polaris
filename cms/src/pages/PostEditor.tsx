@@ -92,6 +92,12 @@ export default function PostEditor({ resource, mode }: { resource: ContentTypeKe
 
   async function handleSubmit(e: FormEvent) {
     e.preventDefault();
+    if (!form.imageKey) {
+      const message = "请上传封面图后再保存";
+      setError(message);
+      showToast(message, "error");
+      return;
+    }
     setSaving(true);
     setError(null);
     try {
@@ -195,7 +201,7 @@ export default function PostEditor({ resource, mode }: { resource: ContentTypeKe
         </label>
 
         <label>
-          卡片封面图
+          卡片封面图（必填）
           <input type="file" accept="image/png,image/jpeg,image/webp,image/gif" onChange={handleImageChange} />
           <span className="field-hint">
             仅用于列表页与首页的卡片封面，不会显示在文章正文中；正文里的图片请在下方正文编辑器中插入。选择图片后会弹出
