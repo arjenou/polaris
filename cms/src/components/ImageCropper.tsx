@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { cropImageToFile, type CropRect } from "../lib/coverImage";
+import { cropImageToFile, fitImageToFile, type CropRect, type FitLayout } from "../lib/coverImage";
 
 const STAGE_MAX_WIDTH = 720;
 const STAGE_MAX_HEIGHT = 460;
@@ -57,10 +57,13 @@ function resizeRect(
   };
 }
 
+const MAX_ZOOM = 3;
+
 export default function ImageCropper({
   file,
   aspectRatio,
   busy = false,
+  mode = "crop",
   title = "调整封面裁剪范围",
   hint,
   onCancel,
@@ -69,6 +72,8 @@ export default function ImageCropper({
   file: File;
   aspectRatio: number;
   busy?: boolean;
+  /** crop：拖动选框裁剪；fit：整图自动缩放进固定比例的取景框 */
+  mode?: "crop" | "fit";
   title?: string;
   hint?: string;
   onCancel: () => void;
@@ -80,12 +85,15 @@ export default function ImageCropper({
   const [crop, setCrop] = useState<CropRect | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [stageLimit, setStageLimit] = useState(STAGE_MAX_WIDTH);
+  const [zoom, setZoom] = useState(1);
+  const [offset, setOffset] = useState({ x: 0, y: 0 });
 
   useEffect(() => {
     const url = URL.createObjectURL(file);
     setSrc(url);
     setNatural(null);
     setCrop(null);
+    setZoom(1);
     return () => URL.revokeObjectURL(url);
   }, [file]);
 
@@ -101,13 +109,74 @@ export default function ImageCropper({
   const scale = natural
     ? Math.min(stageLimit / natural.width, STAGE_MAX_HEIGHT / natural.height, 1)
     : 1;
-  const stageWidth = natural ? natural.width * scale : 0;
-  const stageHeight = natural ? natural.height * scale : 0;
+  // fit 模式下舞台是固定比例的取景框，整图缩放后放进去
+  const frameWidth = Math.min(stageLimit, STAGE_MAX_HEIGHT * aspectRatio);
+  const frameHeight = frameWidth / aspectRatio;
+  const fitScale = natural
+    ? Math.min(frameWidth / natural.width, frameHeight / natural.height)
+    : 1;
+  const drawWidth = natural ? natural.width * fitScale * zoom : 0;
+  const drawHeight = natural ? natural.height * fitScale * zoom : 0;
+
+  const stageWidth = mode === "fit" ? frameWidth : natural ? natural.width * scale : 0;
+  const stageHeight = mode === "fit" ? frameHeight : natural ? natural.height * scale : 0;
+
+  /** 图片小于取景框时保持整体可见，大于时不留缝隙 */
+  function clampOffset(x: number, y: number, w: number, h: number) {
+    const clampAxis = (value: number, drawSize: number, frameSize: number) =>
+      drawSize >= frameSize
+        ? clamp(value, frameSize - drawSize, 0)
+        : clamp(value, 0, frameSize - drawSize);
+    return {
+      x: clampAxis(x, w, frameWidth),
+      y: clampAxis(y, h, frameHeight),
+    };
+  }
+
+  function centerOffset(w: number, h: number) {
+    return { x: (frameWidth - w) / 2, y: (frameHeight - h) / 2 };
+  }
+
+  function handleZoomChange(next: number) {
+    if (!natural) return;
+    const nextW = natural.width * fitScale * next;
+    const nextH = natural.height * fitScale * next;
+    // 以取景框中心为锚点缩放
+    const cx = (frameWidth / 2 - offset.x) / drawWidth;
+    const cy = (frameHeight / 2 - offset.y) / drawHeight;
+    setZoom(next);
+    setOffset(clampOffset(frameWidth / 2 - cx * nextW, frameHeight / 2 - cy * nextH, nextW, nextH));
+  }
 
   function handleImageLoad(e: React.SyntheticEvent<HTMLImageElement>) {
     const { naturalWidth, naturalHeight } = e.currentTarget;
     setNatural({ width: naturalWidth, height: naturalHeight });
-    setCrop(centeredRect(naturalWidth, naturalHeight, aspectRatio));
+    if (mode === "fit") {
+      const s = Math.min(frameWidth / naturalWidth, frameHeight / naturalHeight);
+      setZoom(1);
+      setOffset(centerOffset(naturalWidth * s, naturalHeight * s));
+    } else {
+      setCrop(centeredRect(naturalWidth, naturalHeight, aspectRatio));
+    }
+  }
+
+  function startPan(e: React.PointerEvent) {
+    if (!natural || busy) return;
+    e.preventDefault();
+    const start = offset;
+    const startX = e.clientX;
+    const startY = e.clientY;
+    const onMove = (ev: PointerEvent) => {
+      setOffset(
+        clampOffset(start.x + (ev.clientX - startX), start.y + (ev.clientY - startY), drawWidth, drawHeight),
+      );
+    };
+    const onUp = () => {
+      window.removeEventListener("pointermove", onMove);
+      window.removeEventListener("pointerup", onUp);
+    };
+    window.addEventListener("pointermove", onMove);
+    window.addEventListener("pointerup", onUp);
   }
 
   function startDrag(e: React.PointerEvent, handle: Handle | "move") {
@@ -140,18 +209,36 @@ export default function ImageCropper({
   }
 
   async function handleConfirm() {
-    if (!imageRef.current || !crop) return;
+    if (!imageRef.current) return;
     setError(null);
     try {
-      const cropped = await cropImageToFile(imageRef.current, crop, file.name, file.type);
-      onConfirm(cropped);
+      if (mode === "fit") {
+        if (!natural) return;
+        const layout: FitLayout = {
+          frameWidth,
+          frameHeight,
+          drawX: offset.x,
+          drawY: offset.y,
+          drawWidth,
+          drawHeight,
+        };
+        onConfirm(await fitImageToFile(imageRef.current, layout, file.name, file.type));
+      } else {
+        if (!crop) return;
+        onConfirm(await cropImageToFile(imageRef.current, crop, file.name, file.type));
+      }
     } catch (err) {
-      setError(err instanceof Error ? err.message : "图片裁剪失败");
+      setError(err instanceof Error ? err.message : "图片处理失败");
     }
   }
 
   function handleReset() {
     if (!natural) return;
+    if (mode === "fit") {
+      setZoom(1);
+      setOffset(centerOffset(natural.width * fitScale, natural.height * fitScale));
+      return;
+    }
     setCrop(centeredRect(natural.width, natural.height, aspectRatio));
   }
 
@@ -161,7 +248,11 @@ export default function ImageCropper({
         <h2 className="cropper-title">{title}</h2>
         {hint && <p className="cropper-hint">{hint}</p>}
 
-        <div className="cropper-stage" style={{ width: stageWidth || undefined, height: stageHeight || undefined }}>
+        <div
+          className={`cropper-stage${mode === "fit" ? " cropper-stage-fit" : ""}`}
+          style={{ width: stageWidth || undefined, height: stageHeight || undefined }}
+          onPointerDown={mode === "fit" ? startPan : undefined}
+        >
           {src && (
             <img
               ref={imageRef}
@@ -170,10 +261,18 @@ export default function ImageCropper({
               draggable={false}
               onLoad={handleImageLoad}
               className="cropper-image"
-              style={{ width: stageWidth || undefined, height: stageHeight || undefined }}
+              style={
+                mode === "fit"
+                  ? {
+                      width: drawWidth || undefined,
+                      height: drawHeight || undefined,
+                      transform: `translate(${offset.x}px, ${offset.y}px)`,
+                    }
+                  : { width: stageWidth || undefined, height: stageHeight || undefined }
+              }
             />
           )}
-          {crop && (
+          {mode !== "fit" && crop && (
             <div
               className="cropper-box"
               style={{
@@ -195,7 +294,27 @@ export default function ImageCropper({
           )}
         </div>
 
-        {crop && (
+        {mode === "fit" && natural && (
+          <>
+            <div className="cropper-zoom">
+              <span>缩放</span>
+              <input
+                type="range"
+                min={1}
+                max={MAX_ZOOM}
+                step={0.01}
+                value={zoom}
+                disabled={busy}
+                onChange={(e) => handleZoomChange(Number(e.target.value))}
+              />
+              <span>{Math.round(zoom * 100)}%</span>
+            </div>
+            <p className="cropper-meta">
+              原图 {natural.width} × {natural.height} px，已自动缩放至取景框内，可拖动图片调整位置。
+            </p>
+          </>
+        )}
+        {mode !== "fit" && crop && (
           <p className="cropper-meta">
             裁剪尺寸：{Math.round(crop.width)} × {Math.round(crop.height)} px
           </p>
@@ -204,13 +323,13 @@ export default function ImageCropper({
 
         <div className="cropper-actions">
           <button type="button" className="cropper-reset" onClick={handleReset} disabled={busy || !natural}>
-            重置选框
+            {mode === "fit" ? "重置位置" : "重置选框"}
           </button>
           <div className="cropper-actions-right">
             <button type="button" className="btn-ghost" onClick={onCancel} disabled={busy}>
               取消
             </button>
-            <button type="button" className="btn-primary" onClick={handleConfirm} disabled={busy || !crop}>
+            <button type="button" className="btn-primary" onClick={handleConfirm} disabled={busy || (mode === "fit" ? !natural : !crop)}>
               {busy ? "上传中…" : "确定并上传"}
             </button>
           </div>

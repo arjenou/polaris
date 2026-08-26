@@ -14,6 +14,16 @@ export interface CropRect {
   height: number;
 }
 
+/** 图片在展示框内的摆放位置，坐标均为展示框显示像素。 */
+export interface FitLayout {
+  frameWidth: number;
+  frameHeight: number;
+  drawX: number;
+  drawY: number;
+  drawWidth: number;
+  drawHeight: number;
+}
+
 function buildFileName(original: string, type: string): string {
   const ext = type === "image/png" ? "png" : "jpg";
   const base = original.replace(/\.[^./\\]+$/, "") || "cover";
@@ -49,6 +59,53 @@ export async function cropImageToFile(
     canvas.toBlob(resolve, outputType, JPEG_QUALITY);
   });
   if (!blob) throw new Error("图片裁剪失败，请重试");
+
+  return new File([blob], buildFileName(originalName, outputType), { type: outputType });
+}
+
+/**
+ * 把整张图片按 layout 缩放绘制到展示框大小的画布上（不足处留白 / 透明），
+ * 用于 logo 这类不能被截断、需要整体缩放进取景框的图片。
+ */
+export async function fitImageToFile(
+  source: HTMLImageElement,
+  layout: FitLayout,
+  originalName: string,
+  originalType: string,
+): Promise<File> {
+  // 输出至少与展示框等大，最多放大到图片原始分辨率，且不超过 MAX_OUTPUT_WIDTH
+  const scale = Math.min(
+    MAX_OUTPUT_WIDTH / layout.frameWidth,
+    Math.max(1, source.naturalWidth / layout.drawWidth),
+  );
+  const outputWidth = Math.max(1, Math.round(layout.frameWidth * scale));
+  const outputHeight = Math.max(1, Math.round(layout.frameHeight * scale));
+
+  const canvas = document.createElement("canvas");
+  canvas.width = outputWidth;
+  canvas.height = outputHeight;
+  const ctx = canvas.getContext("2d");
+  if (!ctx) throw new Error("当前浏览器不支持图片处理");
+
+  const keepAlpha = originalType === "image/png";
+  const outputType = keepAlpha ? "image/png" : "image/jpeg";
+  if (!keepAlpha) {
+    ctx.fillStyle = "#ffffff";
+    ctx.fillRect(0, 0, outputWidth, outputHeight);
+  }
+  ctx.imageSmoothingQuality = "high";
+  ctx.drawImage(
+    source,
+    layout.drawX * scale,
+    layout.drawY * scale,
+    layout.drawWidth * scale,
+    layout.drawHeight * scale,
+  );
+
+  const blob = await new Promise<Blob | null>((resolve) => {
+    canvas.toBlob(resolve, outputType, JPEG_QUALITY);
+  });
+  if (!blob) throw new Error("图片处理失败，请重试");
 
   return new File([blob], buildFileName(originalName, outputType), { type: outputType });
 }

@@ -848,6 +848,35 @@ body {
   pointer-events: none;
 }
 
+/* fit 模式：固定比例取景框，整图缩放居中，空白处显示为白底 */
+.cropper-stage-fit {
+  background: #fff;
+  box-shadow: 0 0 0 1px #d7dbe2;
+  cursor: move;
+}
+
+.cropper-stage-fit .cropper-image {
+  position: absolute;
+  top: 0;
+  left: 0;
+  transform-origin: 0 0;
+}
+
+.cropper-zoom {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  align-self: center;
+  width: 100%;
+  max-width: 360px;
+  font-size: 12px;
+  color: #8a93a6;
+}
+
+.cropper-zoom input {
+  flex: 1;
+}
+
 .cropper-box {
   position: absolute;
   box-sizing: border-box;

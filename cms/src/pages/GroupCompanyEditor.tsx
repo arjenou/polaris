@@ -189,8 +189,7 @@ export default function GroupCompanyEditor({ mode }: { mode: "create" | "edit" }
           企业 Logo
           <input type="file" accept="image/png,image/jpeg,image/webp,image/gif" onChange={handleImageChange} />
           <span className="field-hint">
-            前台 logo 展示框比例约为 2.54:1，选择图片后会弹出对应比例的裁剪框，请拖动选框选取要展示的区域，避免
-            logo 被截断。
+            前台 logo 展示框比例约为 2.54:1，选择图片后会自动整体缩放进取景框，不会被截断，可再手动调整位置与大小。
           </span>
         </label>
         {uploading && <p>上传中…</p>}
@@ -219,8 +218,9 @@ export default function GroupCompanyEditor({ mode }: { mode: "create" | "edit" }
           file={cropSource}
           aspectRatio={LOGO_ASPECT_RATIO}
           busy={uploading}
-          title="调整 Logo 裁剪范围"
-          hint="前台 logo 按约 2.54:1 显示，请拖动选框选择要展示的区域，可拖动四角调整大小。"
+          mode="fit"
+          title="调整 Logo 显示效果"
+          hint="前台 logo 按约 2.54:1 显示。图片已自动缩放到取景框内（不会被截断），可拖动调整位置或用滑块放大。"
           onCancel={() => setCropSource(null)}
           onConfirm={handleCropConfirm}
         />
