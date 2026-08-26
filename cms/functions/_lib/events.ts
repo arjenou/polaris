@@ -18,6 +18,9 @@ export interface EventRow {
   hero_image_width: number | null;
   hero_image_height: number | null;
   video_url: string;
+  video_poster_key: string | null;
+  video_poster_width: number | null;
+  video_poster_height: number | null;
   overview_event_name: string;
   overview_datetime: string;
   overview_venue: string;
@@ -56,6 +59,9 @@ export interface EventInput {
   heroImageWidth?: number | null;
   heroImageHeight?: number | null;
   videoUrl?: string;
+  videoPosterKey?: string | null;
+  videoPosterWidth?: number | null;
+  videoPosterHeight?: number | null;
   overview?: EventOverviewInput;
   gallery?: string[];
   published?: boolean;
@@ -99,6 +105,10 @@ export function toEventApiShape(row: EventRow, origin: string) {
     heroImageWidth: row.hero_image_width,
     heroImageHeight: row.hero_image_height,
     videoUrl: row.video_url,
+    videoPosterKey: row.video_poster_key,
+    videoPosterUrl: toMediaUrl(origin, row.video_poster_key),
+    videoPosterWidth: row.video_poster_width,
+    videoPosterHeight: row.video_poster_height,
     overview: {
       eventName: row.overview_event_name,
       datetime: row.overview_datetime,
@@ -125,6 +135,7 @@ export function validateEvent(input: EventInput): string | null {
   if (!input.title) return "标题不能为空";
   if (!input.date || !DATE_RE.test(input.date)) return "日期格式应为 YYYY.MM.DD";
   if (!input.badge) return "标签不能为空";
+  if (!input.coverImageKey) return "请上传封面图";
   if (input.badgeColor && !HEX_COLOR_RE.test(input.badgeColor)) return "标签颜色必须是 #RRGGBB 格式";
   if (input.gallery && !Array.isArray(input.gallery)) return "gallery 必须是数组";
   if (input.videoUrl && !/^https?:\/\//.test(input.videoUrl)) return "视频链接必须以 http(s):// 开头";

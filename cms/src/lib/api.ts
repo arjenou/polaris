@@ -463,6 +463,10 @@ export interface EventItem {
   heroImageWidth: number | null;
   heroImageHeight: number | null;
   videoUrl: string;
+  videoPosterKey: string | null;
+  videoPosterUrl: string | null;
+  videoPosterWidth: number | null;
+  videoPosterHeight: number | null;
   overview: EventOverview;
   gallery: EventGalleryImage[];
   published: boolean;
@@ -476,6 +480,7 @@ export type EventInput = Omit<
   | "id"
   | "coverImageUrl"
   | "heroImageUrl"
+  | "videoPosterUrl"
   | "gallery"
   | "createdAt"
   | "updatedAt"

@@ -53,6 +53,7 @@ export const onRequestGet: PagesFunction<Env> = async ({ request, env }) => {
         image: toMediaUrl(url.origin, row.cover_image_key),
         heroImage: toMediaUrl(url.origin, row.hero_image_key) ?? toMediaUrl(url.origin, row.cover_image_key),
         videoUrl: row.video_url || null,
+        videoPosterImage: toMediaUrl(url.origin, row.video_poster_key),
         overview:
           row.overview_event_name || row.overview_datetime || row.overview_venue
             ? {

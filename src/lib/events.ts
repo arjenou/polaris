@@ -23,6 +23,7 @@ export interface EventDetail extends EventCard {
   summary: string | null;
   heroImage: string | null;
   videoUrl: string | null;
+  videoPosterImage: string | null;
   overview: EventOverview | null;
   gallery: string[];
 }

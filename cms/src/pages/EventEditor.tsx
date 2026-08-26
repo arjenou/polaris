@@ -21,6 +21,9 @@ const EMPTY_FORM: EventInput = {
   heroImageWidth: null,
   heroImageHeight: null,
   videoUrl: "",
+  videoPosterKey: null,
+  videoPosterWidth: null,
+  videoPosterHeight: null,
   overview: { eventName: "", datetime: "", venue: "", participants: "", content: "", organizer: "" },
   published: true,
   scheduledAt: null,
@@ -34,12 +37,14 @@ export default function EventEditor({ mode }: { mode: "create" | "edit" }) {
   const [form, setForm] = useState<EventInput>(EMPTY_FORM);
   const [coverUrl, setCoverUrl] = useState<string | null>(null);
   const [heroUrl, setHeroUrl] = useState<string | null>(null);
+  const [videoPosterUrl, setVideoPosterUrl] = useState<string | null>(null);
   const [galleryItems, setGalleryItems] = useState<EventGalleryImage[]>([]);
   const [loading, setLoading] = useState(mode === "edit");
   const [saving, setSaving] = useState(false);
   const [uploadingCover, setUploadingCover] = useState(false);
   const [uploadingVideo, setUploadingVideo] = useState(false);
   const [uploadingHero, setUploadingHero] = useState(false);
+  const [uploadingPoster, setUploadingPoster] = useState(false);
   const [uploadingGallery, setUploadingGallery] = useState(false);
   const [galleryDragIndex, setGalleryDragIndex] = useState<number | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -52,6 +57,7 @@ export default function EventEditor({ mode }: { mode: "create" | "edit" }) {
           setForm({ ...event, gallery: event.gallery.map((g) => g.key) });
           setCoverUrl(event.coverImageUrl);
           setHeroUrl(event.heroImageUrl);
+          setVideoPosterUrl(event.videoPosterUrl);
           setGalleryItems(event.gallery);
         })
         .catch((err) => setError(err.message))
@@ -113,6 +119,7 @@ export default function EventEditor({ mode }: { mode: "create" | "edit" }) {
     try {
       const res = await mediaApi.upload(file, "events");
       update("videoUrl", "");
+      clearVideoPoster();
       update("heroImageKey", res.key);
       update("heroImageWidth", res.width);
       update("heroImageHeight", res.height);
@@ -122,6 +129,35 @@ export default function EventEditor({ mode }: { mode: "create" | "edit" }) {
       setError(err instanceof Error ? err.message : "上传失败");
     } finally {
       setUploadingHero(false);
+      e.target.value = "";
+    }
+  }
+
+  function clearVideoPoster() {
+    setForm((f) => ({ ...f, videoPosterKey: null, videoPosterWidth: null, videoPosterHeight: null }));
+    setVideoPosterUrl(null);
+  }
+
+  /** Cover image shown over the uploaded video until the visitor clicks play. */
+  async function handleVideoPosterChange(e: ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setUploadingPoster(true);
+    setError(null);
+    try {
+      const res = await mediaApi.upload(file, "events");
+      setForm((f) => ({
+        ...f,
+        videoPosterKey: res.key,
+        videoPosterWidth: res.width,
+        videoPosterHeight: res.height,
+      }));
+      setVideoPosterUrl(res.url);
+      showToast("视频封面图上传成功");
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "上传失败");
+    } finally {
+      setUploadingPoster(false);
       e.target.value = "";
     }
   }
@@ -166,6 +202,12 @@ export default function EventEditor({ mode }: { mode: "create" | "edit" }) {
 
   async function handleSubmit(e: FormEvent) {
     e.preventDefault();
+    if (!form.coverImageKey) {
+      const message = "请上传封面图后再保存";
+      setError(message);
+      showToast(message, "error");
+      return;
+    }
     setSaving(true);
     setError(null);
     const payload: EventInput = { ...form, gallery: galleryItems.map((item) => item.key) };
@@ -190,7 +232,7 @@ export default function EventEditor({ mode }: { mode: "create" | "edit" }) {
 
   if (loading) return <p>加载中…</p>;
 
-  const uploading = uploadingCover || uploadingVideo || uploadingHero || uploadingGallery;
+  const uploading = uploadingCover || uploadingVideo || uploadingHero || uploadingPoster || uploadingGallery;
 
   return (
     <div>
@@ -274,7 +316,7 @@ export default function EventEditor({ mode }: { mode: "create" | "edit" }) {
         </label>
 
         <label>
-          封面图（首页轮播卡片 / 列表页使用）
+          封面图（必填，首页轮播卡片 / 列表页使用）
           <span className="field-hint">仅支持图片（jpg / png / webp / gif）。</span>
           <input type="file" accept="image/png,image/jpeg,image/webp,image/gif" onChange={handleCoverChange} />
         </label>
@@ -301,10 +343,42 @@ export default function EventEditor({ mode }: { mode: "create" | "edit" }) {
             ) : (
               <p className="hint">当前为旧的外部视频链接；上传视频文件后会自动替换。</p>
             )}
-            <button type="button" className="btn-link danger" onClick={() => update("videoUrl", "")}>
+            <button
+              type="button"
+              className="btn-link danger"
+              onClick={() => {
+                update("videoUrl", "");
+                clearVideoPoster();
+              }}
+            >
               移除视频
             </button>
           </div>
+        )}
+
+        {form.videoUrl && (
+          <>
+            <label>
+              视频封面图（可选）
+              <span className="field-hint">
+                详情页会先显示这张封面图，访客点击后才开始播放视频。不上传时使用视频第一帧。
+              </span>
+              <input
+                type="file"
+                accept="image/png,image/jpeg,image/webp,image/gif"
+                onChange={handleVideoPosterChange}
+              />
+            </label>
+            {uploadingPoster && <p>封面图上传中…</p>}
+            {videoPosterUrl && (
+              <div>
+                <img src={videoPosterUrl} alt="" className="image-preview" />
+                <button type="button" className="btn-link danger" onClick={clearVideoPoster}>
+                  移除视频封面图
+                </button>
+              </div>
+            )}
+          </>
         )}
 
         <fieldset className="overview-fieldset">

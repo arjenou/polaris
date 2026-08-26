@@ -95,7 +95,7 @@ export default function EventDetailPage({
           <div className={styles.mainRow}>
             <div className={styles.heroWrap}>
               {event.videoUrl ? (
-                <EventVideo url={event.videoUrl} title={event.title} />
+                <EventVideo url={event.videoUrl} title={event.title} poster={event.videoPosterImage} />
               ) : (
                 heroImage && (
                   <Image

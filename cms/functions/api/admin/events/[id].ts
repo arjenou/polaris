@@ -45,6 +45,7 @@ export const onRequestPut: PagesFunction<Env> = async ({ request, env, params })
          locale = ?, slug = ?, title = ?, date = ?, date_range = ?, badge = ?, badge_color = ?, summary = ?,
          cover_image_key = ?, cover_image_width = ?, cover_image_height = ?,
          hero_image_key = ?, hero_image_width = ?, hero_image_height = ?, video_url = ?,
+         video_poster_key = ?, video_poster_width = ?, video_poster_height = ?,
          overview_event_name = ?, overview_datetime = ?, overview_venue = ?, overview_participants = ?, overview_content = ?, overview_organizer = ?,
          gallery = ?, published = ?, scheduled_at = ?, updated_at = datetime('now')
        WHERE id = ?`,
@@ -65,6 +66,9 @@ export const onRequestPut: PagesFunction<Env> = async ({ request, env, params })
         input.heroImageWidth ?? null,
         input.heroImageHeight ?? null,
         input.videoUrl ?? "",
+        input.videoPosterKey ?? null,
+        input.videoPosterWidth ?? null,
+        input.videoPosterHeight ?? null,
         input.overview?.eventName ?? "",
         input.overview?.datetime ?? "",
         input.overview?.venue ?? "",

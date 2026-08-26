@@ -7,3 +7,48 @@
   object-fit: cover;
   background: #000;
 }
+
+/* Sits on the poster until the visitor clicks; disappears once playback starts,
+ * handing the surface back to the native controls. */
+.playOverlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 0;
+  padding: 0;
+  background: rgba(0, 0, 0, 0.15);
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.playOverlay:hover {
+  background: rgba(0, 0, 0, 0.3);
+}
+
+.playIcon {
+  display: block;
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.92);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.25);
+  clip-path: none;
+  position: relative;
+}
+
+.playIcon::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 54%;
+  transform: translate(-50%, -50%);
+  border-style: solid;
+  border-width: 13px 0 13px 22px;
+  border-color: transparent transparent transparent #111;
+}
+
+.playOverlay:hover .playIcon {
+  background: #fff;
+}
