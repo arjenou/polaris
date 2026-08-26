@@ -4,3 +4,4 @@ dist
 migrations-data
 *.tsbuildinfo
 .DS_Store
+.dev.vars
