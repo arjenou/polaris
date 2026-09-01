@@ -18,7 +18,7 @@ function Field({ label, value }: { label: string; value: string }) {
 export default function ContactSubmissionDetail() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
-  const { showToast } = useToast();
+  const { showToast, showSuccessDialog } = useToast();
   const { refresh: refreshUnreadCount } = useContactUnread();
   const [item, setItem] = useState<ContactSubmission | null>(null);
   const [loading, setLoading] = useState(true);
@@ -46,7 +46,7 @@ export default function ContactSubmissionDetail() {
     setDeleting(true);
     try {
       await contactSubmissionsApi.remove(item.id);
-      showToast("删除成功");
+      showSuccessDialog("删除成功");
       navigate("/contact-submissions", { replace: true });
     } catch (err) {
       showToast(err instanceof Error ? err.message : "删除失败", "error");

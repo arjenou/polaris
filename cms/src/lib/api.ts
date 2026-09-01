@@ -59,7 +59,7 @@ export const authApi = {
       body: JSON.stringify({ username, password }),
     }),
   logout: () => request<{ ok: true }>("/api/auth/logout", { method: "POST" }),
-  me: () => request<{ authenticated: boolean; username?: string }>("/api/auth/me"),
+  me: () => request<{ authenticated: boolean; username?: string; isSuperAdmin?: boolean }>("/api/auth/me"),
 };
 
 export interface ContentApi {
@@ -210,6 +210,24 @@ export const contactQrApi = {
     request<ContactQr>(`/api/admin/contact-qr/${type}`, { method: "DELETE" }),
 };
 
+export interface MaintenancePage {
+  imageKey: string | null;
+  imageUrl: string | null;
+  imageWidth: number | null;
+  imageHeight: number | null;
+  updatedAt: string | null;
+}
+
+export const maintenancePageApi = {
+  get: () => request<MaintenancePage>("/api/admin/maintenance-page"),
+  update: (imageKey: string, imageWidth: number | null, imageHeight: number | null) =>
+    request<MaintenancePage>("/api/admin/maintenance-page", {
+      method: "PUT",
+      body: JSON.stringify({ imageKey, imageWidth, imageHeight }),
+    }),
+  remove: () => request<MaintenancePage>("/api/admin/maintenance-page", { method: "DELETE" }),
+};
+
 export type HomeHeroLocale = "ja" | "zh";
 
 export interface HomeHeroHeadline {
@@ -275,6 +293,26 @@ export const pageGalleriesApi = {
       method: "POST",
       body: JSON.stringify({ pageKey, orderedIds }),
     }),
+};
+
+export interface PageMidImage {
+  pageKey: PageGalleryKey;
+  imageKey: string | null;
+  imageUrl: string | null;
+  imageWidth: number | null;
+  imageHeight: number | null;
+  updatedAt: string | null;
+}
+
+export const pageMidImagesApi = {
+  get: (pageKey: PageGalleryKey) => request<PageMidImage>(`/api/admin/page-mid-images/${pageKey}`),
+  update: (pageKey: PageGalleryKey, imageKey: string, imageWidth: number | null, imageHeight: number | null) =>
+    request<PageMidImage>(`/api/admin/page-mid-images/${pageKey}`, {
+      method: "PUT",
+      body: JSON.stringify({ imageKey, imageWidth, imageHeight }),
+    }),
+  remove: (pageKey: PageGalleryKey) =>
+    request<PageMidImage>(`/api/admin/page-mid-images/${pageKey}`, { method: "DELETE" }),
 };
 
 export interface PageAdvantage {

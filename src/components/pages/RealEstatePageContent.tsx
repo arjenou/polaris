@@ -3,6 +3,7 @@ import PageShell from "@/components/layout/PageShell";
 import PageHero from "@/components/pages/PageHero";
 import ServiceStrip from "@/components/pages/ServiceStrip";
 import AdvantageList from "@/components/pages/AdvantageList";
+import PageMidBanner from "@/components/pages/PageMidBanner";
 import PhotoCoverflow from "@/components/pages/PhotoCoverflow";
 import AdvantageListSkeleton from "@/components/pages/AdvantageListSkeleton";
 import PhotoCoverflowSkeleton from "@/components/pages/PhotoCoverflowSkeleton";
@@ -12,6 +13,7 @@ import { realEstate } from "@/data/pages/realEstate";
 import { realEstateZh } from "@/data/pages/realEstate.zh";
 import { getPageGallery } from "@/lib/pageGalleries";
 import { getPageAdvantages } from "@/lib/pageAdvantages";
+import { getPageMidImage } from "@/lib/pageMidImages";
 import type { PageGalleryKey } from "@/lib/pageGalleries";
 
 /** Fetches the CMS-managed advantages + gallery for this page and renders
@@ -28,13 +30,15 @@ async function RealEstateBottomSections({
   galleryTitle: string;
   advantagesTitle: string;
 }) {
-  const [gallery, advantages] = await Promise.all([
+  const [gallery, advantages, midImage] = await Promise.all([
     getPageGallery(pageKey),
     getPageAdvantages(pageKey, locale),
+    getPageMidImage(pageKey),
   ]);
   return (
     <>
       <AdvantageList title={advantagesTitle} items={advantages} />
+      <PageMidBanner image={midImage} />
       <PhotoCoverflow title={galleryTitle} images={gallery} />
     </>
   );

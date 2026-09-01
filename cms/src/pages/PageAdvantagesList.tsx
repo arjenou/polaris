@@ -11,7 +11,7 @@ const PAGE_TABS: { key: PageGalleryKey; label: string }[] = [
 ];
 
 export default function PageAdvantagesList() {
-  const { showToast } = useToast();
+  const { showToast, showSuccessDialog } = useToast();
   const [pageKey, setPageKey] = useState<PageGalleryKey>("real-estate");
   const [locale, setLocale] = useState<"ja" | "zh">("ja");
   const [items, setItems] = useState<PageAdvantage[]>([]);
@@ -36,7 +36,7 @@ export default function PageAdvantagesList() {
     if (!confirm(`确认删除「${item.heading}」？此操作不可撤销。`)) return;
     try {
       await pageAdvantagesApi.remove(pageKey, item.id);
-      showToast("删除成功");
+      showSuccessDialog("删除成功");
       refresh();
     } catch (err) {
       showToast(err instanceof Error ? err.message : "删除失败", "error");
@@ -92,7 +92,7 @@ export default function PageAdvantagesList() {
   return (
     <div>
       <div className="page-header">
-        <h1>私たちが選ばれる理由</h1>
+        <h1>子公司企业优势管理</h1>
       </div>
 
       <p className="hint">

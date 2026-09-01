@@ -1,6 +1,7 @@
 import { useState, type FormEvent } from "react";
 import { Navigate, useNavigate } from "react-router-dom";
 import { useAuth } from "../lib/AuthContext";
+import { getDefaultAdminRoute } from "../lib/adminRoles";
 import { ApiError } from "../lib/api";
 
 export default function Login() {
@@ -10,7 +11,7 @@ export default function Login() {
   const [error, setError] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
 
-  if (!loading && username) return <Navigate to="/news" replace />;
+  if (!loading && username) return <Navigate to={getDefaultAdminRoute(username)} replace />;
 
   async function handleSubmit(e: FormEvent) {
     e.preventDefault();
@@ -18,7 +19,7 @@ export default function Login() {
     setSubmitting(true);
     try {
       await login(form.username, form.password);
-      navigate("/news", { replace: true });
+      navigate(getDefaultAdminRoute(form.username), { replace: true });
     } catch (err) {
       setError(err instanceof ApiError ? err.message : "登录失败");
     } finally {

@@ -14,7 +14,7 @@ function QrCard({ type, label, item, onChange }: {
   item: ContactQr | undefined;
   onChange: () => void;
 }) {
-  const { showToast } = useToast();
+  const { showToast, showSuccessDialog } = useToast();
   const [uploading, setUploading] = useState(false);
 
   async function handleUpload(e: ChangeEvent<HTMLInputElement>) {
@@ -24,7 +24,7 @@ function QrCard({ type, label, item, onChange }: {
     try {
       const res = await mediaApi.upload(file, "contact");
       await contactQrApi.update(type, res.key, res.width, res.height);
-      showToast("上传成功");
+      showSuccessDialog("上传成功");
       onChange();
     } catch (err) {
       showToast(err instanceof Error ? err.message : "上传失败", "error");
@@ -38,7 +38,7 @@ function QrCard({ type, label, item, onChange }: {
     if (!confirm(`确认删除「${label}」？此操作不可撤销。`)) return;
     try {
       await contactQrApi.remove(type);
-      showToast("删除成功");
+      showSuccessDialog("删除成功");
       onChange();
     } catch (err) {
       showToast(err instanceof Error ? err.message : "删除失败", "error");

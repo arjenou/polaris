@@ -17,6 +17,8 @@ export interface NavGroup {
 export interface NavItem {
   label: string;
   href: string;
+  /** Shown on the mega-menu title row when the section is not fully published yet. */
+  comingSoon?: boolean;
   /** Pages that exist but were intentionally kept out of the public nav (kept for parity with the legacy site). */
   hidden?: boolean;
   /** Large banner image shown in the left column of the hover mega-menu, matching the legacy site's dropdown. */
@@ -96,11 +98,12 @@ export const jaNavItems: NavItem[] = [
     href: "/entrepreneurship-support",
     banner: "/images/nav/banner-startup.png",
     brand: "/images/nav/brand-kyoboku.png",
+    comingSoon: true,
     groups: [
       {
         heading: "起業家向け",
         icon: "/images/nav/icon-entrepreneur.png",
-        items: [{ label: "ビザ申請支援" }, { label: "経営コンサル" }],
+        items: [{ label: "経営コンサル" }],
       },
       {
         heading: "税務・労務",
@@ -111,7 +114,6 @@ export const jaNavItems: NavItem[] = [
         heading: "レンタルオフィス",
         icon: "/images/nav/icon-office.png",
         items: [{ label: "賃貸事務所" }],
-        comingSoon: true,
       },
     ],
   },
@@ -120,12 +122,12 @@ export const jaNavItems: NavItem[] = [
     href: "/monthly-magazine",
     banner: "/images/nav/banner-monthly.png",
     brand: "/images/nav/brand-ark-nest.png",
+    comingSoon: true,
     groups: [
       {
         heading: "マンスリーマンションの運営",
         icon: "/images/nav/icon-monthly.png",
         items: [],
-        comingSoon: true,
       },
     ],
   },
@@ -202,11 +204,12 @@ export const zhNavItems: NavItem[] = [
     href: "/zh/entrepreneurship-support",
     banner: "/images/nav/banner-startup.png",
     brand: "/images/nav/brand-kyoboku.png",
+    comingSoon: true,
     groups: [
       {
         heading: "创业者支援",
         icon: "/images/nav/icon-entrepreneur.png",
-        items: [{ label: "签证申请支援" }, { label: "经营咨询" }],
+        items: [{ label: "经营咨询" }],
       },
       {
         heading: "税务・劳务",
@@ -217,7 +220,6 @@ export const zhNavItems: NavItem[] = [
         heading: "共享办公室",
         icon: "/images/nav/icon-office.png",
         items: [{ label: "租赁事务所" }],
-        comingSoon: true,
       },
     ],
   },
@@ -226,12 +228,12 @@ export const zhNavItems: NavItem[] = [
     href: "/zh/monthly-magazine",
     banner: "/images/nav/banner-monthly.png",
     brand: "/images/nav/brand-ark-nest.png",
+    comingSoon: true,
     groups: [
       {
         heading: "短租公寓运营",
         icon: "/images/nav/icon-monthly.png",
         items: [],
-        comingSoon: true,
       },
     ],
   },

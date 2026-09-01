@@ -5,7 +5,7 @@ import { useToast } from "../lib/ToastContext";
 import { SkeletonTableRows } from "../components/Skeleton";
 
 export default function GroupCompaniesList() {
-  const { showToast } = useToast();
+  const { showToast, showSuccessDialog } = useToast();
   const [locale, setLocale] = useState<"ja" | "zh">("ja");
   const [region, setRegion] = useState<GroupCompanyRegion>("domestic");
   const [items, setItems] = useState<GroupCompany[]>([]);
@@ -30,7 +30,7 @@ export default function GroupCompaniesList() {
     if (!confirm(`确认删除「${item.name}」？此操作不可撤销。`)) return;
     try {
       await groupCompaniesApi.remove(item.id);
-      showToast("删除成功");
+      showSuccessDialog("删除成功");
       refresh();
     } catch (err) {
       showToast(err instanceof Error ? err.message : "删除失败", "error");
@@ -93,7 +93,7 @@ export default function GroupCompaniesList() {
   return (
     <div>
       <div className="page-header">
-        <h1>グループ企業紹介</h1>
+        <h1>集团各企业概要</h1>
       </div>
 
       <p className="hint">

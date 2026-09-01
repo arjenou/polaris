@@ -18,7 +18,7 @@ function statusLabel(event: EventItem): string {
 }
 
 export default function EventList() {
-  const { showToast } = useToast();
+  const { showToast, showSuccessDialog } = useToast();
   const [locale, setLocale] = useState<"ja" | "zh">("ja");
   const [events, setEvents] = useState<EventItem[]>([]);
   const [loading, setLoading] = useState(true);
@@ -42,7 +42,7 @@ export default function EventList() {
     if (!confirm(`确认删除「${event.title}」？此操作不可撤销。`)) return;
     try {
       await eventsApi.remove(event.id);
-      showToast("删除成功");
+      showSuccessDialog("删除成功");
       refresh();
     } catch (err) {
       showToast(err instanceof Error ? err.message : "删除失败", "error");

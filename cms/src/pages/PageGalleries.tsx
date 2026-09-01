@@ -1,5 +1,12 @@
 import { useEffect, useState, type ChangeEvent, type DragEvent } from "react";
-import { mediaApi, pageGalleriesApi, type PageGalleryImage, type PageGalleryKey } from "../lib/api";
+import {
+  mediaApi,
+  pageGalleriesApi,
+  pageMidImagesApi,
+  type PageGalleryImage,
+  type PageGalleryKey,
+  type PageMidImage,
+} from "../lib/api";
 import { useToast } from "../lib/ToastContext";
 import { SkeletonGrid } from "../components/Skeleton";
 
@@ -9,20 +16,33 @@ const TABS: { key: PageGalleryKey; label: string }[] = [
   { key: "asset-management", label: "不動産管理" },
 ];
 
+const EMPTY_MID_IMAGE = (pageKey: PageGalleryKey): PageMidImage => ({
+  pageKey,
+  imageKey: null,
+  imageUrl: null,
+  imageWidth: null,
+  imageHeight: null,
+  updatedAt: null,
+});
+
 export default function PageGalleries() {
-  const { showToast } = useToast();
+  const { showToast, showSuccessDialog } = useToast();
   const [pageKey, setPageKey] = useState<PageGalleryKey>("real-estate");
   const [images, setImages] = useState<PageGalleryImage[]>([]);
+  const [midImage, setMidImage] = useState<PageMidImage>(EMPTY_MID_IMAGE("real-estate"));
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [uploading, setUploading] = useState(false);
+  const [uploadingMid, setUploadingMid] = useState(false);
   const [dragIndex, setDragIndex] = useState<number | null>(null);
 
   function refresh() {
     setLoading(true);
-    pageGalleriesApi
-      .list(pageKey)
-      .then(setImages)
+    Promise.all([pageGalleriesApi.list(pageKey), pageMidImagesApi.get(pageKey)])
+      .then(([gallery, mid]) => {
+        setImages(gallery);
+        setMidImage(mid);
+      })
       .catch((err) => setError(err.message))
       .finally(() => setLoading(false));
   }
@@ -40,7 +60,7 @@ export default function PageGalleries() {
         const res = await mediaApi.upload(file, "page-galleries");
         await pageGalleriesApi.add(pageKey, res.key, res.width, res.height);
       }
-      showToast(`已上传 ${files.length} 张图片`);
+      showSuccessDialog(`已上传 ${files.length} 张图片`);
       refresh();
     } catch (err) {
       setError(err instanceof Error ? err.message : "上传失败");
@@ -50,11 +70,40 @@ export default function PageGalleries() {
     }
   }
 
+  async function handleMidUpload(e: ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setUploadingMid(true);
+    setError(null);
+    try {
+      const res = await mediaApi.upload(file, "page-mid-images");
+      const updated = await pageMidImagesApi.update(pageKey, res.key, res.width, res.height);
+      setMidImage(updated);
+      showSuccessDialog("上传成功");
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "上传失败");
+    } finally {
+      setUploadingMid(false);
+      e.target.value = "";
+    }
+  }
+
+  async function handleMidRemove() {
+    if (!confirm("确认删除中间展示图？")) return;
+    try {
+      const updated = await pageMidImagesApi.remove(pageKey);
+      setMidImage(updated);
+      showSuccessDialog("删除成功");
+    } catch (err) {
+      showToast(err instanceof Error ? err.message : "删除失败", "error");
+    }
+  }
+
   async function handleDelete(image: PageGalleryImage) {
     if (!confirm("确认删除这张图片？此操作不可撤销。")) return;
     try {
       await pageGalleriesApi.remove(pageKey, image.id);
-      showToast("删除成功");
+      showSuccessDialog("删除成功");
       refresh();
     } catch (err) {
       showToast(err instanceof Error ? err.message : "删除失败", "error");
@@ -88,11 +137,11 @@ export default function PageGalleries() {
   return (
     <div>
       <div className="page-header">
-        <h1>页面图片管理</h1>
+        <h1>子公司轮播图管理</h1>
       </div>
 
       <p className="hint">
-        管理「不動産取引」「リノベーション」「不動産管理」三个页面最下方的图片轮播。图片在日语/中文页面共用同一组。拖动图片可调整顺序（拖动后自动保存）。
+        管理「不動産取引」「リノベーション」「不動産管理」三个页面：可在「私たちが選ばれる理由」与底部轮播图之间上传一张可选展示图（未上传则前台不显示）；底部轮播图在日语/中文页面共用，拖动可调整顺序（拖动后自动保存）。
       </p>
 
       <div className="tabs">
@@ -103,7 +152,31 @@ export default function PageGalleries() {
         ))}
       </div>
 
+      <div className="panel" style={{ marginBottom: 24 }}>
+        <h2>中间展示图（可选）</h2>
+        <p className="hint">显示在「私たちが選ばれる理由」板块下方、底部轮播图上方。不上传则前台不显示。</p>
+        <label className="upload-label">
+          {midImage.imageUrl ? "重新上传" : "上传图片"}
+          <input
+            type="file"
+            accept="image/png,image/jpeg,image/webp,image/gif"
+            onChange={handleMidUpload}
+            disabled={uploadingMid || loading}
+          />
+        </label>
+        {uploadingMid && <p>上传中…</p>}
+        {midImage.imageUrl && (
+          <div className="mid-image-preview">
+            <img src={midImage.imageUrl} alt="" className="image-preview" />
+            <button type="button" className="btn-link danger" onClick={handleMidRemove}>
+              删除
+            </button>
+          </div>
+        )}
+      </div>
+
       <div className="panel">
+        <h2>底部轮播图</h2>
         <label className="upload-label">
           上传图片（可多选）
           <input

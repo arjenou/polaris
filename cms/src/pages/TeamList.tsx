@@ -5,7 +5,7 @@ import { useToast } from "../lib/ToastContext";
 import { SkeletonTableRows } from "../components/Skeleton";
 
 export default function TeamList() {
-  const { showToast } = useToast();
+  const { showToast, showSuccessDialog } = useToast();
   const [locale, setLocale] = useState<"ja" | "zh">("ja");
   const [members, setMembers] = useState<TeamMember[]>([]);
   const [loading, setLoading] = useState(true);
@@ -31,7 +31,7 @@ export default function TeamList() {
     if (!confirm(`确认删除「${member.lastName}${member.firstName}」？此操作不可撤销。`)) return;
     try {
       await teamApi.remove(member.id);
-      showToast("删除成功");
+      showSuccessDialog("删除成功");
       refresh();
     } catch (err) {
       showToast(err instanceof Error ? err.message : "删除失败", "error");

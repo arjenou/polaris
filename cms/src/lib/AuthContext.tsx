@@ -1,9 +1,11 @@
 import { createContext, useContext, useEffect, useState, type ReactNode } from "react";
 import { authApi } from "./api";
+import { isSuperAdmin } from "./adminRoles";
 
 interface AuthState {
   loading: boolean;
   username: string | null;
+  isSuperAdmin: boolean;
   login: (username: string, password: string) => Promise<void>;
   logout: () => Promise<void>;
 }
@@ -32,7 +34,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setUsername(null);
   }
 
-  return <AuthContext.Provider value={{ loading, username, login, logout }}>{children}</AuthContext.Provider>;
+  return (
+    <AuthContext.Provider value={{ loading, username, isSuperAdmin: isSuperAdmin(username), login, logout }}>
+      {children}
+    </AuthContext.Provider>
+  );
 }
 
 export function useAuth(): AuthState {

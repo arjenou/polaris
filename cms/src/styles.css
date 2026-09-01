@@ -754,6 +754,12 @@ body {
   margin-left: 6px;
 }
 
+.panel-note {
+  color: #8a93a6;
+  font-size: 14px;
+  margin: 0 0 16px;
+}
+
 .editor-form {
   display: flex;
   flex-direction: column;
@@ -1006,6 +1012,14 @@ body {
   object-fit: cover;
   border-radius: 6px;
   background: #111;
+}
+
+.mid-image-preview {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 8px;
+  margin-top: 12px;
 }
 
 .form-error {

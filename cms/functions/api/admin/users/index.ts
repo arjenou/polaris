@@ -1,7 +1,9 @@
 /// <reference types="@cloudflare/workers-types" />
+import { isSuperAdmin, SUPER_ADMIN_USERNAME } from "../../../_lib/adminRoles";
 import type { Env } from "../../../_lib/env";
 import { hashPassword } from "../../../_lib/password";
 import { errorJson, json } from "../../../_lib/response";
+import { requireSession } from "../../../_lib/session";
 
 interface AdminUserRow {
   id: number;
@@ -17,7 +19,9 @@ interface CreateUserBody {
 
 const USERNAME_PATTERN = /^[a-zA-Z0-9_-]{3,32}$/;
 
-export const onRequestGet: PagesFunction<Env> = async ({ env }) => {
+export const onRequestGet: PagesFunction<Env> = async ({ request, env }) => {
+  const session = await requireSession(request, env);
+  if (!session || !isSuperAdmin(session.username)) return errorJson("无权限访问该功能", 403);
   const { results } = await env.DB.prepare(
     "SELECT id, username, created_at, updated_at FROM admin_users ORDER BY created_at ASC",
   ).all<AdminUserRow>();
@@ -33,6 +37,9 @@ export const onRequestGet: PagesFunction<Env> = async ({ env }) => {
 };
 
 export const onRequestPost: PagesFunction<Env> = async ({ request, env }) => {
+  const session = await requireSession(request, env);
+  if (!session || !isSuperAdmin(session.username)) return errorJson("无权限访问该功能", 403);
+
   let body: CreateUserBody;
   try {
     body = await request.json();
@@ -43,6 +50,9 @@ export const onRequestPost: PagesFunction<Env> = async ({ request, env }) => {
   const { username, password } = body;
   if (!username || !USERNAME_PATTERN.test(username)) {
     return errorJson("用户名需为 3-32 位英文字母/数字/下划线/连字符", 400);
+  }
+  if (username === SUPER_ADMIN_USERNAME) {
+    return errorJson("admin 为主账号，不可重复创建", 400);
   }
   if (!password || password.length < 8) {
     return errorJson("密码至少需要 8 位", 400);

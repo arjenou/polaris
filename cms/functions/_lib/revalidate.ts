@@ -9,7 +9,8 @@ export type RevalidateKind =
   | "advantages"
   | "group-companies"
   | "contact"
-  | "home-hero";
+  | "home-hero"
+  | "maintenance-page";
 
 /**
  * Best-effort on-demand revalidation call to the Next.js site so content edits

@@ -1,4 +1,5 @@
 /// <reference types="@cloudflare/workers-types" />
+import { isSuperAdmin } from "../../_lib/adminRoles";
 import type { Env } from "../../_lib/env";
 import { json } from "../../_lib/response";
 import { requireSession } from "../../_lib/session";
@@ -6,5 +7,9 @@ import { requireSession } from "../../_lib/session";
 export const onRequestGet: PagesFunction<Env> = async ({ request, env }) => {
   const session = await requireSession(request, env);
   if (!session) return json({ authenticated: false }, { status: 401 });
-  return json({ authenticated: true, username: session.username });
+  return json({
+    authenticated: true,
+    username: session.username,
+    isSuperAdmin: isSuperAdmin(session.username),
+  });
 };

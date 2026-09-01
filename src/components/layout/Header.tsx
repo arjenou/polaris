@@ -8,7 +8,8 @@ import { jaNavItems, zhNavItems, type NavItem } from "@/data/nav";
 import { site } from "@/data/site";
 import styles from "./Header.module.css";
 
-const comingSoonLabel = { ja: "現在、サイトを準備中です", zh: "网站准备中，敬请期待" } as const;
+const comingSoonShort = { ja: "現在、サイトを準備中です", zh: "网站正在准备中" } as const;
+const comingSoonDetail = { ja: "公開までしばらくお待ちください。", zh: "请稍候正式公开。" } as const;
 
 function ArrowIcon({ className }: { className?: string }) {
   return (
@@ -74,7 +75,8 @@ export default function Header({ locale = "ja" }: { locale?: "ja" | "zh" }) {
   const visibleItems = navItems.filter((item) => !item.hidden);
   const homeHref = locale === "zh" ? "/zh" : "/";
   const contactHref = locale === "zh" ? "/zh/contact" : site.contactHref;
-  const comingSoonText = comingSoonLabel[locale];
+  const comingSoonShortText = comingSoonShort[locale];
+  const comingSoonDetailText = comingSoonDetail[locale];
   const logoSubtitle = locale === "zh" ? site.nameZh : site.name;
   const jaHref = getLocalePath(pathname, "ja");
   const zhHref = getLocalePath(pathname, "zh");
@@ -152,10 +154,18 @@ export default function Header({ locale = "ja" }: { locale?: "ja" | "zh" }) {
 
                   {item.groups && item.groups.length > 0 && (
                     <div className={styles.megaMenu}>
-                      <Link href={item.href} className={styles.megaHeadingRow}>
-                        <span className={styles.megaHeadingText}>{item.label}</span>
-                        <ArrowIcon className={styles.megaHeadingArrow} />
-                      </Link>
+                      <div className={styles.megaHeadingBand}>
+                        <Link href={item.href} className={styles.megaHeadingRow}>
+                          <span className={styles.megaHeadingText}>{item.label}</span>
+                          <ArrowIcon className={styles.megaHeadingArrow} />
+                        </Link>
+                        {item.comingSoon && (
+                          <div className={styles.megaComingSoon}>
+                            <span>{comingSoonShortText}</span>
+                            <span>{comingSoonDetailText}</span>
+                          </div>
+                        )}
+                      </div>
                       <div className={styles.megaMenuInner}>
                         {item.banner && (
                           <Link href={item.href} className={styles.megaBannerImageWrap}>
@@ -206,9 +216,6 @@ export default function Header({ locale = "ja" }: { locale?: "ja" | "zh" }) {
                                   </li>
                                 ))}
                               </ul>
-                            )}
-                            {group.comingSoon && (
-                              <p className={styles.megaComingSoon}>{comingSoonText}</p>
                             )}
                           </div>
                         ))}
@@ -279,6 +286,12 @@ export default function Header({ locale = "ja" }: { locale?: "ja" | "zh" }) {
                         isOpen ? styles.mobileGroupsOpen : ""
                       }`}
                     >
+                      {item.comingSoon && (
+                        <div className={styles.mobileComingSoon}>
+                          <span>{comingSoonShortText}</span>
+                          <span>{comingSoonDetailText}</span>
+                        </div>
+                      )}
                       {item.brand && (
                         <Link href={item.href} className={styles.mobileBrandCard}>
                           <Image
@@ -317,9 +330,6 @@ export default function Header({ locale = "ja" }: { locale?: "ja" | "zh" }) {
                                 </li>
                               ))}
                             </ul>
-                          )}
-                          {group.comingSoon && (
-                            <p className={styles.mobileComingSoon}>{comingSoonText}</p>
                           )}
                         </div>
                       ))}

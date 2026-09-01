@@ -10,7 +10,8 @@ type RevalidateKind =
   | "advantages"
   | "group-companies"
   | "contact"
-  | "home-hero";
+  | "home-hero"
+  | "maintenance-page";
 
 /** Pages (besides the content type's own list/detail pages) that render a
  * card fed by the CMS, and therefore also need revalidating on every change. */
@@ -60,6 +61,11 @@ const PAGES_WITH_CARD: Record<RevalidateKind, { ja: string[]; zh: string[] }> = 
   // "home-hero" is handled directly below (fixed / + /zh paths) — this
   // entry only exists to satisfy the Record type.
   "home-hero": {
+    ja: [],
+    zh: [],
+  },
+  // "maintenance-page" is handled directly below.
+  "maintenance-page": {
     ja: [],
     zh: [],
   },
@@ -114,7 +120,9 @@ export async function POST(request: NextRequest) {
                   ? "contact"
                   : body.kind === "home-hero"
                     ? "home-hero"
-                    : "news";
+                    : body.kind === "maintenance-page"
+                      ? "maintenance-page"
+                      : "news";
 
   if (kind === "contact") {
     const paths = ["/contact", "/zh/contact"];
@@ -126,6 +134,17 @@ export async function POST(request: NextRequest) {
   // always revalidate both homepage paths together on any hero change.
   if (kind === "home-hero") {
     const paths = ["/", "/zh"];
+    for (const path of paths) revalidatePath(path);
+    return NextResponse.json({ revalidated: true, paths });
+  }
+
+  if (kind === "maintenance-page") {
+    const paths = [
+      "/monthly-magazine",
+      "/entrepreneurship-support",
+      "/zh/monthly-magazine",
+      "/zh/entrepreneurship-support",
+    ];
     for (const path of paths) revalidatePath(path);
     return NextResponse.json({ revalidated: true, paths });
   }

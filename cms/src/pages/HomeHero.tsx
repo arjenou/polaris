@@ -59,7 +59,7 @@ function HeadlineForm({ locale, label, value, onSaved }: {
 }
 
 export default function HomeHero() {
-  const { showToast } = useToast();
+  const { showToast, showSuccessDialog } = useToast();
   const [headlines, setHeadlines] = useState<HomeHeroHeadline[]>([]);
   const [headlinesLoading, setHeadlinesLoading] = useState(true);
 
@@ -102,7 +102,7 @@ export default function HomeHero() {
         const res = await mediaApi.upload(file, "home-hero");
         await homeHeroApi.addSlide(res.key, res.width, res.height);
       }
-      showToast(`已上传 ${files.length} 张图片`);
+      showSuccessDialog(`已上传 ${files.length} 张图片`);
       refreshSlides();
     } catch (err) {
       setError(err instanceof Error ? err.message : "上传失败");
@@ -116,7 +116,7 @@ export default function HomeHero() {
     if (!confirm("确认删除这张图片？此操作不可撤销。")) return;
     try {
       await homeHeroApi.removeSlide(slide.id);
-      showToast("删除成功");
+      showSuccessDialog("删除成功");
       refreshSlides();
     } catch (err) {
       showToast(err instanceof Error ? err.message : "删除失败", "error");

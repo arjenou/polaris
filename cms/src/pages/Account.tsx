@@ -1,6 +1,7 @@
 import { useEffect, useState, type FormEvent } from "react";
 import { useNavigate } from "react-router-dom";
 import { ApiError, accountApi, usersApi, type AdminUser } from "../lib/api";
+import { isSuperAdmin, SUPER_ADMIN_USERNAME } from "../lib/adminRoles";
 import { useAuth } from "../lib/AuthContext";
 import { useToast } from "../lib/ToastContext";
 
@@ -62,6 +63,12 @@ export default function Account() {
   async function handleCreateUser(e: FormEvent) {
     e.preventDefault();
     setUsersError(null);
+
+    if (newUser.username === SUPER_ADMIN_USERNAME) {
+      setUsersError("admin 为主账号，不可重复创建");
+      return;
+    }
+
     setCreatingUser(true);
     try {
       await usersApi.create(newUser.username, newUser.password);
@@ -139,6 +146,7 @@ export default function Account() {
 
       <section className="panel">
         <h2>管理员账号</h2>
+        <p className="panel-note">admin 为主账号，拥有全部权限；其他账号仅可查看咨询记录。</p>
 
         {usersError && <p className="form-error">{usersError}</p>}
         {usersLoading ? (
@@ -157,11 +165,14 @@ export default function Account() {
                 <tr key={user.id}>
                   <td>
                     {user.username}
-                    {user.username === currentUsername && <span className="badge-me">（我）</span>}
+                    {user.username === SUPER_ADMIN_USERNAME && <span className="badge-me">（主账号）</span>}
+                    {user.username === currentUsername && user.username !== SUPER_ADMIN_USERNAME && (
+                      <span className="badge-me">（我）</span>
+                    )}
                   </td>
                   <td>{user.createdAt}</td>
                   <td className="table-actions">
-                    {user.username !== currentUsername && (
+                    {user.username !== currentUsername && !isSuperAdmin(user.username) && (
                       <button className="btn-link danger" onClick={() => handleDeleteUser(user)}>
                         删除
                       </button>
