@@ -2,7 +2,7 @@
 import type { Env } from "../../../_lib/env";
 import { errorJson, json } from "../../../_lib/response";
 import { triggerRevalidate } from "../../../_lib/revalidate";
-import { toTagsJson, toTeamApiShape, validateTeamMember, type TeamMemberInput, type TeamMemberRow } from "../../../_lib/team";
+import { toTagsJson, toTeamApiShape, validateTeamMember, applyTeamPresident, type TeamMemberInput, type TeamMemberRow } from "../../../_lib/team";
 
 export const onRequestGet: PagesFunction<Env> = async ({ request, env, params }) => {
   const id = Number(params.id);
@@ -36,7 +36,7 @@ export const onRequestPut: PagesFunction<Env> = async ({ request, env, params })
     `UPDATE team_members SET
        locale = ?, last_name = ?, first_name = ?, last_name_kana = ?, first_name_kana = ?,
        department = ?, position = ?, description = ?, tags = ?, languages = ?,
-       image_key = ?, image_width = ?, image_height = ?, published = ?, updated_at = datetime('now')
+       image_key = ?, image_width = ?, image_height = ?, is_president = ?, published = ?, updated_at = datetime('now')
      WHERE id = ?`,
   )
     .bind(
@@ -53,10 +53,15 @@ export const onRequestPut: PagesFunction<Env> = async ({ request, env, params })
       input.imageKey ?? null,
       input.imageWidth ?? null,
       input.imageHeight ?? null,
+      input.isPresident ? 1 : 0,
       input.published === false ? 0 : 1,
       id,
     )
     .run();
+
+  if (input.isPresident) {
+    await applyTeamPresident(env, input.locale!, id);
+  }
 
   const row = await env.DB.prepare("SELECT * FROM team_members WHERE id = ?").bind(id).first<TeamMemberRow>();
   if (!row) return errorJson("未找到该社员", 404);

@@ -14,7 +14,7 @@ function HeadlineForm({ locale, label, value, onSaved }: {
   value: string;
   onSaved: (headline: string) => void;
 }) {
-  const { showToast } = useToast();
+  const { showToast, showSuccessDialog } = useToast();
   const [text, setText] = useState(value);
   const [saving, setSaving] = useState(false);
 
@@ -32,7 +32,7 @@ function HeadlineForm({ locale, label, value, onSaved }: {
     try {
       const updated = await homeHeroApi.updateHeadline(locale, text);
       onSaved(updated.headline);
-      showToast("保存成功");
+      showSuccessDialog("保存成功");
     } catch (err) {
       showToast(err instanceof Error ? err.message : "保存失败", "error");
     } finally {

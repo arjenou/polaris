@@ -13,7 +13,7 @@ function parseJsonArray(value: string): string[] {
 }
 
 /** Public read-only endpoint consumed by the homepage team carousel.
- * GET ?locale=ja -> published members, ordered by admin-managed sort_order. */
+ * GET ?locale=ja -> published members; president flag included for client-side ordering. */
 export const onRequestGet: PagesFunction<Env> = async ({ request, env }) => {
   const url = new URL(request.url);
   const locale = url.searchParams.get("locale");
@@ -43,6 +43,7 @@ export const onRequestGet: PagesFunction<Env> = async ({ request, env }) => {
       image: row.image_key ? `${url.origin}/media/${row.image_key}` : null,
       imageWidth: row.image_width ?? 400,
       imageHeight: row.image_height ?? 500,
+      isPresident: Boolean(row.is_president),
     })),
     {},
     PUBLIC_CORS_HEADERS,

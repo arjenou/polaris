@@ -7,7 +7,7 @@ import { useToast } from "../lib/ToastContext";
 export default function Account() {
   const { username: currentUsername } = useAuth();
   const navigate = useNavigate();
-  const { showToast } = useToast();
+  const { showToast, showSuccessDialog } = useToast();
 
   const [passwordForm, setPasswordForm] = useState({ currentPassword: "", newPassword: "", confirmPassword: "" });
   const [passwordError, setPasswordError] = useState<string | null>(null);
@@ -46,11 +46,11 @@ export default function Account() {
     setChangingPassword(true);
     try {
       await accountApi.changePassword(passwordForm.currentPassword, passwordForm.newPassword);
-      showToast("密码已修改，请重新登录");
-      setTimeout(() => {
+      setChangingPassword(false);
+      showSuccessDialog("密码已修改，请重新登录", () => {
         navigate("/login", { replace: true });
         window.location.reload();
-      }, 1200);
+      });
     } catch (err) {
       const message = err instanceof ApiError ? err.message : "修改失败";
       setPasswordError(message);
@@ -66,7 +66,7 @@ export default function Account() {
     try {
       await usersApi.create(newUser.username, newUser.password);
       setNewUser({ username: "", password: "" });
-      showToast("账号创建成功");
+      showSuccessDialog("账号创建成功");
       refreshUsers();
     } catch (err) {
       const message = err instanceof ApiError ? err.message : "创建失败";

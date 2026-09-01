@@ -136,6 +136,7 @@ export interface TeamMember {
   imageWidth: number | null;
   imageHeight: number | null;
   sortOrder: number;
+  isPresident: boolean;
   published: boolean;
   submissionCount: number;
   createdAt: string;
@@ -157,6 +158,11 @@ export const teamApi = {
   remove: (id: number) => request<{ ok: true }>(`/api/admin/team/${id}`, { method: "DELETE" }),
   reorder: (locale: "ja" | "zh", orderedIds: number[]) =>
     request<{ ok: true }>("/api/admin/team/reorder", { method: "POST", body: JSON.stringify({ locale, orderedIds }) }),
+  setPresident: (locale: "ja" | "zh", memberId: number | null) =>
+    request<{ ok: true }>("/api/admin/team/president", {
+      method: "POST",
+      body: JSON.stringify({ locale, memberId }),
+    }),
 };
 
 export interface ContactSubmission {
@@ -471,6 +477,7 @@ export interface EventItem {
   gallery: EventGalleryImage[];
   published: boolean;
   scheduledAt: string | null;
+  sortOrder: number;
   createdAt: string;
   updatedAt: string;
 }
@@ -482,6 +489,7 @@ export type EventInput = Omit<
   | "heroImageUrl"
   | "videoPosterUrl"
   | "gallery"
+  | "sortOrder"
   | "createdAt"
   | "updatedAt"
 > & { gallery: string[] };
@@ -494,4 +502,9 @@ export const eventsApi = {
   update: (id: number, input: EventInput) =>
     request<EventItem>(`/api/admin/events/${id}`, { method: "PUT", body: JSON.stringify(input) }),
   remove: (id: number) => request<{ ok: true }>(`/api/admin/events/${id}`, { method: "DELETE" }),
+  reorder: (locale: "ja" | "zh", orderedIds: number[]) =>
+    request<{ ok: true }>("/api/admin/events/reorder", {
+      method: "POST",
+      body: JSON.stringify({ locale, orderedIds }),
+    }),
 };

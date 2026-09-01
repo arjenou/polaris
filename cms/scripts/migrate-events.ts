@@ -272,7 +272,7 @@ function uploadImage(publicImagePath: string): { key: string; width: number; hei
 function main() {
   const statements: string[] = [];
 
-  for (const event of EVENTS) {
+  for (const [eventIndex, event] of EVENTS.entries()) {
     const cover = uploadImage(event.coverPublicPath);
     const galleryKeys = (event.galleryPublicPaths ?? [])
       .map((p) => uploadImage(p))
@@ -306,10 +306,11 @@ function main() {
         `'${sqlEscape(overview.organizer)}'`,
         `'${toGalleryJson(galleryKeys)}'`,
         "1",
+        String(eventIndex),
       ].join(", ");
 
       statements.push(
-        `INSERT INTO events (locale, slug, title, date, date_range, badge, badge_color, summary, cover_image_key, cover_image_width, cover_image_height, hero_image_key, hero_image_width, hero_image_height, video_url, overview_event_name, overview_datetime, overview_venue, overview_participants, overview_content, overview_organizer, gallery, published) VALUES (${values});`,
+        `INSERT INTO events (locale, slug, title, date, date_range, badge, badge_color, summary, cover_image_key, cover_image_width, cover_image_height, hero_image_key, hero_image_width, hero_image_height, video_url, overview_event_name, overview_datetime, overview_venue, overview_participants, overview_content, overview_organizer, gallery, published, sort_order) VALUES (${values});`,
       );
     }
   }

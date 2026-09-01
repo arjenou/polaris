@@ -16,8 +16,8 @@ export const onRequestGet: PagesFunction<Env> = async ({ request, env }) => {
   const locale = url.searchParams.get("locale");
 
   const stmt = locale
-    ? env.DB.prepare("SELECT * FROM events WHERE locale = ? ORDER BY date DESC").bind(locale)
-    : env.DB.prepare("SELECT * FROM events ORDER BY date DESC");
+    ? env.DB.prepare("SELECT * FROM events WHERE locale = ? ORDER BY sort_order ASC").bind(locale)
+    : env.DB.prepare("SELECT * FROM events ORDER BY locale, sort_order ASC");
 
   const { results } = await stmt.all<EventRow>();
   return json((results ?? []).map((row) => toEventApiShape(row, url.origin)));
@@ -34,6 +34,11 @@ export const onRequestPost: PagesFunction<Env> = async ({ request, env }) => {
   const validationError = validateEvent(input);
   if (validationError) return errorJson(validationError, 400);
 
+  const maxOrder = await env.DB.prepare("SELECT MAX(sort_order) as maxOrder FROM events WHERE locale = ?")
+    .bind(input.locale)
+    .first<{ maxOrder: number | null }>();
+  const nextOrder = (maxOrder?.maxOrder ?? -1) + 1;
+
   try {
     const result = await env.DB.prepare(
       `INSERT INTO events
@@ -42,8 +47,8 @@ export const onRequestPost: PagesFunction<Env> = async ({ request, env }) => {
           hero_image_key, hero_image_width, hero_image_height, video_url,
           video_poster_key, video_poster_width, video_poster_height,
           overview_event_name, overview_datetime, overview_venue, overview_participants, overview_content, overview_organizer,
-          gallery, published, scheduled_at, updated_at)
-       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, datetime('now'))`,
+          gallery, published, scheduled_at, sort_order, updated_at)
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, datetime('now'))`,
     )
       .bind(
         input.locale,
@@ -73,6 +78,7 @@ export const onRequestPost: PagesFunction<Env> = async ({ request, env }) => {
         toGalleryJson(input.gallery),
         input.published === false ? 0 : 1,
         resolveEventScheduledAt(input),
+        nextOrder,
       )
       .run();
 

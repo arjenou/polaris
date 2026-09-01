@@ -1,4 +1,4 @@
-import { useEffect, useState, type DragEvent } from "react";
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { teamApi, type TeamMember } from "../lib/api";
 import { useToast } from "../lib/ToastContext";
@@ -10,8 +10,8 @@ export default function TeamList() {
   const [members, setMembers] = useState<TeamMember[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [dragIndex, setDragIndex] = useState<number | null>(null);
   const [updatingId, setUpdatingId] = useState<number | null>(null);
+  const [updatingPresident, setUpdatingPresident] = useState(false);
 
   function refresh() {
     setLoading(true);
@@ -24,6 +24,8 @@ export default function TeamList() {
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(refresh, [locale]);
+
+  const president = members.find((member) => member.isPresident);
 
   async function handleDelete(member: TeamMember) {
     if (!confirm(`确认删除「${member.lastName}${member.firstName}」？此操作不可撤销。`)) return;
@@ -53,6 +55,7 @@ export default function TeamList() {
         imageKey: member.imageKey,
         imageWidth: member.imageWidth,
         imageHeight: member.imageHeight,
+        isPresident: member.isPresident,
         published,
       });
       setMembers((current) => current.map((item) => (item.id === member.id ? updated : item)));
@@ -64,27 +67,24 @@ export default function TeamList() {
     }
   }
 
-  function handleDragOver(e: DragEvent, index: number) {
-    e.preventDefault();
-    if (dragIndex === null || dragIndex === index) return;
-    setMembers((prev) => {
-      const next = [...prev];
-      const [moved] = next.splice(dragIndex, 1);
-      next.splice(index, 0, moved);
-      return next;
-    });
-    setDragIndex(index);
-  }
-
-  async function handleDragEnd() {
-    if (dragIndex === null) return;
-    setDragIndex(null);
+  async function handlePresidentChange(memberId: string) {
+    const nextId = memberId ? Number(memberId) : null;
+    if (nextId === president?.id) return;
+    setUpdatingPresident(true);
     try {
-      await teamApi.reorder(locale, members.map((m) => m.id));
-      showToast("排序已保存");
+      await teamApi.setPresident(locale, nextId);
+      setMembers((current) =>
+        current.map((member) => ({
+          ...member,
+          isPresident: nextId !== null && member.id === nextId,
+        })),
+      );
+      showToast(nextId ? "已设为社长" : "已取消社长设置");
     } catch (err) {
-      showToast(err instanceof Error ? err.message : "排序保存失败", "error");
+      showToast(err instanceof Error ? err.message : "社长设置失败", "error");
       refresh();
+    } finally {
+      setUpdatingPresident(false);
     }
   }
 
@@ -108,12 +108,31 @@ export default function TeamList() {
         </Link>
       </div>
 
-      <p className="hint">拖动左侧手柄可调整首页轮播中的显示顺序（拖动后自动保存）。</p>
+      <p className="hint">
+        每个语言页面只能设置一位社长；社长在首页轮播中间首位固定展示，其余社员每次访问随机排序。
+      </p>
+
+      <div className="president-picker">
+        <label>
+          社长
+          <select
+            value={president?.id ?? ""}
+            disabled={loading || updatingPresident || members.length === 0}
+            onChange={(e) => handlePresidentChange(e.target.value)}
+          >
+            <option value="">— 未设置 —</option>
+            {members.map((member) => (
+              <option key={member.id} value={member.id}>
+                {member.lastName}{member.firstName}
+              </option>
+            ))}
+          </select>
+        </label>
+      </div>
 
       {error && <p className="form-error">{error}</p>}
       <table className="data-table team-table">
         <colgroup>
-          <col className="col-drag" />
           <col className="col-avatar" />
           <col className="col-name" />
           <col className="col-role" />
@@ -124,7 +143,6 @@ export default function TeamList() {
         </colgroup>
         <thead>
           <tr>
-            <th />
             <th>头像</th>
             <th>姓名</th>
             <th>部门 / 职位</th>
@@ -136,23 +154,11 @@ export default function TeamList() {
         </thead>
         <tbody>
           {loading ? (
-            <SkeletonTableRows
-              columns={["drag", "thumb", "text-block", "text-block", "badge", "badge", "badge", "actions"]}
-            />
+            <SkeletonTableRows columns={["thumb", "text-block", "text-block", "badge", "badge", "badge", "actions"]} />
           ) : (
             <>
-            {members.map((member, index) => (
-              <tr
-                key={member.id}
-                draggable
-                onDragStart={() => setDragIndex(index)}
-                onDragOver={(e) => handleDragOver(e, index)}
-                onDragEnd={handleDragEnd}
-                className={dragIndex === index ? "dragging-row" : ""}
-              >
-                <td className="drag-handle" title="拖动排序">
-                  ⠿
-                </td>
+            {members.map((member) => (
+              <tr key={member.id}>
                 <td>
                   {member.imageUrl ? (
                     <img src={member.imageUrl} alt="" className="avatar-thumb" />
@@ -163,6 +169,7 @@ export default function TeamList() {
                 <td>
                   <div className="member-name">
                     {member.lastName} {member.firstName}
+                    {member.isPresident && <span className="president-badge">社长</span>}
                   </div>
                   {(member.lastNameKana || member.firstNameKana) && (
                     <div className="member-kana">
@@ -189,8 +196,6 @@ export default function TeamList() {
                     value={member.published ? "visible" : "hidden"}
                     disabled={updatingId === member.id}
                     aria-label={`设置「${member.lastName}${member.firstName}」的显示状态`}
-                    onMouseDown={(e) => e.stopPropagation()}
-                    onClick={(e) => e.stopPropagation()}
                     onChange={(e) => handleVisibilityChange(member, e.target.value === "visible")}
                   >
                     <option value="visible">显示</option>
@@ -210,7 +215,7 @@ export default function TeamList() {
             ))}
             {members.length === 0 && (
               <tr>
-                <td colSpan={8} className="empty-row">
+                <td colSpan={7} className="empty-row">
                   暂无数据
                 </td>
               </tr>

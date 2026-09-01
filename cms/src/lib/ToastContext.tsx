@@ -10,7 +10,7 @@ interface ToastItem {
 
 interface ToastContextValue {
   showToast: (message: string, type?: ToastType) => void;
-  showSuccessDialog: (message: string) => void;
+  showSuccessDialog: (message: string, onConfirm?: () => void) => void;
 }
 
 const ToastContext = createContext<ToastContextValue | null>(null);
@@ -20,6 +20,7 @@ const TOAST_DURATION_MS = 2500;
 export function ToastProvider({ children }: { children: ReactNode }) {
   const [toasts, setToasts] = useState<ToastItem[]>([]);
   const [dialogMessage, setDialogMessage] = useState<string | null>(null);
+  const dialogOnConfirmRef = useRef<(() => void) | undefined>(undefined);
   const nextId = useRef(0);
 
   const showToast = useCallback((message: string, type: ToastType = "success") => {
@@ -30,12 +31,16 @@ export function ToastProvider({ children }: { children: ReactNode }) {
     }, TOAST_DURATION_MS);
   }, []);
 
-  const showSuccessDialog = useCallback((message: string) => {
+  const showSuccessDialog = useCallback((message: string, onConfirm?: () => void) => {
+    dialogOnConfirmRef.current = onConfirm;
     setDialogMessage(message);
   }, []);
 
   const closeDialog = useCallback(() => {
     setDialogMessage(null);
+    const onConfirm = dialogOnConfirmRef.current;
+    dialogOnConfirmRef.current = undefined;
+    onConfirm?.();
   }, []);
 
   return (

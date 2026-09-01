@@ -212,14 +212,14 @@ export default function EventEditor({ mode }: { mode: "create" | "edit" }) {
     setError(null);
     const payload: EventInput = { ...form, gallery: galleryItems.map((item) => item.key) };
     try {
+      const goToList = () => navigate("/events");
       if (mode === "create") {
         const slug = generateSlug(form.title, form.date);
-        const created = await eventsApi.create({ ...payload, slug });
-        showSuccessDialog("创建成功");
-        navigate(`/events/${created.id}/edit`, { replace: true });
+        await eventsApi.create({ ...payload, slug });
+        showSuccessDialog("创建成功", goToList);
       } else {
         await eventsApi.update(Number(id), payload);
-        showSuccessDialog("保存成功");
+        showSuccessDialog("保存成功", goToList);
       }
     } catch (err) {
       const message = err instanceof Error ? err.message : "保存失败";
@@ -326,7 +326,9 @@ export default function EventEditor({ mode }: { mode: "create" | "edit" }) {
         <label>
           详情图 / 视频（可选，详情页顶部展示）
           <span className="field-hint">
-            可上传图片或视频。上传视频后详情页会直接播放（MP4 / WebM / OGG，最大 100MB）；上传图片则显示该图。都不上传时使用封面图。
+            可上传图片或视频。上传视频后详情页左侧按 <strong>16:9</strong> 固定比例展示（推荐分辨率
+            <strong> 1920×1080</strong>），竖屏视频会被裁切；右侧显示「开催概要」。支持 MP4 / WebM / OGG，最大
+            100MB。上传图片则显示该图，都不上传时使用封面图。
           </span>
           <input
             type="file"
@@ -361,7 +363,8 @@ export default function EventEditor({ mode }: { mode: "create" | "edit" }) {
             <label>
               视频封面图（可选）
               <span className="field-hint">
-                详情页会先显示这张封面图，访客点击后才开始播放视频。不上传时使用视频第一帧。
+                详情页会先显示这张封面图，访客点击后才开始播放视频。建议比例 <strong>16:9</strong>（如
+                <strong> 1920×1080</strong>），与视频展示区域一致。不上传时使用视频第一帧。
               </span>
               <input
                 type="file"

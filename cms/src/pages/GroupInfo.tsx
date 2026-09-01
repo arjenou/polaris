@@ -44,7 +44,7 @@ function ContentForm({
   content: GroupInfoContent;
   onSaved: (content: GroupInfoContent) => void;
 }) {
-  const { showToast } = useToast();
+  const { showToast, showSuccessDialog } = useToast();
   const [form, setForm] = useState<GroupInfoContentInput>(toFormInput(content));
   const [introText, setIntroText] = useState(content.intro.join("\n\n"));
   const [saving, setSaving] = useState(false);
@@ -74,7 +74,7 @@ function ContentForm({
     try {
       const updated = await groupInfoApi.updateContent(locale, { ...form, intro });
       onSaved(updated);
-      showToast("保存成功");
+      showSuccessDialog("保存成功");
     } catch (err) {
       showToast(err instanceof Error ? err.message : "保存失败", "error");
     } finally {

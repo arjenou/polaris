@@ -20,7 +20,7 @@ function toMediaUrl(origin: string, key: string | null): string | null {
 
 /** Public read-only endpoint consumed by the homepage carousel, the events
  * list pages, and the event detail pages.
- * GET ?locale=ja            -> published event cards, newest first
+ * GET ?locale=ja            -> published event cards, admin-managed order
  * GET ?locale=ja&slug=xxx   -> single published event with full detail
  */
 export const onRequestGet: PagesFunction<Env> = async ({ request, env }) => {
@@ -75,7 +75,7 @@ export const onRequestGet: PagesFunction<Env> = async ({ request, env }) => {
   }
 
   const { results } = await env.DB.prepare(
-    `SELECT * FROM events WHERE locale = ? AND ${EFFECTIVELY_PUBLISHED} ORDER BY date DESC`,
+    `SELECT * FROM events WHERE locale = ? AND ${EFFECTIVELY_PUBLISHED} ORDER BY sort_order ASC`,
   )
     .bind(locale)
     .all<EventRow>();

@@ -74,13 +74,13 @@ export default function PageAdvantageEditor({ mode }: { mode: "create" | "edit" 
     setSaving(true);
     setError(null);
     try {
+      const goToList = () => navigate("/page-advantages");
       if (mode === "create") {
-        const created = await pageAdvantagesApi.create(pageKey, form);
-        showSuccessDialog("创建成功");
-        navigate(`/page-advantages/${pageKey}/${form.locale}/${created.id}/edit`, { replace: true });
+        await pageAdvantagesApi.create(pageKey, form);
+        showSuccessDialog("创建成功", goToList);
       } else if (id) {
         await pageAdvantagesApi.update(pageKey, Number(id), form);
-        showSuccessDialog("保存成功");
+        showSuccessDialog("保存成功", goToList);
       }
     } catch (err) {
       const message = err instanceof Error ? err.message : "保存失败";

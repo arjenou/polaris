@@ -2,7 +2,7 @@
 import type { Env } from "../../../_lib/env";
 import { errorJson, json } from "../../../_lib/response";
 import { triggerRevalidate } from "../../../_lib/revalidate";
-import { toTagsJson, toTeamApiShape, validateTeamMember, type TeamMemberInput, type TeamMemberRow } from "../../../_lib/team";
+import { toTagsJson, toTeamApiShape, validateTeamMember, applyTeamPresident, type TeamMemberInput, type TeamMemberRow } from "../../../_lib/team";
 
 interface TeamMemberRowWithCount extends TeamMemberRow {
   submission_count: number;
@@ -45,8 +45,8 @@ export const onRequestPost: PagesFunction<Env> = async ({ request, env }) => {
   const result = await env.DB.prepare(
     `INSERT INTO team_members
        (locale, last_name, first_name, last_name_kana, first_name_kana, department, position, description,
-        tags, languages, image_key, image_width, image_height, sort_order, published, updated_at)
-     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, datetime('now'))`,
+        tags, languages, image_key, image_width, image_height, sort_order, is_president, published, updated_at)
+     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, datetime('now'))`,
   )
     .bind(
       input.locale,
@@ -63,11 +63,15 @@ export const onRequestPost: PagesFunction<Env> = async ({ request, env }) => {
       input.imageWidth ?? null,
       input.imageHeight ?? null,
       nextOrder,
+      input.isPresident ? 1 : 0,
       input.published === false ? 0 : 1,
     )
     .run();
 
   const id = result.meta.last_row_id;
+  if (input.isPresident) {
+    await applyTeamPresident(env, input.locale!, id);
+  }
   const row = await env.DB.prepare("SELECT * FROM team_members WHERE id = ?").bind(id).first<TeamMemberRow>();
   await triggerRevalidate(env, { kind: "team", locale: input.locale! });
   return json(toTeamApiShape(row!, new URL(request.url).origin, 0), { status: 201 });

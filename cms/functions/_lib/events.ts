@@ -30,6 +30,7 @@ export interface EventRow {
   gallery: string;
   published: number;
   scheduled_at: string | null;
+  sort_order: number;
   created_at: string;
   updated_at: string;
 }
@@ -120,6 +121,7 @@ export function toEventApiShape(row: EventRow, origin: string) {
     gallery: parseGallery(row.gallery).map((key) => ({ key, url: toMediaUrl(origin, key) })),
     published: Boolean(row.published),
     scheduledAt: fromSqliteDatetime(row.scheduled_at),
+    sortOrder: row.sort_order,
     createdAt: row.created_at,
     updatedAt: row.updated_at,
   };

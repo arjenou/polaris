@@ -1,12 +1,29 @@
 "use client";
 
 import Image from "next/image";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useLayoutEffect, useMemo, useState } from "react";
 import type { TeamMemberCard } from "@/lib/team";
 import styles from "./TeamCarousel.module.css";
 
 function mod(n: number, m: number) {
   return ((n % m) + m) % m;
+}
+
+function shuffle<T>(items: T[]): T[] {
+  const next = [...items];
+  for (let i = next.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [next[i], next[j]] = [next[j], next[i]];
+  }
+  return next;
+}
+
+/** President is always index 0 (carousel center); other members are shuffled per page load. */
+function orderMembersForCarousel(members: TeamMemberCard[]): TeamMemberCard[] {
+  if (members.length === 0) return [];
+  const president = members.find((member) => member.isPresident);
+  const others = members.filter((member) => !member.isPresident);
+  return president ? [president, ...shuffle(others)] : shuffle(others);
 }
 
 const AUTOPLAY_INTERVAL_MS = 3000;
@@ -41,18 +58,26 @@ export default function TeamCarousel({
   contactHref?: string;
   labels?: TeamCarouselLabels;
 }) {
+  const [displayMembers, setDisplayMembers] = useState<TeamMemberCard[]>(members);
+  const [orderReady, setOrderReady] = useState(false);
   const [activeIndex, setActiveIndex] = useState(0);
   const [modalMember, setModalMember] = useState<TeamMemberCard | null>(null);
   const [isPaused, setIsPaused] = useState(false);
-  const total = members.length;
+  const total = displayMembers.length;
+
+  useLayoutEffect(() => {
+    setDisplayMembers(orderMembersForCarousel(members));
+    setActiveIndex(0);
+    setOrderReady(true);
+  }, [members]);
 
   const visible = useMemo(() => {
     if (total === 0) return null;
-    const prev = members[mod(activeIndex - 1, total)];
-    const active = members[activeIndex];
-    const next = members[mod(activeIndex + 1, total)];
+    const prev = displayMembers[mod(activeIndex - 1, total)];
+    const active = displayMembers[activeIndex];
+    const next = displayMembers[mod(activeIndex + 1, total)];
     return { prev, active, next };
-  }, [activeIndex, total, members]);
+  }, [activeIndex, total, displayMembers]);
 
   const goPrev = () => setActiveIndex((i) => mod(i - 1, total));
   const goNext = () => setActiveIndex((i) => mod(i + 1, total));
@@ -73,7 +98,7 @@ export default function TeamCarousel({
     `${contactHref}?member=${member.id}`;
 
   return (
-    <section className={styles.section}>
+    <section className={styles.section} style={{ opacity: orderReady ? 1 : 0 }}>
       <div className={styles.inner}>
         <div className={styles.header}>
           <span className={styles.teamLabel}>TEAM</span>

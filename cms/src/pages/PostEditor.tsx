@@ -101,14 +101,14 @@ export default function PostEditor({ resource, mode }: { resource: ContentTypeKe
     setSaving(true);
     setError(null);
     try {
+      const goToList = () => navigate(config.basePath);
       if (mode === "create") {
         const slug = generateSlug(form.title, form.date);
-        const created = await config.api.create({ ...form, slug });
-        showSuccessDialog("创建成功");
-        navigate(`${config.basePath}/${created.id}/edit`, { replace: true });
+        await config.api.create({ ...form, slug });
+        showSuccessDialog("创建成功", goToList);
       } else {
         await config.api.update(Number(id), form);
-        showSuccessDialog("保存成功");
+        showSuccessDialog("保存成功", goToList);
       }
     } catch (err) {
       const message = err instanceof Error ? err.message : "保存失败";

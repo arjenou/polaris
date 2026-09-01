@@ -41,13 +41,13 @@ export default function GroupTimelineEditor({ mode }: { mode: "create" | "edit" 
     setSaving(true);
     setError(null);
     try {
+      const goToList = () => navigate("/group-timeline");
       if (mode === "create") {
         await groupInfoApi.createTimelineEntry(form);
-        showSuccessDialog("创建成功");
-        navigate(`/group-timeline`);
+        showSuccessDialog("创建成功", goToList);
       } else if (id) {
         await groupInfoApi.updateTimelineEntry(Number(id), form);
-        showSuccessDialog("保存成功");
+        showSuccessDialog("保存成功", goToList);
       }
     } catch (err) {
       const message = err instanceof Error ? err.message : "保存失败";

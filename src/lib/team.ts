@@ -1,8 +1,8 @@
 import type { PostLocale } from "./posts";
 
 // Content is managed via the Polaris CMS (Cloudflare Pages + D1 + R2). See /cms.
-// Unlike news/recommended, ja/zh team members are independent content, and
-// display order is admin-managed (sort_order) instead of sorted by date.
+// Unlike news/recommended, ja/zh team members are independent content.
+// Homepage carousel order: president first (center), others randomized per visit.
 const CMS_API_URL = process.env.CMS_API_URL ?? "https://polaris.api.yingmu-tech.com";
 
 const REVALIDATE_SECONDS = 300;
@@ -21,6 +21,7 @@ export interface TeamMemberCard {
   image: string | null;
   imageWidth: number;
   imageHeight: number;
+  isPresident: boolean;
 }
 
 export async function getTeamMembers(locale: PostLocale): Promise<TeamMemberCard[]> {

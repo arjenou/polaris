@@ -57,6 +57,15 @@ export default function EventDetailPage({
 }) {
   const heroImage = event.heroImage ?? event.image;
   const overview = event.overview;
+  const showOverviewPanel = Boolean(event.videoUrl || overview);
+  const overviewData = overview ?? {
+    eventName: "",
+    datetime: "",
+    venue: "",
+    participants: "",
+    content: "",
+    organizer: "",
+  };
 
   return (
     <>
@@ -110,33 +119,33 @@ export default function EventDetailPage({
               )}
             </div>
 
-            {overview && (
+            {showOverviewPanel && (
               <div className={styles.overviewBox}>
                 <h2 className={styles.overviewTitle}>{labels.overviewTitle}</h2>
                 <dl className={styles.overviewList}>
                   <div className={styles.overviewRow}>
                     <dt>{labels.overview.eventName}</dt>
-                    <dd>{overview.eventName}</dd>
+                    <dd>{overviewData.eventName || "—"}</dd>
                   </div>
                   <div className={styles.overviewRow}>
                     <dt>{labels.overview.datetime}</dt>
-                    <dd>{overview.datetime}</dd>
+                    <dd>{overviewData.datetime || "—"}</dd>
                   </div>
                   <div className={styles.overviewRow}>
                     <dt>{labels.overview.venue}</dt>
-                    <dd>{overview.venue}</dd>
+                    <dd>{overviewData.venue || "—"}</dd>
                   </div>
                   <div className={styles.overviewRow}>
                     <dt>{labels.overview.participants}</dt>
-                    <dd>{overview.participants}</dd>
+                    <dd>{overviewData.participants || "—"}</dd>
                   </div>
                   <div className={styles.overviewRow}>
                     <dt>{labels.overview.content}</dt>
-                    <dd>{overview.content}</dd>
+                    <dd>{overviewData.content || "—"}</dd>
                   </div>
                   <div className={styles.overviewRow}>
                     <dt>{labels.overview.organizer}</dt>
-                    <dd>{overview.organizer}</dd>
+                    <dd>{overviewData.organizer || "—"}</dd>
                   </div>
                 </dl>
               </div>

@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, type DragEvent } from "react";
 import { Link } from "react-router-dom";
 import { eventsApi, type EventInput, type EventItem } from "../lib/api";
 import { useToast } from "../lib/ToastContext";
@@ -23,6 +23,7 @@ export default function EventList() {
   const [events, setEvents] = useState<EventItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [dragIndex, setDragIndex] = useState<number | null>(null);
   const [updatingId, setUpdatingId] = useState<number | null>(null);
 
   function refresh() {
@@ -89,6 +90,30 @@ export default function EventList() {
     }
   }
 
+  function handleDragOver(e: DragEvent, index: number) {
+    e.preventDefault();
+    if (dragIndex === null || dragIndex === index) return;
+    setEvents((prev) => {
+      const next = [...prev];
+      const [moved] = next.splice(dragIndex, 1);
+      next.splice(index, 0, moved);
+      return next;
+    });
+    setDragIndex(index);
+  }
+
+  async function handleDragEnd() {
+    if (dragIndex === null) return;
+    setDragIndex(null);
+    try {
+      await eventsApi.reorder(locale, events.map((event) => event.id));
+      showToast("排序已保存");
+    } catch (err) {
+      showToast(err instanceof Error ? err.message : "排序保存失败", "error");
+      refresh();
+    }
+  }
+
   return (
     <div>
       <div className="page-header">
@@ -109,9 +134,12 @@ export default function EventList() {
         </Link>
       </div>
 
+      <p className="hint">拖动左侧手柄可调整首页轮播中的显示顺序（拖动后自动保存）。</p>
+
       {error && <p className="form-error">{error}</p>}
       <table className="data-table events-table">
         <colgroup>
+          <col className="col-drag" />
           <col className="col-cover" />
           <col />
           <col className="col-badge" />
@@ -120,6 +148,7 @@ export default function EventList() {
         </colgroup>
         <thead>
           <tr>
+            <th />
             <th>封面</th>
             <th>活动</th>
             <th>标签</th>
@@ -129,11 +158,21 @@ export default function EventList() {
         </thead>
         <tbody>
           {loading ? (
-            <SkeletonTableRows columns={["cover", "text-block", "badge", "badge", "actions"]} />
+            <SkeletonTableRows columns={["drag", "cover", "text-block", "badge", "badge", "actions"]} />
           ) : (
             <>
-            {events.map((event) => (
-              <tr key={event.id}>
+            {events.map((event, index) => (
+              <tr
+                key={event.id}
+                draggable
+                onDragStart={() => setDragIndex(index)}
+                onDragOver={(e) => handleDragOver(e, index)}
+                onDragEnd={handleDragEnd}
+                className={dragIndex === index ? "dragging-row" : ""}
+              >
+                <td className="drag-handle" title="拖动排序">
+                  ⠿
+                </td>
                 <td>
                   {event.coverImageUrl ? (
                     <img src={event.coverImageUrl} alt="" className="cover-thumb" />
@@ -156,6 +195,8 @@ export default function EventList() {
                     value={isVisible(event) ? "visible" : "hidden"}
                     disabled={updatingId === event.id}
                     aria-label={`设置「${event.title}」的显示状态`}
+                    onMouseDown={(e) => e.stopPropagation()}
+                    onClick={(e) => e.stopPropagation()}
                     onChange={(e) => handleVisibilityChange(event, e.target.value === "visible")}
                   >
                     <option value="visible">显示</option>
@@ -175,7 +216,7 @@ export default function EventList() {
             ))}
             {events.length === 0 && (
               <tr>
-                <td colSpan={5} className="empty-row">
+                <td colSpan={6} className="empty-row">
                   暂无数据
                 </td>
               </tr>

@@ -98,13 +98,13 @@ export default function GroupCompanyEditor({ mode }: { mode: "create" | "edit" }
     setSaving(true);
     setError(null);
     try {
+      const goToList = () => navigate("/group-companies");
       if (mode === "create") {
-        const created = await groupCompaniesApi.create(form);
-        showSuccessDialog("创建成功");
-        navigate(`/group-companies/${form.locale}/${form.region}/${created.id}/edit`, { replace: true });
+        await groupCompaniesApi.create(form);
+        showSuccessDialog("创建成功", goToList);
       } else if (id) {
         await groupCompaniesApi.update(Number(id), form);
-        showSuccessDialog("保存成功");
+        showSuccessDialog("保存成功", goToList);
       }
     } catch (err) {
       const message = err instanceof Error ? err.message : "保存失败";

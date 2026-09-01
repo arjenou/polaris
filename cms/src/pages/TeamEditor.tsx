@@ -17,6 +17,7 @@ const EMPTY_FORM: TeamMemberInput = {
   imageKey: null,
   imageWidth: null,
   imageHeight: null,
+  isPresident: false,
   published: true,
 };
 
@@ -89,13 +90,13 @@ export default function TeamEditor({ mode }: { mode: "create" | "edit" }) {
       languages: splitList(languagesText),
     };
     try {
+      const goToList = () => navigate("/team");
       if (mode === "create") {
-        const created = await teamApi.create(payload);
-        showSuccessDialog("创建成功");
-        navigate(`/team/${created.id}/edit`, { replace: true });
+        await teamApi.create(payload);
+        showSuccessDialog("创建成功", goToList);
       } else {
         await teamApi.update(Number(id), payload);
-        showSuccessDialog("保存成功");
+        showSuccessDialog("保存成功", goToList);
       }
     } catch (err) {
       const message = err instanceof Error ? err.message : "保存失败";
@@ -122,6 +123,14 @@ export default function TeamEditor({ mode }: { mode: "create" | "edit" }) {
               <option value="ja">日语</option>
               <option value="zh">中文</option>
             </select>
+          </label>
+          <label className="checkbox-label">
+            <input
+              type="checkbox"
+              checked={form.isPresident ?? false}
+              onChange={(e) => update("isPresident", e.target.checked)}
+            />
+            设为社长（首页轮播中间首位固定展示，每个语言只能有一位）
           </label>
           <label className="checkbox-label">
             <input

@@ -15,7 +15,7 @@ export default function EventVideo({ url, title, poster }: { url: string; title:
 
   if (DIRECT_FILE_RE.test(url)) {
     return (
-      <>
+      <div className={styles.root}>
         <video
           ref={videoRef}
           src={url}
@@ -36,17 +36,19 @@ export default function EventVideo({ url, title, poster }: { url: string; title:
             <span className={styles.playIcon} aria-hidden="true" />
           </button>
         )}
-      </>
+      </div>
     );
   }
 
   return (
-    <iframe
-      src={url}
-      title={title}
-      className={styles.media}
-      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-      allowFullScreen
-    />
+    <div className={styles.root}>
+      <iframe
+        src={url}
+        title={title}
+        className={styles.media}
+        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+        allowFullScreen
+      />
+    </div>
   );
 }
