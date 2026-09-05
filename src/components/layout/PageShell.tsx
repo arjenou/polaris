@@ -15,7 +15,7 @@ export default function PageShell({
     <>
       <Header locale={locale} />
       <main>{children}</main>
-      <Footer locale={locale} subsidiary={subsidiary} />
+      <Footer subsidiary={subsidiary} />
     </>
   );
 }

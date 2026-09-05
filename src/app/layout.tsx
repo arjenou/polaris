@@ -1,6 +1,12 @@
 import type { Metadata, Viewport } from "next";
-import { Noto_Sans_JP, Shippori_Mincho_B1 } from "next/font/google";
+import {
+  Noto_Sans_JP,
+  Noto_Sans_SC,
+  Noto_Serif_SC,
+  Shippori_Mincho_B1,
+} from "next/font/google";
 import FloatingContactButtons from "@/components/layout/FloatingContactButtons";
+import LocaleHtmlAttributes from "@/components/layout/LocaleHtmlAttributes";
 import { getContactQrImages } from "@/lib/contactQr";
 import "./globals.css";
 
@@ -15,6 +21,20 @@ const shipporiMincho = Shippori_Mincho_B1({
   variable: "--font-shippori-mincho",
   subsets: ["latin"],
   weight: ["400", "500", "600", "700", "800"],
+  display: "swap",
+});
+
+const notoSansSC = Noto_Sans_SC({
+  variable: "--font-noto-sans-sc",
+  subsets: ["latin"],
+  weight: ["400", "500", "700", "900"],
+  display: "swap",
+});
+
+const notoSerifSC = Noto_Serif_SC({
+  variable: "--font-noto-serif-sc",
+  subsets: ["latin"],
+  weight: ["400", "500", "600", "700", "900"],
   display: "swap",
 });
 
@@ -49,8 +69,12 @@ export default async function RootLayout({
   const qrImages = await getContactQrImages();
 
   return (
-    <html lang="ja" className={`${notoSansJP.variable} ${shipporiMincho.variable}`}>
+    <html
+      lang="ja"
+      className={`${notoSansJP.variable} ${shipporiMincho.variable} ${notoSansSC.variable} ${notoSerifSC.variable}`}
+    >
       <body>
+        <LocaleHtmlAttributes />
         {children}
         <FloatingContactButtons wechatImage={qrImages.wechat} lineImage={qrImages.line} />
       </body>

@@ -3,17 +3,10 @@ import { site } from "@/data/site";
 import { subsidiaries, type SubsidiaryKey } from "@/data/subsidiaries";
 import styles from "./Footer.module.css";
 
-export default function Footer({
-  locale = "ja",
-  subsidiary,
-}: {
-  locale?: "ja" | "zh";
-  subsidiary?: SubsidiaryKey;
-}) {
-  const isZh = locale === "zh";
+export default function Footer({ subsidiary }: { subsidiary?: SubsidiaryKey }) {
   const sub = subsidiary ? subsidiaries[subsidiary] : undefined;
-  const companyName = sub ? (isZh ? sub.nameZh : sub.name) : isZh ? site.nameZh : site.name;
-  const companyAddress = sub ? (isZh ? sub.addressZh : sub.address) : isZh ? site.addressZh : site.address;
+  const companyName = sub ? sub.name : site.name;
+  const companyAddress = sub ? sub.address : site.address;
 
   return (
     <footer className={styles.footer}>
@@ -48,11 +41,7 @@ export default function Footer({
           </a>
         </div>
         <div className={styles.bottom} style={{ paddingTop: 4 }}>
-          <span>
-            {isZh
-              ? `© ${new Date().getFullYear()} Polaris Group. 保留所有权利。`
-              : `© ${new Date().getFullYear()} Polaris Group. All rights reserved.`}
-          </span>
+          <span>© {new Date().getFullYear()} Polaris Group. All rights reserved.</span>
         </div>
       </div>
     </footer>
