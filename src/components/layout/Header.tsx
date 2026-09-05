@@ -8,8 +8,8 @@ import { jaNavItems, zhNavItems, type NavItem } from "@/data/nav";
 import { site } from "@/data/site";
 import styles from "./Header.module.css";
 
-const comingSoonShort = { ja: "現在、サイトを準備中です", zh: "网站正在准备中" } as const;
-const comingSoonDetail = { ja: "公開までしばらくお待ちください。", zh: "请稍候正式公开。" } as const;
+const comingSoonShort = { ja: "現在、サイトを準備中です", zh: "页面建设中，敬请期待..." } as const;
+const comingSoonDetail = { ja: "公開までしばらくお待ちください。", zh: "" } as const;
 
 function ArrowIcon({ className }: { className?: string }) {
   return (
@@ -162,7 +162,7 @@ export default function Header({ locale = "ja" }: { locale?: "ja" | "zh" }) {
                         {item.comingSoon && (
                           <div className={styles.megaComingSoon}>
                             <span>{comingSoonShortText}</span>
-                            <span>{comingSoonDetailText}</span>
+                            {comingSoonDetailText && <span>{comingSoonDetailText}</span>}
                           </div>
                         )}
                       </div>
@@ -289,7 +289,7 @@ export default function Header({ locale = "ja" }: { locale?: "ja" | "zh" }) {
                       {item.comingSoon && (
                         <div className={styles.mobileComingSoon}>
                           <span>{comingSoonShortText}</span>
-                          <span>{comingSoonDetailText}</span>
+                          {comingSoonDetailText && <span>{comingSoonDetailText}</span>}
                         </div>
                       )}
                       {item.brand && (
