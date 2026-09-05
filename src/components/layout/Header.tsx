@@ -77,7 +77,7 @@ export default function Header({ locale = "ja" }: { locale?: "ja" | "zh" }) {
   const contactHref = locale === "zh" ? "/zh/contact" : site.contactHref;
   const comingSoonShortText = comingSoonShort[locale];
   const comingSoonDetailText = comingSoonDetail[locale];
-  const logoSubtitle = locale === "zh" ? site.nameZh : site.name;
+  const logoSubtitle = locale === "ja" ? site.name : null;
   const jaHref = getLocalePath(pathname, "ja");
   const zhHref = getLocalePath(pathname, "zh");
 
@@ -137,7 +137,7 @@ export default function Header({ locale = "ja" }: { locale?: "ja" | "zh" }) {
             </span>
             <span className={styles.logoTextGroup}>
               <span className={styles.logoTitle}>{site.nameEn}</span>
-              <span className={styles.logoSubtitle}>{logoSubtitle}</span>
+              {logoSubtitle && <span className={styles.logoSubtitle}>{logoSubtitle}</span>}
             </span>
           </Link>
 

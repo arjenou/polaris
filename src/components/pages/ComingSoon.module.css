@@ -36,6 +36,7 @@
   font-size: 15px;
   line-height: 1.9;
   color: #e4e7ee;
+  white-space: pre-line;
 }
 
 @media (max-width: 768px) {
