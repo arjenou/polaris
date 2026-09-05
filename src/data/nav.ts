@@ -143,16 +143,16 @@ export const zhNavItems: NavItem[] = [
     brand: "/images/nav/brand-polaris-next.png",
     groups: [
       {
-        heading: "不动产买卖·翻新转售",
+        heading: "不动产买卖",
         icon: "/images/nav/icon-buy-resell.jpg",
-        items: [{ label: "二手房翻新" }, { label: "收益型不动产买卖" }],
+        items: [{ label: "二手住房买卖" }, { label: "收益不动产买卖" }],
       },
       {
         heading: "不动产中介",
         icon: "/images/nav/icon-brokerage.jpg",
         items: [
-          { label: "收益型不动产投资企划" },
-          { label: "住宅买卖中介" },
+          { label: "收益不动产投资企划" },
+          { label: "住房买卖中介" },
           { label: "租赁中介" },
         ],
       },
@@ -165,21 +165,21 @@ export const zhNavItems: NavItem[] = [
     brand: "/images/nav/brand-polaris-property.png",
     groups: [
       {
-        heading: "租赁运营管理（PM）",
+        heading: "收益资产管理(PM)",
         icon: "/images/nav/icon-pm.png",
         items: [
-          { label: "PM收支管理" },
-          { label: "招商运营" },
-          { label: "入住者・租户对应" },
+          { label: "收支管理" },
+          { label: "招租招商" },
+          { label: "物业服务" },
           { label: "退租受理表单", href: "/zh/move-out-request", bold: true },
         ],
       },
       {
-        heading: "建筑设施管理（BM）",
+        heading: "建筑设备管理(BM)",
         icon: "/images/nav/icon-bm.png",
         items: [
-          { label: "公共区域环境管理" },
-          { label: "法定检查" },
+          { label: "共用部环境维持" },
+          { label: "各种法定点检" },
           { label: "建筑设备维护" },
         ],
       },
