@@ -563,6 +563,23 @@
     color: var(--color-primary) !important;
   }
 
+  .mobileTrailingItems {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 4px 4px 16px 16px;
+  }
+
+  .mobileTrailingItems a {
+    display: block;
+    padding: 8px 4px;
+    font-size: 14px;
+    font-weight: 400;
+    color: var(--color-text-secondary);
+    text-align: left;
+  }
+
   .mobileComingSoon {
     margin: 4px 4px 12px;
     display: flex;

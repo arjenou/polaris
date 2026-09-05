@@ -92,7 +92,7 @@ const DOMESTIC_ZH: CompanySeed[] = [
   },
   {
     name: "Polaris Property株式会社",
-    business: "资产管理・租赁运营管理（PM）・建筑设施管理（BM）",
+    business: "资产管理・收益资产管理（PM）・建筑设备管理（BM）",
     address: "東京都千代田区麴町３丁目５−１５ 得水ビル 5F",
     imagePath: "/images/pages/group-info/company-property.png",
     href: "/zh/assets-management",

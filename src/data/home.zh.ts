@@ -43,7 +43,7 @@ export const domesticCompaniesZh: GroupCompanyCard[] = [
     href: "/zh/business-headquarters",
   },
   {
-    title: "资产管理・租赁运营管理（PM）・建筑设施管理（BM）",
+    title: "资产管理・收益资产管理（PM）・建筑设备管理（BM）",
     image: "/images/home/group-property.png",
     href: "/zh/assets-management",
   },

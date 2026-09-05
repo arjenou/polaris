@@ -4,6 +4,8 @@ export interface NavSubItem {
   href?: string;
   /** Renders the sub-item label in bold, e.g. to highlight a newly published page. */
   bold?: boolean;
+  /** In vertical (mobile) nav, render after all groups instead of within the parent group. */
+  mobileTrailing?: boolean;
 }
 
 export interface NavGroup {
@@ -66,7 +68,7 @@ export const jaNavItems: NavItem[] = [
           { label: "PM収支管理" },
           { label: "リーシング業務" },
           { label: "入居者・テナント対応" },
-          { label: "退去受付フォーム", href: "/move-out-request", bold: true },
+          { label: "退去受付フォーム", href: "/move-out-request", bold: true, mobileTrailing: true },
         ],
       },
       {
@@ -165,17 +167,17 @@ export const zhNavItems: NavItem[] = [
     brand: "/images/nav/brand-polaris-property.png",
     groups: [
       {
-        heading: "收益资产管理(PM)",
+        heading: "收益资产管理（PM）",
         icon: "/images/nav/icon-pm.png",
         items: [
           { label: "收支管理" },
           { label: "招租招商" },
           { label: "物业服务" },
-          { label: "退租受理表单", href: "/zh/move-out-request", bold: true },
+          { label: "退租受理表单", href: "/zh/move-out-request", bold: true, mobileTrailing: true },
         ],
       },
       {
-        heading: "建筑设备管理(BM)",
+        heading: "建筑设备管理（BM）",
         icon: "/images/nav/icon-bm.png",
         items: [
           { label: "共用部环境维持" },
@@ -191,9 +193,9 @@ export const zhNavItems: NavItem[] = [
     banner: "/images/nav/banner-renovation.png",
     brand: "/images/nav/brand-polaris-next.png",
     groups: [
-      { heading: "室内装潢", icon: "/images/nav/icon-renovation.png", items: [] },
-      { heading: "翻新装修", icon: "/images/nav/icon-reform.png", items: [] },
-      { heading: "上门维修对应", icon: "/images/nav/icon-repair.png", items: [] },
+      { heading: "设计装潢", icon: "/images/nav/icon-renovation.png", items: [] },
+      { heading: "室内改修", icon: "/images/nav/icon-reform.png", items: [] },
+      { heading: "应急修缮服务", icon: "/images/nav/icon-repair.png", items: [] },
     ],
   },
   // 日本身份规划 (immigration-planning) is kept hidden here too, for parity with
@@ -209,7 +211,7 @@ export const zhNavItems: NavItem[] = [
       {
         heading: "创业者支援",
         icon: "/images/nav/icon-entrepreneur.png",
-        items: [{ label: "经营咨询" }],
+        items: [{ label: "企业顾问" }],
       },
       {
         heading: "税务・劳务",
@@ -231,7 +233,7 @@ export const zhNavItems: NavItem[] = [
     comingSoon: true,
     groups: [
       {
-        heading: "短租公寓运营",
+        heading: "短租公寓运营管理",
         icon: "/images/nav/icon-monthly.png",
         items: [],
       },

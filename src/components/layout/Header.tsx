@@ -317,22 +317,42 @@ export default function Header({ locale = "ja" }: { locale?: "ja" | "zh" }) {
                               />
                             )}
                           </div>
-                          {group.items.length > 0 && (
+                          {group.items.filter((sub) => !sub.mobileTrailing).length > 0 && (
                             <ul>
-                              {group.items.map((sub) => (
-                                <li key={sub.label}>
-                                  <Link
-                                    href={sub.href ?? item.href}
-                                    className={sub.bold ? styles.mobileSubItemBold : undefined}
-                                  >
-                                    {sub.label}
-                                  </Link>
-                                </li>
-                              ))}
+                              {group.items
+                                .filter((sub) => !sub.mobileTrailing)
+                                .map((sub) => (
+                                  <li key={sub.label}>
+                                    <Link
+                                      href={sub.href ?? item.href}
+                                      className={sub.bold ? styles.mobileSubItemBold : undefined}
+                                    >
+                                      {sub.label}
+                                    </Link>
+                                  </li>
+                                ))}
                             </ul>
                           )}
                         </div>
                       ))}
+                      {item.groups!.some((group) =>
+                        group.items.some((sub) => sub.mobileTrailing),
+                      ) && (
+                        <ul className={styles.mobileTrailingItems}>
+                          {item.groups!.flatMap((group) =>
+                            group.items.filter((sub) => sub.mobileTrailing),
+                          ).map((sub) => (
+                            <li key={sub.label}>
+                              <Link
+                                href={sub.href ?? item.href}
+                                className={sub.bold ? styles.mobileSubItemBold : undefined}
+                              >
+                                {sub.label}
+                              </Link>
+                            </li>
+                          ))}
+                        </ul>
+                      )}
                     </div>
                   )}
                 </li>
