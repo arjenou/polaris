@@ -89,6 +89,11 @@ export const IMAGE_UPLOAD_SPECS = {
     pixels: "400×400 px 以上",
     note: "联系页悬浮按钮弹窗中的二维码",
   },
+  richTextImage: {
+    ratio: "不限比例",
+    pixels: "宽度 1200 px 以上",
+    note: "正文内图片按原始比例显示",
+  },
 } as const satisfies Record<string, ImageUploadSpec>;
 
 export type ImageUploadSpecKey = keyof typeof IMAGE_UPLOAD_SPECS;

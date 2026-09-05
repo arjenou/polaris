@@ -711,6 +711,10 @@ body {
   margin-bottom: 16px;
 }
 
+.upload-label > span {
+  line-height: 1.5;
+}
+
 .gallery-remove-btn {
   position: absolute;
   top: 4px;
@@ -796,6 +800,31 @@ body {
   color: #8a93a6;
   font-size: 12px;
   line-height: 1.5;
+}
+
+.upload-size-hint {
+  color: #8a93a6;
+  font-size: 12px;
+  font-weight: 400;
+  margin-left: 6px;
+  white-space: nowrap;
+}
+
+.upload-label .upload-size-hint {
+  margin-left: 0;
+  margin-top: 2px;
+}
+
+.editor-form label > .upload-size-hint {
+  margin-left: 0;
+  margin-top: -2px;
+  margin-bottom: 2px;
+}
+
+.rich-text-toolbar .upload-size-hint {
+  margin-left: 0;
+  font-size: 11px;
+  align-self: center;
 }
 
 .checkbox-label {

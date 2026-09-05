@@ -199,8 +199,10 @@ export default function TeamEditor({ mode }: { mode: "create" | "edit" }) {
         </label>
 
         <label>
-          头像
-          <UploadSizeHint spec="teamPhoto" />
+          <span>
+            头像
+            <UploadSizeHint spec="teamPhoto" />
+          </span>
           <input type="file" accept="image/png,image/jpeg,image/webp,image/gif" onChange={handleImageChange} />
         </label>
         {uploading && <p>上传中…</p>}

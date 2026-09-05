@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { teamApi, type TeamMember } from "../lib/api";
-import { formatUploadSizeHint, IMAGE_UPLOAD_SPECS } from "../lib/imageUploadSpecs";
 import { useToast } from "../lib/ToastContext";
 import { SkeletonTableRows } from "../components/Skeleton";
 
@@ -110,8 +109,7 @@ export default function TeamList() {
       </div>
 
       <p className="hint">
-        每个语言页面只能设置一位社长；社长在首页轮播中间首位固定展示，其余社员每次访问随机排序。头像
-        {formatUploadSizeHint(IMAGE_UPLOAD_SPECS.teamPhoto)}
+        每个语言页面只能设置一位社长；社长在首页轮播中间首位固定展示，其余社员每次访问随机排序。
       </p>
 
       <div className="president-picker">

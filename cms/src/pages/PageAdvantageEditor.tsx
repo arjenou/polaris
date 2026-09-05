@@ -132,8 +132,10 @@ export default function PageAdvantageEditor({ mode }: { mode: "create" | "edit" 
         </label>
 
         <label>
-          图片
-          <UploadSizeHint spec="pageAdvantage" />
+          <span>
+            图片
+            <UploadSizeHint spec="pageAdvantage" />
+          </span>
           <input type="file" accept="image/png,image/jpeg,image/webp,image/gif" onChange={handleImageChange} />
         </label>
         {uploading && <p>上传中…</p>}

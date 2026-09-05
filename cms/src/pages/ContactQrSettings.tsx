@@ -49,7 +49,6 @@ function QrCard({ type, label, item, onChange }: {
   return (
     <div className="panel" style={{ maxWidth: 280 }}>
       <h2>{label}</h2>
-      <UploadSizeHint spec="contactQr" />
       {item?.imageUrl ? (
         <div className="gallery-preview-item" style={{ width: 160, height: 160, marginBottom: 16 }}>
           <img src={item.imageUrl} alt="" style={{ height: 160 }} />
@@ -63,7 +62,10 @@ function QrCard({ type, label, item, onChange }: {
         </p>
       )}
       <label className="upload-label">
-        {item?.imageUrl ? "重新上传" : "上传二维码图片"}
+        <span>
+          {item?.imageUrl ? "重新上传" : "上传二维码图片"}
+          <UploadSizeHint spec="contactQr" />
+        </span>
         <input
           type="file"
           accept="image/png,image/jpeg,image/webp,image/gif"

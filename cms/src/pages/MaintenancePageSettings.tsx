@@ -133,7 +133,6 @@ export default function MaintenancePageSettings() {
 
       <div className="panel" style={{ maxWidth: 640 }}>
         <h2>背景图</h2>
-        <UploadSizeHint spec="maintenanceBanner" />
         {loading ? (
           <SkeletonBlock width="100%" height={280} radius={6} style={{ display: "block", marginBottom: 16 }} />
         ) : item?.imageUrl ? (
@@ -179,7 +178,10 @@ export default function MaintenancePageSettings() {
           </p>
         )}
         <label className="upload-label">
-          {item?.imageUrl ? "重新上传" : "上传背景图"}
+          <span>
+            {item?.imageUrl ? "重新上传" : "上传背景图"}
+            <UploadSizeHint spec="maintenanceBanner" />
+          </span>
           <input
             type="file"
             accept="image/png,image/jpeg,image/webp,image/gif"

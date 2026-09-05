@@ -202,8 +202,10 @@ export default function PostEditor({ resource, mode }: { resource: ContentTypeKe
         </label>
 
         <label>
-          卡片封面图（必填）
-          <UploadSizeHint spec={resource === "recommended" ? "recommendedCover" : "newsCover"} />
+          <span>
+            卡片封面图（必填）
+            <UploadSizeHint spec={resource === "recommended" ? "recommendedCover" : "newsCover"} />
+          </span>
           <input type="file" accept="image/png,image/jpeg,image/webp,image/gif" onChange={handleImageChange} />
           <span className="field-hint">选择图片后会弹出 16:10 裁剪框，与前台封面显示比例一致。正文图片请在下方编辑器中插入。</span>
         </label>

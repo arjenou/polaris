@@ -1,7 +1,6 @@
 import { useEffect, useState, type DragEvent } from "react";
 import { Link } from "react-router-dom";
 import { eventsApi, type EventInput, type EventItem } from "../lib/api";
-import { formatUploadSizeHint, IMAGE_UPLOAD_SPECS } from "../lib/imageUploadSpecs";
 import { useToast } from "../lib/ToastContext";
 import { formatDateTime } from "../lib/datetime";
 import { SkeletonTableRows } from "../components/Skeleton";
@@ -135,10 +134,7 @@ export default function EventList() {
         </Link>
       </div>
 
-      <p className="hint">
-        拖动左侧手柄可调整首页轮播中的显示顺序（拖动后自动保存）。封面图
-        {formatUploadSizeHint(IMAGE_UPLOAD_SPECS.eventCover)}
-      </p>
+      <p className="hint">拖动左侧手柄可调整首页轮播中的显示顺序（拖动后自动保存）。</p>
 
       {error && <p className="form-error">{error}</p>}
       <table className="data-table events-table">

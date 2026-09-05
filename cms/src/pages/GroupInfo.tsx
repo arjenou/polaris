@@ -251,7 +251,6 @@ function AssetCard({
     <div className="panel" style={{ flex: wide ? "1 1 100%" : 1, minWidth: wide ? undefined : 280, maxWidth: wide ? 640 : undefined, width: wide ? "100%" : undefined }}>
       <h2>{label}</h2>
       <p className="hint">{hint}</p>
-      {sizeSpec && <UploadSizeHint spec={sizeSpec} />}
       {isHero && <p className="hint">上传后可在虚线框内拖动调整展示区域。</p>}
       {item?.imageUrl ? (
         isHero ? (
@@ -304,7 +303,10 @@ function AssetCard({
         </p>
       )}
       <label className="upload-label">
-        {item?.imageUrl ? "重新上传" : "上传图片"}
+        <span>
+          {item?.imageUrl ? "重新上传" : "上传图片"}
+          {sizeSpec && <UploadSizeHint spec={sizeSpec} />}
+        </span>
         <input type="file" accept="image/png,image/jpeg,image/webp,image/gif" onChange={handleUpload} disabled={uploading} />
       </label>
       {uploading && <p>上传中…</p>}

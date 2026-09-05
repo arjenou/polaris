@@ -187,8 +187,10 @@ export default function GroupCompanyEditor({ mode }: { mode: "create" | "edit" }
         </label>
 
         <label>
-          企业 Logo
-          <UploadSizeHint spec="groupCompanyLogo" />
+          <span>
+            企业 Logo
+            <UploadSizeHint spec="groupCompanyLogo" />
+          </span>
           <input type="file" accept="image/png,image/jpeg,image/webp,image/gif" onChange={handleImageChange} />
           <span className="field-hint">选择图片后会自动整体缩放进取景框，不会被截断，可再手动调整位置与大小。</span>
         </label>

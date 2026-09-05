@@ -7,7 +7,6 @@ import { homeHeroApi, mediaApi, type HomeHeroHeadline, type HomeHeroLocale, type
 import { useToast } from "../lib/ToastContext";
 import { SkeletonBlock, SkeletonGrid } from "../components/Skeleton";
 import UploadSizeHint from "../components/UploadSizeHint";
-import { formatUploadSizeHint, IMAGE_UPLOAD_SPECS } from "../lib/imageUploadSpecs";
 
 const LOCALES: { locale: HomeHeroLocale; label: string }[] = [
   { locale: "ja", label: "日语首页" },
@@ -271,8 +270,7 @@ export default function HomeHero() {
       </div>
 
       <p className="hint">
-        管理首页最上方的大标题文字（日语 / 中文可分别设置）与背景图片轮播。背景图片在两个语言页面共用同一组，拖动图片可调整顺序（拖动后自动保存）。上传或点击「调整区域」可在虚线框内选择展示位置。背景图
-        {formatUploadSizeHint(IMAGE_UPLOAD_SPECS.homeHeroSlide)}
+        管理首页最上方的大标题文字（日语 / 中文可分别设置）与背景图片轮播。背景图片在两个语言页面共用同一组，拖动图片可调整顺序（拖动后自动保存）。上传或点击「调整区域」可在虚线框内选择展示位置。
       </p>
 
       {error && <p className="form-error">{error}</p>}
@@ -300,9 +298,11 @@ export default function HomeHero() {
 
       <div className="panel">
         <h2>背景图片轮播</h2>
-        <UploadSizeHint spec="homeHeroSlide" />
         <label className="upload-label">
-          上传图片（可多选）
+          <span>
+            上传图片（可多选）
+            <UploadSizeHint spec="homeHeroSlide" />
+          </span>
           <input
             type="file"
             multiple

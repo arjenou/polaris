@@ -4,6 +4,7 @@ import StarterKit from "@tiptap/starter-kit";
 import Image from "@tiptap/extension-image";
 import { useRef, useState } from "react";
 import { ApiError, mediaApi } from "../lib/api";
+import UploadSizeHint from "./UploadSizeHint";
 
 /**
  * Swaps the default Enter / Shift+Enter behavior: plain Enter inserts a
@@ -168,6 +169,7 @@ export default function RichTextEditor({ initialContent, onChange }: RichTextEdi
         <button type="button" onClick={() => fileInputRef.current?.click()} disabled={uploadingImage}>
           {uploadingImage ? "上传中…" : "插入图片"}
         </button>
+        <UploadSizeHint spec="richTextImage" />
         <input
           ref={fileInputRef}
           type="file"

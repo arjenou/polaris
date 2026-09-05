@@ -317,16 +317,20 @@ export default function EventEditor({ mode }: { mode: "create" | "edit" }) {
         </label>
 
         <label>
-          封面图（必填，首页轮播卡片 / 列表页使用）
-          <UploadSizeHint spec="eventCover" />
+          <span>
+            封面图（必填，首页轮播卡片 / 列表页使用）
+            <UploadSizeHint spec="eventCover" />
+          </span>
           <input type="file" accept="image/png,image/jpeg,image/webp,image/gif" onChange={handleCoverChange} />
         </label>
         {uploadingCover && <p>封面上传中…</p>}
         {coverUrl && <img src={coverUrl} alt="" className="image-preview" />}
 
         <label>
-          详情图 / 视频（可选，详情页顶部展示）
-          <UploadSizeHint spec="eventHeroImage" />
+          <span>
+            详情图 / 视频（可选，详情页顶部展示）
+            <UploadSizeHint spec="eventHeroImage" />
+          </span>
           <span className="field-hint">
             可上传图片或视频。上传视频后竖屏视频会完整显示（左右留黑边）；支持 MP4 / WebM / OGG，最大 100MB。
           </span>
@@ -361,8 +365,10 @@ export default function EventEditor({ mode }: { mode: "create" | "edit" }) {
         {form.videoUrl && (
           <>
             <label>
-              视频封面图（可选）
-              <UploadSizeHint spec="eventVideoPoster" />
+              <span>
+                视频封面图（可选）
+                <UploadSizeHint spec="eventVideoPoster" />
+              </span>
               <input
                 type="file"
                 accept="image/png,image/jpeg,image/webp,image/gif"
@@ -428,8 +434,10 @@ export default function EventEditor({ mode }: { mode: "create" | "edit" }) {
         </fieldset>
 
         <label>
-          图库（可选，多选上传，详情页以照片墙+灯箱展示）
-          <UploadSizeHint spec="eventGallery" />
+          <span>
+            图库（可选，多选上传，详情页以照片墙+灯箱展示）
+            <UploadSizeHint spec="eventGallery" />
+          </span>
           <input
             type="file"
             multiple
