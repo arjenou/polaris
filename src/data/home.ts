@@ -1,5 +1,6 @@
 export interface HeroSlide {
   image: string;
+  objectPosition?: { x: number; y: number };
 }
 
 export const heroSlides: HeroSlide[] = [

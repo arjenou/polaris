@@ -23,7 +23,10 @@ export const onRequestGet: PagesFunction<Env> = async ({ request, env }) => {
   return json(
     {
       headline: headlineRow?.headline ?? "",
-      slides: (slidesResult.results ?? []).map((row) => ({ src: `${url.origin}/media/${row.image_key}` })),
+      slides: (slidesResult.results ?? []).map((row) => ({
+        src: `${url.origin}/media/${row.image_key}`,
+        objectPosition: { x: row.object_position_x ?? 50, y: row.object_position_y ?? 0 },
+      })),
     },
     {},
     PUBLIC_CORS_HEADERS,

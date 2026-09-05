@@ -8,6 +8,13 @@ interface MaintenancePageInput {
   imageKey?: string | null;
   imageWidth?: number | null;
   imageHeight?: number | null;
+  objectPositionX?: number;
+  objectPositionY?: number;
+}
+
+function clampPosition(value: unknown, fallback: number): number {
+  if (typeof value !== "number" || Number.isNaN(value)) return fallback;
+  return Math.min(100, Math.max(0, value));
 }
 
 async function getRow(env: Env) {
@@ -22,6 +29,8 @@ export const onRequestGet: PagesFunction<Env> = async ({ request, env }) => {
       imageUrl: null,
       imageWidth: null,
       imageHeight: null,
+      objectPositionX: 50,
+      objectPositionY: 0,
       updatedAt: null,
     });
   }
@@ -35,23 +44,50 @@ export const onRequestPut: PagesFunction<Env> = async ({ request, env }) => {
   } catch {
     return errorJson("请求格式错误", 400);
   }
-  if (!input.imageKey) return errorJson("imageKey 不能为空", 400);
-
-  await env.DB.prepare(
-    `UPDATE maintenance_page SET image_key = ?, image_width = ?, image_height = ?, updated_at = datetime('now')
-     WHERE id = 1`,
-  )
-    .bind(input.imageKey, input.imageWidth ?? null, input.imageHeight ?? null)
-    .run();
 
   const row = await getRow(env);
+  if (!row) return errorJson("记录不存在", 404);
+
+  if (input.imageKey) {
+    await env.DB.prepare(
+      `UPDATE maintenance_page
+       SET image_key = ?, image_width = ?, image_height = ?,
+           object_position_x = ?, object_position_y = ?, updated_at = datetime('now')
+       WHERE id = 1`,
+    )
+      .bind(
+        input.imageKey,
+        input.imageWidth ?? null,
+        input.imageHeight ?? null,
+        clampPosition(input.objectPositionX, row.object_position_x ?? 50),
+        clampPosition(input.objectPositionY, row.object_position_y ?? 0),
+      )
+      .run();
+  } else if (input.objectPositionX !== undefined || input.objectPositionY !== undefined) {
+    await env.DB.prepare(
+      `UPDATE maintenance_page
+       SET object_position_x = ?, object_position_y = ?, updated_at = datetime('now')
+       WHERE id = 1`,
+    )
+      .bind(
+        clampPosition(input.objectPositionX, row.object_position_x ?? 50),
+        clampPosition(input.objectPositionY, row.object_position_y ?? 0),
+      )
+      .run();
+  } else {
+    return errorJson("请提供 imageKey 或 objectPosition", 400);
+  }
+
+  const updated = await getRow(env);
   await triggerRevalidate(env, { kind: "maintenance-page" });
-  return json(toMaintenancePageApiShape(row!, new URL(request.url).origin));
+  return json(toMaintenancePageApiShape(updated!, new URL(request.url).origin));
 };
 
 export const onRequestDelete: PagesFunction<Env> = async ({ request, env }) => {
   await env.DB.prepare(
-    `UPDATE maintenance_page SET image_key = NULL, image_width = NULL, image_height = NULL, updated_at = datetime('now')
+    `UPDATE maintenance_page
+     SET image_key = NULL, image_width = NULL, image_height = NULL,
+         object_position_x = 50, object_position_y = 0, updated_at = datetime('now')
      WHERE id = 1`,
   ).run();
 
@@ -63,6 +99,8 @@ export const onRequestDelete: PagesFunction<Env> = async ({ request, env }) => {
       imageUrl: null,
       imageWidth: null,
       imageHeight: null,
+      objectPositionX: 50,
+      objectPositionY: 0,
       updatedAt: null,
     });
   }

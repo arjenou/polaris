@@ -215,15 +215,28 @@ export interface MaintenancePage {
   imageUrl: string | null;
   imageWidth: number | null;
   imageHeight: number | null;
+  objectPositionX: number;
+  objectPositionY: number;
   updatedAt: string | null;
 }
 
 export const maintenancePageApi = {
   get: () => request<MaintenancePage>("/api/admin/maintenance-page"),
-  update: (imageKey: string, imageWidth: number | null, imageHeight: number | null) =>
+  update: (
+    imageKey: string,
+    imageWidth: number | null,
+    imageHeight: number | null,
+    objectPositionX = 50,
+    objectPositionY = 0,
+  ) =>
     request<MaintenancePage>("/api/admin/maintenance-page", {
       method: "PUT",
-      body: JSON.stringify({ imageKey, imageWidth, imageHeight }),
+      body: JSON.stringify({ imageKey, imageWidth, imageHeight, objectPositionX, objectPositionY }),
+    }),
+  updatePosition: (objectPositionX: number, objectPositionY: number) =>
+    request<MaintenancePage>("/api/admin/maintenance-page", {
+      method: "PUT",
+      body: JSON.stringify({ objectPositionX, objectPositionY }),
     }),
   remove: () => request<MaintenancePage>("/api/admin/maintenance-page", { method: "DELETE" }),
 };
@@ -242,6 +255,8 @@ export interface HomeHeroSlide {
   imageUrl: string;
   imageWidth: number | null;
   imageHeight: number | null;
+  objectPositionX: number;
+  objectPositionY: number;
   sortOrder: number;
 }
 
@@ -253,10 +268,21 @@ export const homeHeroApi = {
       body: JSON.stringify({ headline }),
     }),
   listSlides: () => request<HomeHeroSlide[]>("/api/admin/home-hero/slides"),
-  addSlide: (imageKey: string, imageWidth: number | null, imageHeight: number | null) =>
+  addSlide: (
+    imageKey: string,
+    imageWidth: number | null,
+    imageHeight: number | null,
+    objectPositionX = 50,
+    objectPositionY = 0,
+  ) =>
     request<HomeHeroSlide>("/api/admin/home-hero/slides", {
       method: "POST",
-      body: JSON.stringify({ imageKey, imageWidth, imageHeight }),
+      body: JSON.stringify({ imageKey, imageWidth, imageHeight, objectPositionX, objectPositionY }),
+    }),
+  updateSlidePosition: (id: number, objectPositionX: number, objectPositionY: number) =>
+    request<HomeHeroSlide>(`/api/admin/home-hero/slides/${id}`, {
+      method: "PUT",
+      body: JSON.stringify({ objectPositionX, objectPositionY }),
     }),
   removeSlide: (id: number) => request<{ ok: true }>(`/api/admin/home-hero/slides/${id}`, { method: "DELETE" }),
   reorderSlides: (orderedIds: number[]) =>
@@ -426,6 +452,8 @@ export interface GroupInfoAsset {
   imageUrl: string | null;
   imageWidth: number | null;
   imageHeight: number | null;
+  objectPositionX: number;
+  objectPositionY: number;
   updatedAt: string;
 }
 
@@ -448,10 +476,22 @@ export const groupInfoApi = {
       body: JSON.stringify(input),
     }),
   listAssets: () => request<GroupInfoAsset[]>("/api/admin/group-info/assets"),
-  updateAsset: (type: GroupInfoAssetType, imageKey: string, imageWidth: number | null, imageHeight: number | null) =>
+  updateAsset: (
+    type: GroupInfoAssetType,
+    imageKey: string,
+    imageWidth: number | null,
+    imageHeight: number | null,
+    objectPositionX = 50,
+    objectPositionY = 0,
+  ) =>
     request<GroupInfoAsset>(`/api/admin/group-info/assets/${type}`, {
       method: "PUT",
-      body: JSON.stringify({ imageKey, imageWidth, imageHeight }),
+      body: JSON.stringify({ imageKey, imageWidth, imageHeight, objectPositionX, objectPositionY }),
+    }),
+  updateAssetPosition: (type: GroupInfoAssetType, objectPositionX: number, objectPositionY: number) =>
+    request<GroupInfoAsset>(`/api/admin/group-info/assets/${type}`, {
+      method: "PUT",
+      body: JSON.stringify({ objectPositionX, objectPositionY }),
     }),
   removeAsset: (type: GroupInfoAssetType) =>
     request<GroupInfoAsset>(`/api/admin/group-info/assets/${type}`, { method: "DELETE" }),

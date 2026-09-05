@@ -1,4 +1,8 @@
 import { useEffect, useState, type ChangeEvent, type FormEvent } from "react";
+import BannerFocalPicker from "../components/BannerFocalPicker";
+import BannerUploadDialog from "../components/BannerUploadDialog";
+import { BANNER_ASPECT_PAGE_HERO } from "../lib/bannerAspectRatios";
+import { DEFAULT_OBJECT_POSITION, type ObjectPosition } from "../lib/objectPosition";
 import {
   groupInfoApi,
   mediaApi,
@@ -11,13 +15,29 @@ import {
 import { useToast } from "../lib/ToastContext";
 import { SkeletonBlock } from "../components/Skeleton";
 
+function readImageSize(file: File): Promise<{ width: number; height: number }> {
+  return new Promise((resolve, reject) => {
+    const url = URL.createObjectURL(file);
+    const img = new Image();
+    img.onload = () => {
+      resolve({ width: img.naturalWidth, height: img.naturalHeight });
+      URL.revokeObjectURL(url);
+    };
+    img.onerror = () => {
+      URL.revokeObjectURL(url);
+      reject(new Error("无法读取图片尺寸"));
+    };
+    img.src = url;
+  });
+}
+
 const LOCALES: { locale: GroupInfoLocale; label: string }[] = [
   { locale: "ja", label: "日语页面" },
   { locale: "zh", label: "中文页面" },
 ];
 
 const ASSET_CARDS: { type: GroupInfoAssetType; label: string; hint: string }[] = [
-  { type: "hero", label: "页面顶部banner图", hint: "グループ情報页面最上方的通栏背景图，ja/zh 两个语言页面共用同一张。" },
+  { type: "hero", label: "页面顶部banner图", hint: "グループ情報页面最上方的通栏背景图，ja/zh 两个语言页面共用同一张。上传后可在虚线框内拖动调整展示区域。" },
   { type: "badge", label: "グループ情報水印logo", hint: "「グループ情報」板块标题旁的水印装饰图，ja/zh 两个语言页面共用同一张。" },
 ];
 
@@ -139,10 +159,34 @@ function AssetCard({
 }) {
   const { showToast, showSuccessDialog } = useToast();
   const [uploading, setUploading] = useState(false);
+  const [savingPosition, setSavingPosition] = useState(false);
+  const [pendingFile, setPendingFile] = useState<File | null>(null);
+  const [pendingSize, setPendingSize] = useState<{ width: number; height: number } | null>(null);
+  const [draftPosition, setDraftPosition] = useState<ObjectPosition>(DEFAULT_OBJECT_POSITION);
+  const isHero = type === "hero";
+
+  useEffect(() => {
+    if (!item) return;
+    setDraftPosition({
+      x: item.objectPositionX ?? DEFAULT_OBJECT_POSITION.x,
+      y: item.objectPositionY ?? DEFAULT_OBJECT_POSITION.y,
+    });
+  }, [item]);
 
   async function handleUpload(e: ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0];
     if (!file) return;
+    e.target.value = "";
+    if (isHero) {
+      try {
+        const size = await readImageSize(file);
+        setPendingSize(size);
+        setPendingFile(file);
+      } catch (err) {
+        showToast(err instanceof Error ? err.message : "无法读取图片", "error");
+      }
+      return;
+    }
     setUploading(true);
     try {
       const res = await mediaApi.upload(file, "group-info");
@@ -153,7 +197,36 @@ function AssetCard({
       showToast(err instanceof Error ? err.message : "上传失败", "error");
     } finally {
       setUploading(false);
-      e.target.value = "";
+    }
+  }
+
+  async function handleUploadConfirm(position: ObjectPosition) {
+    if (!pendingFile) return;
+    setUploading(true);
+    try {
+      const res = await mediaApi.upload(pendingFile, "group-info");
+      await groupInfoApi.updateAsset(type, res.key, res.width, res.height, position.x, position.y);
+      setPendingFile(null);
+      setPendingSize(null);
+      showSuccessDialog("上传成功");
+      onChange();
+    } catch (err) {
+      showToast(err instanceof Error ? err.message : "上传失败", "error");
+    } finally {
+      setUploading(false);
+    }
+  }
+
+  async function handleSavePosition() {
+    setSavingPosition(true);
+    try {
+      await groupInfoApi.updateAssetPosition(type, draftPosition.x, draftPosition.y);
+      showSuccessDialog("显示位置已保存");
+      onChange();
+    } catch (err) {
+      showToast(err instanceof Error ? err.message : "保存失败", "error");
+    } finally {
+      setSavingPosition(false);
     }
   }
 
@@ -168,17 +241,48 @@ function AssetCard({
     }
   }
 
+  const positionDirty =
+    isHero &&
+    item?.imageUrl &&
+    (draftPosition.x !== item.objectPositionX || draftPosition.y !== item.objectPositionY);
+
   return (
     <div className="panel" style={{ flex: 1, minWidth: 280 }}>
       <h2>{label}</h2>
       <p className="hint">{hint}</p>
       {item?.imageUrl ? (
-        <div className="gallery-preview-item" style={{ width: "100%", height: 140, marginBottom: 16 }}>
-          <img src={item.imageUrl} alt="" style={{ width: "100%", height: "100%", objectFit: "contain" }} />
-          <button type="button" className="gallery-remove-btn" onClick={handleRemove}>
-            删除
-          </button>
-        </div>
+        isHero ? (
+          <>
+            <BannerFocalPicker
+              imageUrl={item.imageUrl}
+              imageWidth={item.imageWidth}
+              imageHeight={item.imageHeight}
+              aspectRatio={BANNER_ASPECT_PAGE_HERO}
+              position={draftPosition}
+              onChange={setDraftPosition}
+            />
+            <div className="form-actions" style={{ marginTop: 16, marginBottom: 16 }}>
+              <button
+                type="button"
+                className="btn-primary"
+                onClick={handleSavePosition}
+                disabled={savingPosition || !positionDirty}
+              >
+                {savingPosition ? "保存中…" : "保存显示位置"}
+              </button>
+              <button type="button" className="btn-link danger" onClick={handleRemove}>
+                删除图片
+              </button>
+            </div>
+          </>
+        ) : (
+          <div className="gallery-preview-item" style={{ width: "100%", height: 140, marginBottom: 16 }}>
+            <img src={item.imageUrl} alt="" style={{ width: "100%", height: "100%", objectFit: "contain" }} />
+            <button type="button" className="gallery-remove-btn" onClick={handleRemove}>
+              删除
+            </button>
+          </div>
+        )
       ) : (
         <p
           className="empty-row"
@@ -201,6 +305,21 @@ function AssetCard({
         <input type="file" accept="image/png,image/jpeg,image/webp,image/gif" onChange={handleUpload} disabled={uploading} />
       </label>
       {uploading && <p>上传中…</p>}
+
+      {pendingFile && (
+        <BannerUploadDialog
+          file={pendingFile}
+          aspectRatio={BANNER_ASPECT_PAGE_HERO}
+          imageWidth={pendingSize?.width ?? null}
+          imageHeight={pendingSize?.height ?? null}
+          busy={uploading}
+          onCancel={() => {
+            setPendingFile(null);
+            setPendingSize(null);
+          }}
+          onConfirm={handleUploadConfirm}
+        />
+      )}
     </div>
   );
 }

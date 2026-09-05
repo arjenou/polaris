@@ -41,6 +41,10 @@ export const onRequestGet: PagesFunction<Env> = async ({ request, env }) => {
     {
       heroTitle: content?.heroTitle ?? "",
       heroImage: hero?.imageUrl ?? null,
+      heroObjectPosition:
+        hero?.imageUrl != null
+          ? { x: hero.objectPositionX ?? 50, y: hero.objectPositionY ?? 0 }
+          : null,
       badge: badge?.imageUrl ?? null,
       introTitle: content?.introTitle ?? "",
       intro: content?.intro ?? [],

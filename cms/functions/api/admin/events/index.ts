@@ -34,23 +34,21 @@ export const onRequestPost: PagesFunction<Env> = async ({ request, env }) => {
   const validationError = validateEvent(input);
   if (validationError) return errorJson(validationError, 400);
 
-  const maxOrder = await env.DB.prepare("SELECT MAX(sort_order) as maxOrder FROM events WHERE locale = ?")
-    .bind(input.locale)
-    .first<{ maxOrder: number | null }>();
-  const nextOrder = (maxOrder?.maxOrder ?? -1) + 1;
-
+  // New events are inserted at the top of the list, so push every existing
+  // row (for this locale) down by one before inserting at sort_order 0.
   try {
-    const result = await env.DB.prepare(
-      `INSERT INTO events
-         (locale, slug, title, date, date_range, badge, badge_color, summary,
-          cover_image_key, cover_image_width, cover_image_height,
-          hero_image_key, hero_image_width, hero_image_height, video_url,
-          video_poster_key, video_poster_width, video_poster_height,
-          overview_event_name, overview_datetime, overview_venue, overview_participants, overview_content, overview_organizer,
-          gallery, published, scheduled_at, sort_order, updated_at)
-       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, datetime('now'))`,
-    )
-      .bind(
+    const result = await env.DB.batch([
+      env.DB.prepare("UPDATE events SET sort_order = sort_order + 1 WHERE locale = ?").bind(input.locale),
+      env.DB.prepare(
+        `INSERT INTO events
+           (locale, slug, title, date, date_range, badge, badge_color, summary,
+            cover_image_key, cover_image_width, cover_image_height,
+            hero_image_key, hero_image_width, hero_image_height, video_url,
+            video_poster_key, video_poster_width, video_poster_height,
+            overview_event_name, overview_datetime, overview_venue, overview_participants, overview_content, overview_organizer,
+            gallery, published, scheduled_at, sort_order, updated_at)
+         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 0, datetime('now'))`,
+      ).bind(
         input.locale,
         input.slug,
         input.title,
@@ -78,9 +76,8 @@ export const onRequestPost: PagesFunction<Env> = async ({ request, env }) => {
         toGalleryJson(input.gallery),
         input.published === false ? 0 : 1,
         resolveEventScheduledAt(input),
-        nextOrder,
-      )
-      .run();
+      ),
+    ]).then(([, insertResult]) => insertResult);
 
     const id = result.meta.last_row_id;
     const row = await env.DB.prepare("SELECT * FROM events WHERE id = ?").bind(id).first<EventRow>();

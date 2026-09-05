@@ -1,6 +1,8 @@
 import { groupInfo as defaultGroupInfoJa } from "@/data/pages/groupInfo";
 import { groupInfoZh as defaultGroupInfoZh } from "@/data/pages/groupInfo.zh";
 import type { TimelineEntry } from "@/components/pages/CompanyTimeline";
+import type { ObjectPosition } from "@/lib/objectPosition";
+import { DEFAULT_OBJECT_POSITION } from "@/lib/objectPosition";
 
 // Content is managed via the Polaris CMS (Cloudflare Pages + D1 + R2). See /cms.
 const CMS_API_URL = process.env.CMS_API_URL ?? "https://polaris.api.yingmu-tech.com";
@@ -9,6 +11,7 @@ const REVALIDATE_SECONDS = 300;
 
 export interface GroupInfoData {
   heroImage: string;
+  heroObjectPosition: ObjectPosition;
   heroTitle: string;
   badge: string;
   introTitle: string;
@@ -23,6 +26,7 @@ export interface GroupInfoData {
 interface GroupInfoApiShape {
   heroTitle?: string;
   heroImage?: string | null;
+  heroObjectPosition?: ObjectPosition | null;
   badge?: string | null;
   introTitle?: string;
   intro?: string[];
@@ -42,12 +46,13 @@ export async function getGroupInfo(locale: "ja" | "zh"): Promise<GroupInfoData> 
     const res = await fetch(`${CMS_API_URL}/api/group-info?locale=${locale}`, {
       next: { revalidate: REVALIDATE_SECONDS },
     });
-    if (!res.ok) return fallback;
+    if (!res.ok) return { ...fallback, heroObjectPosition: DEFAULT_OBJECT_POSITION };
 
     const data: GroupInfoApiShape = await res.json();
 
     return {
       heroImage: data.heroImage || fallback.heroImage,
+      heroObjectPosition: data.heroObjectPosition ?? DEFAULT_OBJECT_POSITION,
       heroTitle: data.heroTitle?.trim() ? data.heroTitle : fallback.heroTitle,
       badge: data.badge || fallback.badge,
       introTitle: data.introTitle?.trim() ? data.introTitle : fallback.introTitle,
@@ -59,6 +64,6 @@ export async function getGroupInfo(locale: "ja" | "zh"): Promise<GroupInfoData> 
       overseasTitle: data.overseasTitle?.trim() ? data.overseasTitle : fallback.overseasTitle,
     };
   } catch {
-    return fallback;
+    return { ...fallback, heroObjectPosition: DEFAULT_OBJECT_POSITION };
   }
 }

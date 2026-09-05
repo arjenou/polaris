@@ -1,4 +1,8 @@
-import { useEffect, useState, type ChangeEvent, type DragEvent, type FormEvent } from "react";
+import { useEffect, useRef, useState, type ChangeEvent, type DragEvent, type FormEvent } from "react";
+import BannerFocalPicker from "../components/BannerFocalPicker";
+import BannerUploadDialog from "../components/BannerUploadDialog";
+import { BANNER_ASPECT_HOME_HERO } from "../lib/bannerAspectRatios";
+import { DEFAULT_OBJECT_POSITION, type ObjectPosition } from "../lib/objectPosition";
 import { homeHeroApi, mediaApi, type HomeHeroHeadline, type HomeHeroLocale, type HomeHeroSlide } from "../lib/api";
 import { useToast } from "../lib/ToastContext";
 import { SkeletonBlock, SkeletonGrid } from "../components/Skeleton";
@@ -7,6 +11,22 @@ const LOCALES: { locale: HomeHeroLocale; label: string }[] = [
   { locale: "ja", label: "日语首页" },
   { locale: "zh", label: "中文首页" },
 ];
+
+function readImageSize(file: File): Promise<{ width: number; height: number }> {
+  return new Promise((resolve, reject) => {
+    const url = URL.createObjectURL(file);
+    const img = new Image();
+    img.onload = () => {
+      resolve({ width: img.naturalWidth, height: img.naturalHeight });
+      URL.revokeObjectURL(url);
+    };
+    img.onerror = () => {
+      URL.revokeObjectURL(url);
+      reject(new Error("无法读取图片尺寸"));
+    };
+    img.src = url;
+  });
+}
 
 function HeadlineForm({ locale, label, value, onSaved }: {
   locale: HomeHeroLocale;
@@ -58,6 +78,54 @@ function HeadlineForm({ locale, label, value, onSaved }: {
   );
 }
 
+function SlidePositionDialog({
+  slide,
+  busy,
+  onCancel,
+  onSave,
+}: {
+  slide: HomeHeroSlide;
+  busy: boolean;
+  onCancel: () => void;
+  onSave: (position: ObjectPosition) => void;
+}) {
+  const [position, setPosition] = useState<ObjectPosition>({
+    x: slide.objectPositionX ?? DEFAULT_OBJECT_POSITION.x,
+    y: slide.objectPositionY ?? DEFAULT_OBJECT_POSITION.y,
+  });
+
+  useEffect(() => {
+    setPosition({
+      x: slide.objectPositionX ?? DEFAULT_OBJECT_POSITION.x,
+      y: slide.objectPositionY ?? DEFAULT_OBJECT_POSITION.y,
+    });
+  }, [slide]);
+
+  return (
+    <div className="cropper-overlay" role="dialog" aria-modal="true">
+      <div className="cropper-dialog">
+        <h2 className="cropper-title">调整轮播图显示区域</h2>
+        <BannerFocalPicker
+          imageUrl={slide.imageUrl}
+          imageWidth={slide.imageWidth}
+          imageHeight={slide.imageHeight}
+          aspectRatio={BANNER_ASPECT_HOME_HERO}
+          position={position}
+          onChange={setPosition}
+        />
+        <div className="cropper-actions">
+          <button type="button" className="btn-ghost" onClick={onCancel} disabled={busy}>
+            取消
+          </button>
+          <button type="button" className="btn-primary" onClick={() => onSave(position)} disabled={busy}>
+            {busy ? "保存中…" : "保存"}
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 export default function HomeHero() {
   const { showToast, showSuccessDialog } = useToast();
   const [headlines, setHeadlines] = useState<HomeHeroHeadline[]>([]);
@@ -68,6 +136,13 @@ export default function HomeHero() {
   const [error, setError] = useState<string | null>(null);
   const [uploading, setUploading] = useState(false);
   const [dragIndex, setDragIndex] = useState<number | null>(null);
+  const [pendingUpload, setPendingUpload] = useState<{
+    file: File;
+    width: number;
+    height: number;
+  } | null>(null);
+  const [editingSlide, setEditingSlide] = useState<HomeHeroSlide | null>(null);
+  const uploadQueueRef = useRef<File[]>([]);
 
   function refreshHeadlines() {
     setHeadlinesLoading(true);
@@ -92,23 +167,63 @@ export default function HomeHero() {
     refreshSlides();
   }, []);
 
+  async function openNextUploadFromQueue() {
+    const next = uploadQueueRef.current.shift();
+    if (!next) {
+      setPendingUpload(null);
+      return;
+    }
+    try {
+      const size = await readImageSize(next);
+      setPendingUpload({ file: next, width: size.width, height: size.height });
+    } catch (err) {
+      showToast(err instanceof Error ? err.message : "无法读取图片", "error");
+      await openNextUploadFromQueue();
+    }
+  }
+
   async function handleUpload(e: ChangeEvent<HTMLInputElement>) {
     const files = Array.from(e.target.files ?? []);
+    e.target.value = "";
     if (files.length === 0) return;
+    uploadQueueRef.current = files;
+    await openNextUploadFromQueue();
+  }
+
+  async function handleUploadConfirm(position: ObjectPosition) {
+    if (!pendingUpload) return;
     setUploading(true);
     setError(null);
     try {
-      for (const file of files) {
-        const res = await mediaApi.upload(file, "home-hero");
-        await homeHeroApi.addSlide(res.key, res.width, res.height);
+      const res = await mediaApi.upload(pendingUpload.file, "home-hero");
+      await homeHeroApi.addSlide(res.key, res.width, res.height, position.x, position.y);
+      if (uploadQueueRef.current.length === 0) {
+        showSuccessDialog("上传成功");
+        refreshSlides();
       }
-      showSuccessDialog(`已上传 ${files.length} 张图片`);
-      refreshSlides();
+      setPendingUpload(null);
+      if (uploadQueueRef.current.length > 0) {
+        await openNextUploadFromQueue();
+      }
     } catch (err) {
       setError(err instanceof Error ? err.message : "上传失败");
     } finally {
       setUploading(false);
-      e.target.value = "";
+    }
+  }
+
+  async function handleSaveSlidePosition(position: ObjectPosition) {
+    if (!editingSlide) return;
+    setUploading(true);
+    try {
+      await homeHeroApi.updateSlidePosition(editingSlide.id, position.x, position.y);
+      showSuccessDialog("显示位置已保存");
+      setEditingSlide(null);
+      refreshSlides();
+    } catch (err) {
+      showToast(err instanceof Error ? err.message : "保存失败", "error");
+    } finally {
+      setUploading(false);
     }
   }
 
@@ -153,7 +268,9 @@ export default function HomeHero() {
         <h1>首页页面管理</h1>
       </div>
 
-      <p className="hint">管理首页最上方的大标题文字（日语 / 中文可分别设置）与背景图片轮播。背景图片在两个语言页面共用同一组，拖动图片可调整顺序（拖动后自动保存）。</p>
+      <p className="hint">
+        管理首页最上方的大标题文字（日语 / 中文可分别设置）与背景图片轮播。背景图片在两个语言页面共用同一组，拖动图片可调整顺序（拖动后自动保存）。上传或点击「调整区域」可在虚线框内选择展示位置。
+      </p>
 
       {error && <p className="form-error">{error}</p>}
 
@@ -187,7 +304,7 @@ export default function HomeHero() {
             multiple
             accept="image/png,image/jpeg,image/webp,image/gif"
             onChange={handleUpload}
-            disabled={uploading}
+            disabled={uploading || Boolean(pendingUpload)}
           />
         </label>
         {uploading && <p>上传中…</p>}
@@ -204,7 +321,6 @@ export default function HomeHero() {
                 className={`gallery-preview-item ${dragIndex === index ? "dragging-item" : ""}`}
                 draggable
                 onDragStart={(e) => {
-                  // Firefox/Safari refuse to start a drag unless data is set.
                   e.dataTransfer.effectAllowed = "move";
                   e.dataTransfer.setData("text/plain", String(index));
                   setDragIndex(index);
@@ -214,6 +330,14 @@ export default function HomeHero() {
                 onDragEnd={handleDragEnd}
               >
                 <img src={slide.imageUrl} alt="" draggable={false} />
+                <button
+                  type="button"
+                  className="gallery-edit-btn"
+                  onClick={() => setEditingSlide(slide)}
+                  onPointerDown={(e) => e.stopPropagation()}
+                >
+                  调整区域
+                </button>
                 <button
                   type="button"
                   className="gallery-remove-btn"
@@ -227,6 +351,31 @@ export default function HomeHero() {
           </div>
         )}
       </div>
+
+      {pendingUpload && (
+        <BannerUploadDialog
+          file={pendingUpload.file}
+          aspectRatio={BANNER_ASPECT_HOME_HERO}
+          imageWidth={pendingUpload.width}
+          imageHeight={pendingUpload.height}
+          busy={uploading}
+          title="调整轮播图显示区域"
+          onCancel={() => {
+            uploadQueueRef.current = [];
+            setPendingUpload(null);
+          }}
+          onConfirm={handleUploadConfirm}
+        />
+      )}
+
+      {editingSlide && (
+        <SlidePositionDialog
+          slide={editingSlide}
+          busy={uploading}
+          onCancel={() => setEditingSlide(null)}
+          onSave={handleSaveSlidePosition}
+        />
+      )}
     </div>
   );
 }

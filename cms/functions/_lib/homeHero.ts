@@ -25,6 +25,8 @@ export interface HomeHeroSlideRow {
   image_key: string;
   image_width: number | null;
   image_height: number | null;
+  object_position_x: number;
+  object_position_y: number;
   sort_order: number;
   created_at: string;
   updated_at: string;
@@ -37,6 +39,8 @@ export function toHomeHeroSlideApiShape(row: HomeHeroSlideRow, origin: string) {
     imageUrl: `${origin}/media/${row.image_key}`,
     imageWidth: row.image_width,
     imageHeight: row.image_height,
+    objectPositionX: row.object_position_x,
+    objectPositionY: row.object_position_y,
     sortOrder: row.sort_order,
   };
 }

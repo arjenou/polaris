@@ -8,6 +8,13 @@ interface HomeHeroSlideInput {
   imageKey?: string;
   imageWidth?: number | null;
   imageHeight?: number | null;
+  objectPositionX?: number;
+  objectPositionY?: number;
+}
+
+function clampPosition(value: unknown, fallback: number): number {
+  if (typeof value !== "number" || Number.isNaN(value)) return fallback;
+  return Math.min(100, Math.max(0, value));
 }
 
 export const onRequestGet: PagesFunction<Env> = async ({ request, env }) => {
@@ -32,10 +39,18 @@ export const onRequestPost: PagesFunction<Env> = async ({ request, env }) => {
   const nextOrder = (maxOrder?.maxOrder ?? -1) + 1;
 
   const result = await env.DB.prepare(
-    `INSERT INTO home_hero_slides (image_key, image_width, image_height, sort_order, updated_at)
-     VALUES (?, ?, ?, ?, datetime('now'))`,
+    `INSERT INTO home_hero_slides
+       (image_key, image_width, image_height, object_position_x, object_position_y, sort_order, updated_at)
+     VALUES (?, ?, ?, ?, ?, ?, datetime('now'))`,
   )
-    .bind(input.imageKey, input.imageWidth ?? null, input.imageHeight ?? null, nextOrder)
+    .bind(
+      input.imageKey,
+      input.imageWidth ?? null,
+      input.imageHeight ?? null,
+      clampPosition(input.objectPositionX, 50),
+      clampPosition(input.objectPositionY, 0),
+      nextOrder,
+    )
     .run();
 
   const id = result.meta.last_row_id;

@@ -3,6 +3,8 @@ export interface MaintenancePageRow {
   image_key: string | null;
   image_width: number | null;
   image_height: number | null;
+  object_position_x: number;
+  object_position_y: number;
   updated_at: string;
 }
 
@@ -12,6 +14,8 @@ export function toMaintenancePageApiShape(row: MaintenancePageRow, origin: strin
     imageUrl: row.image_key ? `${origin}/media/${row.image_key}` : null,
     imageWidth: row.image_width,
     imageHeight: row.image_height,
+    objectPositionX: row.object_position_x,
+    objectPositionY: row.object_position_y,
     updatedAt: row.updated_at,
   };
 }
@@ -22,5 +26,9 @@ export function toMaintenancePagePublicShape(row: MaintenancePageRow, origin: st
     src: `${origin}/media/${row.image_key}`,
     width: row.image_width ?? 1920,
     height: row.image_height ?? 1080,
+    objectPosition: {
+      x: row.object_position_x,
+      y: row.object_position_y,
+    },
   };
 }

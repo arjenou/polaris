@@ -1,5 +1,6 @@
 import { heroHeadline as defaultHeadlineJa, heroSlides as defaultSlides, type HeroSlide } from "@/data/home";
 import { heroHeadlineZh as defaultHeadlineZh } from "@/data/home.zh";
+import { DEFAULT_OBJECT_POSITION } from "@/lib/objectPosition";
 
 export type { HeroSlide };
 
@@ -29,10 +30,16 @@ export async function getHomeHero(locale: "ja" | "zh"): Promise<HomeHeroData> {
     });
     if (!res.ok) return fallback;
 
-    const data: { headline?: string; slides?: { src: string }[] } = await res.json();
+    const data: {
+      headline?: string;
+      slides?: { src: string; objectPosition?: { x: number; y: number } }[];
+    } = await res.json();
     const slides =
       Array.isArray(data.slides) && data.slides.length > 0
-        ? data.slides.map((slide) => ({ image: slide.src }))
+        ? data.slides.map((slide) => ({
+            image: slide.src,
+            objectPosition: slide.objectPosition ?? DEFAULT_OBJECT_POSITION,
+          }))
         : fallback.slides;
     const headline = typeof data.headline === "string" && data.headline.trim() ? data.headline : fallback.headline;
 

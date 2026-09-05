@@ -40,7 +40,11 @@ export default async function Page() {
 
   return (
     <PageShell locale="zh">
-      <PageHero image={groupInfoZh.heroImage} title={groupInfoZh.heroTitle} />
+      <PageHero
+        image={groupInfoZh.heroImage}
+        title={groupInfoZh.heroTitle}
+        objectPosition={groupInfoZh.heroObjectPosition}
+      />
       <GroupInfoIntro
         badge={groupInfoZh.badge}
         title={groupInfoZh.introTitle}

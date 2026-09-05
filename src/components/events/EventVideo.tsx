@@ -1,9 +1,13 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import styles from "./EventVideo.module.css";
 
 const DIRECT_FILE_RE = /\.(mp4|webm|ogg)(\?.*)?$/i;
+
+function isPortraitDimensions(width: number, height: number): boolean {
+  return width > 0 && height > 0 && height > width;
+}
 
 /** Renders a real embedded video: a native <video> for direct file links,
  * or an <iframe> for embeddable player links (YouTube/Vimeo "embed" URLs).
@@ -12,6 +16,18 @@ const DIRECT_FILE_RE = /\.(mp4|webm|ogg)(\?.*)?$/i;
 export default function EventVideo({ url, title, poster }: { url: string; title: string; poster?: string | null }) {
   const videoRef = useRef<HTMLVideoElement>(null);
   const [started, setStarted] = useState(false);
+  const [isPortrait, setIsPortrait] = useState(false);
+
+  useEffect(() => {
+    if (!poster) return;
+    const img = new Image();
+    img.onload = () => {
+      if (isPortraitDimensions(img.naturalWidth, img.naturalHeight)) {
+        setIsPortrait(true);
+      }
+    };
+    img.src = poster;
+  }, [poster]);
 
   if (DIRECT_FILE_RE.test(url)) {
     return (
@@ -23,7 +39,11 @@ export default function EventVideo({ url, title, poster }: { url: string; title:
           controls
           playsInline
           preload="metadata"
-          className={styles.media}
+          className={`${styles.media}${isPortrait ? ` ${styles.mediaPortrait}` : ""}`}
+          onLoadedMetadata={(e) => {
+            const { videoWidth, videoHeight } = e.currentTarget;
+            setIsPortrait(isPortraitDimensions(videoWidth, videoHeight));
+          }}
           onPlay={() => setStarted(true)}
         />
         {!started && (

@@ -2,14 +2,17 @@
 
 import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
+import { formatObjectPosition, type ObjectPosition } from "@/lib/objectPosition";
 import styles from "./PageHero.module.css";
 
 export default function PageHero({
   image,
   title,
+  objectPosition,
 }: {
   image: string;
   title: string;
+  objectPosition?: ObjectPosition | null;
 }) {
   const overlayRef = useRef<HTMLDivElement>(null);
   const titleRef = useRef<HTMLHeadingElement>(null);
@@ -43,7 +46,15 @@ export default function PageHero({
 
   return (
     <section className={styles.hero}>
-      <Image src={image} alt="" fill priority sizes="100vw" className={styles.image} />
+      <Image
+        src={image}
+        alt=""
+        fill
+        priority
+        sizes="100vw"
+        className={styles.image}
+        style={{ objectPosition: formatObjectPosition(objectPosition) }}
+      />
       <div ref={overlayRef} className={styles.overlay}>
         <h1 ref={titleRef} className={styles.title} style={fontSize ? { fontSize } : undefined}>
           {title}

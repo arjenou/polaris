@@ -2,6 +2,7 @@
 
 import Image from "next/image";
 import { useEffect, useState } from "react";
+import { formatObjectPosition } from "@/lib/objectPosition";
 import { heroHeadline as defaultHeadline, heroSlides as defaultSlides, type HeroSlide } from "@/data/home";
 import styles from "./Hero.module.css";
 
@@ -38,6 +39,7 @@ export default function Hero({
             priority={index === 0}
             sizes="100vw"
             className={styles.slideImage}
+            style={{ objectPosition: formatObjectPosition(slide.objectPosition) }}
           />
         </div>
       ))}
