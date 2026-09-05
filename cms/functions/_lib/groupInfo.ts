@@ -83,8 +83,8 @@ export function toGroupInfoAssetApiShape(row: GroupInfoAssetRow, origin: string)
     imageUrl: row.image_key ? `${origin}/media/${row.image_key}` : null,
     imageWidth: row.image_width,
     imageHeight: row.image_height,
-    objectPositionX: row.object_position_x,
-    objectPositionY: row.object_position_y,
+    objectPositionX: row.object_position_x ?? 50,
+    objectPositionY: row.object_position_y ?? 0,
     updatedAt: row.updated_at,
   };
 }

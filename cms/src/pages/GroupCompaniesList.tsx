@@ -1,6 +1,7 @@
 import { useEffect, useState, type DragEvent } from "react";
 import { Link } from "react-router-dom";
 import { groupCompaniesApi, type GroupCompany, type GroupCompanyRegion } from "../lib/api";
+import { formatUploadSizeHint, IMAGE_UPLOAD_SPECS } from "../lib/imageUploadSpecs";
 import { useToast } from "../lib/ToastContext";
 import { SkeletonTableRows } from "../components/Skeleton";
 
@@ -97,7 +98,8 @@ export default function GroupCompaniesList() {
       </div>
 
       <p className="hint">
-        管理「グループ情報」页面的「グループ企業紹介」板块。ja/zh 内容各自独立填写。拖动可调整顺序（拖动后自动保存）。
+        管理「グループ情報」页面的「グループ企業紹介」板块。ja/zh 内容各自独立填写。拖动可调整顺序（拖动后自动保存）。企业 Logo
+        {formatUploadSizeHint(IMAGE_UPLOAD_SPECS.groupCompanyLogo)}
       </p>
 
       <div className="tabs-bar">

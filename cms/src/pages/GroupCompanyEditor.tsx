@@ -3,6 +3,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import { groupCompaniesApi, mediaApi, type GroupCompanyInput, type GroupCompanyRegion } from "../lib/api";
 import { useToast } from "../lib/ToastContext";
 import ImageCropper from "../components/ImageCropper";
+import UploadSizeHint from "../components/UploadSizeHint";
 import { LOGO_ASPECT_RATIO } from "../lib/coverImage";
 
 const REGION_LABELS: Record<GroupCompanyRegion, string> = {
@@ -187,10 +188,9 @@ export default function GroupCompanyEditor({ mode }: { mode: "create" | "edit" }
 
         <label>
           企业 Logo
+          <UploadSizeHint spec="groupCompanyLogo" />
           <input type="file" accept="image/png,image/jpeg,image/webp,image/gif" onChange={handleImageChange} />
-          <span className="field-hint">
-            前台 logo 展示框比例约为 2.54:1，选择图片后会自动整体缩放进取景框，不会被截断，可再手动调整位置与大小。
-          </span>
+          <span className="field-hint">选择图片后会自动整体缩放进取景框，不会被截断，可再手动调整位置与大小。</span>
         </label>
         {uploading && <p>上传中…</p>}
         {imageUrl && (

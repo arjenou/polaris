@@ -1,6 +1,7 @@
 import { useEffect, useState, type DragEvent } from "react";
 import { Link } from "react-router-dom";
 import { pageAdvantagesApi, type PageAdvantage, type PageGalleryKey } from "../lib/api";
+import { formatUploadSizeHint, IMAGE_UPLOAD_SPECS } from "../lib/imageUploadSpecs";
 import { useToast } from "../lib/ToastContext";
 import { SkeletonTableRows } from "../components/Skeleton";
 
@@ -97,7 +98,8 @@ export default function PageAdvantagesList() {
 
       <p className="hint">
         管理「不動産取引」「リノベーション」「不動産管理」三个页面中「私たちが選ばれる理由」板块的内容。ja/zh
-        内容各自独立填写。拖动可调整顺序（拖动后自动保存）。
+        内容各自独立填写。拖动可调整顺序（拖动后自动保存）。配图
+        {formatUploadSizeHint(IMAGE_UPLOAD_SPECS.pageAdvantage)}
       </p>
 
       <div className="tabs">

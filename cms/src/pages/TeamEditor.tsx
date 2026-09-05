@@ -2,6 +2,7 @@ import { useEffect, useState, type ChangeEvent, type FormEvent } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { mediaApi, teamApi, type TeamMemberInput } from "../lib/api";
 import { useToast } from "../lib/ToastContext";
+import UploadSizeHint from "../components/UploadSizeHint";
 
 const EMPTY_FORM: TeamMemberInput = {
   locale: "ja",
@@ -199,6 +200,7 @@ export default function TeamEditor({ mode }: { mode: "create" | "edit" }) {
 
         <label>
           头像
+          <UploadSizeHint spec="teamPhoto" />
           <input type="file" accept="image/png,image/jpeg,image/webp,image/gif" onChange={handleImageChange} />
         </label>
         {uploading && <p>上传中…</p>}

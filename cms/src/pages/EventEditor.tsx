@@ -2,6 +2,7 @@ import { useEffect, useState, type ChangeEvent, type DragEvent, type FormEvent }
 import { useNavigate, useParams } from "react-router-dom";
 import { eventsApi, mediaApi, type EventGalleryImage, type EventInput } from "../lib/api";
 import { useToast } from "../lib/ToastContext";
+import UploadSizeHint from "../components/UploadSizeHint";
 import { generateSlug } from "../lib/slug";
 import { datetimeLocalToIso, isoToDatetimeLocal } from "../lib/datetime";
 
@@ -317,7 +318,7 @@ export default function EventEditor({ mode }: { mode: "create" | "edit" }) {
 
         <label>
           封面图（必填，首页轮播卡片 / 列表页使用）
-          <span className="field-hint">仅支持图片（jpg / png / webp / gif）。</span>
+          <UploadSizeHint spec="eventCover" />
           <input type="file" accept="image/png,image/jpeg,image/webp,image/gif" onChange={handleCoverChange} />
         </label>
         {uploadingCover && <p>封面上传中…</p>}
@@ -325,10 +326,9 @@ export default function EventEditor({ mode }: { mode: "create" | "edit" }) {
 
         <label>
           详情图 / 视频（可选，详情页顶部展示）
+          <UploadSizeHint spec="eventHeroImage" />
           <span className="field-hint">
-            可上传图片或视频。上传视频后详情页左侧按 <strong>16:9</strong> 固定比例展示（推荐分辨率
-            <strong> 1920×1080</strong>），竖屏视频会被裁切；右侧显示「开催概要」。支持 MP4 / WebM / OGG，最大
-            100MB。上传图片则显示该图，都不上传时使用封面图。
+            可上传图片或视频。上传视频后竖屏视频会完整显示（左右留黑边）；支持 MP4 / WebM / OGG，最大 100MB。
           </span>
           <input
             type="file"
@@ -362,10 +362,7 @@ export default function EventEditor({ mode }: { mode: "create" | "edit" }) {
           <>
             <label>
               视频封面图（可选）
-              <span className="field-hint">
-                详情页会先显示这张封面图，访客点击后才开始播放视频。建议比例 <strong>16:9</strong>（如
-                <strong> 1920×1080</strong>），与视频展示区域一致。不上传时使用视频第一帧。
-              </span>
+              <UploadSizeHint spec="eventVideoPoster" />
               <input
                 type="file"
                 accept="image/png,image/jpeg,image/webp,image/gif"
@@ -432,6 +429,7 @@ export default function EventEditor({ mode }: { mode: "create" | "edit" }) {
 
         <label>
           图库（可选，多选上传，详情页以照片墙+灯箱展示）
+          <UploadSizeHint spec="eventGallery" />
           <input
             type="file"
             multiple

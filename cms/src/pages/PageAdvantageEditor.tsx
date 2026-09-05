@@ -2,6 +2,7 @@ import { useEffect, useState, type ChangeEvent, type FormEvent } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { mediaApi, pageAdvantagesApi, type PageAdvantageInput, type PageGalleryKey } from "../lib/api";
 import { useToast } from "../lib/ToastContext";
+import UploadSizeHint from "../components/UploadSizeHint";
 
 const PAGE_LABELS: Record<PageGalleryKey, string> = {
   "real-estate": "不動産取引",
@@ -132,6 +133,7 @@ export default function PageAdvantageEditor({ mode }: { mode: "create" | "edit" 
 
         <label>
           图片
+          <UploadSizeHint spec="pageAdvantage" />
           <input type="file" accept="image/png,image/jpeg,image/webp,image/gif" onChange={handleImageChange} />
         </label>
         {uploading && <p>上传中…</p>}

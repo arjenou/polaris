@@ -1,6 +1,7 @@
 import { useEffect, useState, type ChangeEvent } from "react";
 import BannerFocalPicker from "../components/BannerFocalPicker";
 import BannerUploadDialog from "../components/BannerUploadDialog";
+import UploadSizeHint from "../components/UploadSizeHint";
 import { BANNER_ASPECT_COMING_SOON } from "../lib/bannerAspectRatios";
 import { DEFAULT_OBJECT_POSITION, type ObjectPosition } from "../lib/objectPosition";
 import { maintenancePageApi, mediaApi, type MaintenancePage } from "../lib/api";
@@ -132,6 +133,7 @@ export default function MaintenancePageSettings() {
 
       <div className="panel" style={{ maxWidth: 640 }}>
         <h2>背景图</h2>
+        <UploadSizeHint spec="maintenanceBanner" />
         {loading ? (
           <SkeletonBlock width="100%" height={280} radius={6} style={{ display: "block", marginBottom: 16 }} />
         ) : item?.imageUrl ? (

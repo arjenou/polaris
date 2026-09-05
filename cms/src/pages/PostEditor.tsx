@@ -3,6 +3,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import { mediaApi, type ContentPostInput } from "../lib/api";
 import RichTextEditor from "../components/RichTextEditor";
 import ImageCropper from "../components/ImageCropper";
+import UploadSizeHint from "../components/UploadSizeHint";
 import { COVER_ASPECT_RATIO } from "../lib/coverImage";
 import { useToast } from "../lib/ToastContext";
 import { generateSlug } from "../lib/slug";
@@ -202,11 +203,9 @@ export default function PostEditor({ resource, mode }: { resource: ContentTypeKe
 
         <label>
           卡片封面图（必填）
+          <UploadSizeHint spec={resource === "recommended" ? "recommendedCover" : "newsCover"} />
           <input type="file" accept="image/png,image/jpeg,image/webp,image/gif" onChange={handleImageChange} />
-          <span className="field-hint">
-            仅用于列表页与首页的卡片封面，不会显示在文章正文中；正文里的图片请在下方正文编辑器中插入。选择图片后会弹出
-            16:10 的裁剪框，与前台封面显示比例一致。
-          </span>
+          <span className="field-hint">选择图片后会弹出 16:10 裁剪框，与前台封面显示比例一致。正文图片请在下方编辑器中插入。</span>
         </label>
         {uploading && <p>上传中…</p>}
         {imageUrl && (

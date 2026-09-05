@@ -9,6 +9,8 @@ import {
 } from "../lib/api";
 import { useToast } from "../lib/ToastContext";
 import { SkeletonGrid } from "../components/Skeleton";
+import UploadSizeHint from "../components/UploadSizeHint";
+import { formatUploadSizeHint, IMAGE_UPLOAD_SPECS } from "../lib/imageUploadSpecs";
 
 const TABS: { key: PageGalleryKey; label: string }[] = [
   { key: "real-estate", label: "不動産取引" },
@@ -141,7 +143,9 @@ export default function PageGalleries() {
       </div>
 
       <p className="hint">
-        管理「不動産取引」「リノベーション」「不動産管理」三个页面：可在「私たちが選ばれる理由」与底部轮播图之间上传一张可选展示图（未上传则前台不显示）；底部轮播图在日语/中文页面共用，拖动可调整顺序（拖动后自动保存）。
+        管理「不動産取引」「リノベーション」「不動産管理」三个页面：可在「私たちが選ばれる理由」与底部轮播图之间上传一张可选展示图（未上传则前台不显示）；底部轮播图在日语/中文页面共用，拖动可调整顺序（拖动后自动保存）。中间展示图
+        {formatUploadSizeHint(IMAGE_UPLOAD_SPECS.pageMidBanner)} 底部轮播图
+        {formatUploadSizeHint(IMAGE_UPLOAD_SPECS.pageGalleryCarousel)}
       </p>
 
       <div className="tabs">
@@ -154,7 +158,7 @@ export default function PageGalleries() {
 
       <div className="panel" style={{ marginBottom: 24 }}>
         <h2>中间展示图（可选）</h2>
-        <p className="hint">显示在「私たちが選ばれる理由」板块下方、底部轮播图上方。不上传则前台不显示。</p>
+        <UploadSizeHint spec="pageMidBanner" />
         <label className="upload-label">
           {midImage.imageUrl ? "重新上传" : "上传图片"}
           <input
@@ -177,6 +181,7 @@ export default function PageGalleries() {
 
       <div className="panel">
         <h2>底部轮播图</h2>
+        <UploadSizeHint spec="pageGalleryCarousel" />
         <label className="upload-label">
           上传图片（可多选）
           <input

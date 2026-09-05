@@ -2,6 +2,7 @@ import { useEffect, useState, type ChangeEvent } from "react";
 import { contactQrApi, mediaApi, type ContactQr, type ContactQrType } from "../lib/api";
 import { useToast } from "../lib/ToastContext";
 import { SkeletonBlock } from "../components/Skeleton";
+import UploadSizeHint from "../components/UploadSizeHint";
 
 const CARDS: { type: ContactQrType; label: string }[] = [
   { type: "wechat", label: "WeChat 二维码" },
@@ -48,6 +49,7 @@ function QrCard({ type, label, item, onChange }: {
   return (
     <div className="panel" style={{ maxWidth: 280 }}>
       <h2>{label}</h2>
+      <UploadSizeHint spec="contactQr" />
       {item?.imageUrl ? (
         <div className="gallery-preview-item" style={{ width: 160, height: 160, marginBottom: 16 }}>
           <img src={item.imageUrl} alt="" style={{ height: 160 }} />

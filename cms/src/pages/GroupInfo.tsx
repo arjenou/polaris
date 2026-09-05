@@ -1,6 +1,7 @@
 import { useEffect, useState, type ChangeEvent, type FormEvent } from "react";
 import BannerFocalPicker from "../components/BannerFocalPicker";
 import BannerUploadDialog from "../components/BannerUploadDialog";
+import UploadSizeHint from "../components/UploadSizeHint";
 import { BANNER_ASPECT_PAGE_HERO } from "../lib/bannerAspectRatios";
 import { DEFAULT_OBJECT_POSITION, type ObjectPosition } from "../lib/objectPosition";
 import {
@@ -34,11 +35,6 @@ function readImageSize(file: File): Promise<{ width: number; height: number }> {
 const LOCALES: { locale: GroupInfoLocale; label: string }[] = [
   { locale: "ja", label: "日语页面" },
   { locale: "zh", label: "中文页面" },
-];
-
-const ASSET_CARDS: { type: GroupInfoAssetType; label: string; hint: string }[] = [
-  { type: "hero", label: "页面顶部banner图", hint: "グループ情報页面最上方的通栏背景图，ja/zh 两个语言页面共用同一张。上传后可在虚线框内拖动调整展示区域。" },
-  { type: "badge", label: "グループ情報水印logo", hint: "「グループ情報」板块标题旁的水印装饰图，ja/zh 两个语言页面共用同一张。" },
 ];
 
 function toFormInput(content: GroupInfoContent): GroupInfoContentInput {
@@ -150,12 +146,16 @@ function AssetCard({
   hint,
   item,
   onChange,
+  wide = false,
+  sizeSpec,
 }: {
   type: GroupInfoAssetType;
   label: string;
   hint: string;
   item: GroupInfoAsset | undefined;
   onChange: () => void;
+  wide?: boolean;
+  sizeSpec?: "groupInfoHero" | "groupInfoBadge";
 }) {
   const { showToast, showSuccessDialog } = useToast();
   const [uploading, setUploading] = useState(false);
@@ -244,12 +244,15 @@ function AssetCard({
   const positionDirty =
     isHero &&
     item?.imageUrl &&
-    (draftPosition.x !== item.objectPositionX || draftPosition.y !== item.objectPositionY);
+    (draftPosition.x !== (item.objectPositionX ?? DEFAULT_OBJECT_POSITION.x) ||
+      draftPosition.y !== (item.objectPositionY ?? DEFAULT_OBJECT_POSITION.y));
 
   return (
-    <div className="panel" style={{ flex: 1, minWidth: 280 }}>
+    <div className="panel" style={{ flex: wide ? "1 1 100%" : 1, minWidth: wide ? undefined : 280, maxWidth: wide ? 640 : undefined, width: wide ? "100%" : undefined }}>
       <h2>{label}</h2>
       <p className="hint">{hint}</p>
+      {sizeSpec && <UploadSizeHint spec={sizeSpec} />}
+      {isHero && <p className="hint">上传后可在虚线框内拖动调整展示区域。</p>}
       {item?.imageUrl ? (
         isHero ? (
           <>
@@ -389,24 +392,41 @@ export default function GroupInfo() {
             })}
       </div>
 
-      <div style={{ display: "flex", gap: 24, flexWrap: "wrap" }}>
-        {assetsLoading
-          ? ASSET_CARDS.map((card) => (
-              <div key={card.type} className="panel" style={{ flex: 1, minWidth: 280 }}>
-                <h2>{card.label}</h2>
-                <SkeletonBlock width="100%" height={140} radius={6} />
-              </div>
-            ))
-          : ASSET_CARDS.map((card) => (
+      <div style={{ display: "flex", flexDirection: "column", gap: 24 }}>
+        {assetsLoading ? (
+          <>
+            <div className="panel" style={{ maxWidth: 640, width: "100%" }}>
+              <h2>页面顶部banner图</h2>
+              <SkeletonBlock width="100%" height={200} radius={6} />
+            </div>
+            <div className="panel" style={{ flex: 1, minWidth: 280, maxWidth: 400 }}>
+              <h2>グループ情報水印logo</h2>
+              <SkeletonBlock width="100%" height={140} radius={6} />
+            </div>
+          </>
+        ) : (
+          <>
+            <AssetCard
+              type="hero"
+              label="页面顶部banner图"
+              hint="グループ情報页面最上方的通栏背景图，ja/zh 两个语言页面共用同一张。"
+              item={assets.find((a) => a.type === "hero")}
+              onChange={refreshAssets}
+              wide
+              sizeSpec="groupInfoHero"
+            />
+            <div style={{ display: "flex", gap: 24, flexWrap: "wrap" }}>
               <AssetCard
-                key={card.type}
-                type={card.type}
-                label={card.label}
-                hint={card.hint}
-                item={assets.find((a) => a.type === card.type)}
+                type="badge"
+                label="グループ情報水印logo"
+                hint="「グループ情報」板块标题旁的水印装饰图，ja/zh 两个语言页面共用同一张。"
+                item={assets.find((a) => a.type === "badge")}
                 onChange={refreshAssets}
+                sizeSpec="groupInfoBadge"
               />
-            ))}
+            </div>
+          </>
+        )}
       </div>
     </div>
   );
