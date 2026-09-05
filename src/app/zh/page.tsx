@@ -37,7 +37,7 @@ export default async function ZhHomePage() {
   const { headline, slides } = await getHomeHero("zh");
 
   return (
-    <PageShell locale="zh" subsidiary="shanghai">
+    <PageShell locale="zh">
       <Hero headline={headline} slides={slides} />
       <Suspense fallback={<NewsSectionSkeleton />}>
         <LatestNewsSection locale="zh" moreHref="/zh/news" moreLabel="查看全部" />
