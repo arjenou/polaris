@@ -15,11 +15,11 @@ export const onRequestGet: PagesFunction<Env> = async ({ request, env }) => {
   const stmt = locale
     ? env.DB.prepare(
         `SELECT tm.*, (SELECT COUNT(*) FROM contact_submissions cs WHERE cs.member_id = tm.id) AS submission_count
-         FROM team_members tm WHERE tm.locale = ? ORDER BY tm.sort_order ASC`,
+         FROM team_members tm WHERE tm.locale = ? ORDER BY tm.id DESC`,
       ).bind(locale)
     : env.DB.prepare(
         `SELECT tm.*, (SELECT COUNT(*) FROM contact_submissions cs WHERE cs.member_id = tm.id) AS submission_count
-         FROM team_members tm ORDER BY tm.locale, tm.sort_order ASC`,
+         FROM team_members tm ORDER BY tm.locale, tm.id DESC`,
       );
 
   const { results } = await stmt.all<TeamMemberRowWithCount>();

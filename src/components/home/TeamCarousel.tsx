@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { useEffect, useLayoutEffect, useMemo, useState } from "react";
+import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import type { TeamMemberCard } from "@/lib/team";
 import styles from "./TeamCarousel.module.css";
 
@@ -58,12 +58,28 @@ export default function TeamCarousel({
   contactHref?: string;
   labels?: TeamCarouselLabels;
 }) {
+  const sectionRef = useRef<HTMLElement>(null);
   const [displayMembers, setDisplayMembers] = useState<TeamMemberCard[]>(members);
   const [orderReady, setOrderReady] = useState(false);
   const [activeIndex, setActiveIndex] = useState(0);
   const [modalMember, setModalMember] = useState<TeamMemberCard | null>(null);
   const [isPaused, setIsPaused] = useState(false);
+  const [isInView, setIsInView] = useState(false);
   const total = displayMembers.length;
+
+  // Start autoplay only after the section scrolls into view so visitors see the president first.
+  useEffect(() => {
+    const section = sectionRef.current;
+    if (!section) return;
+
+    const observer = new IntersectionObserver(
+      ([entry]) => setIsInView(entry.isIntersecting),
+      { threshold: 0.25 },
+    );
+
+    observer.observe(section);
+    return () => observer.disconnect();
+  }, []);
 
   useLayoutEffect(() => {
     setDisplayMembers(orderMembersForCarousel(members));
@@ -82,15 +98,15 @@ export default function TeamCarousel({
   const goPrev = () => setActiveIndex((i) => mod(i - 1, total));
   const goNext = () => setActiveIndex((i) => mod(i + 1, total));
 
-  // Auto-advance the carousel; pauses on hover and while the detail modal is open,
-  // and restarts the countdown whenever the slide changes (manually or automatically).
+  // Auto-advance the carousel once visible; pauses on hover, when scrolled away,
+  // and while the detail modal is open. Restarts the countdown on each slide change.
   useEffect(() => {
-    if (isPaused || modalMember || total <= 1) return;
+    if (!isInView || isPaused || modalMember || total <= 1) return;
     const timer = setInterval(() => {
       setActiveIndex((i) => mod(i + 1, total));
     }, AUTOPLAY_INTERVAL_MS);
     return () => clearInterval(timer);
-  }, [isPaused, modalMember, total, activeIndex]);
+  }, [isInView, isPaused, modalMember, total, activeIndex]);
 
   if (!visible) return null;
 
@@ -98,7 +114,11 @@ export default function TeamCarousel({
     `${contactHref}?member=${member.id}`;
 
   return (
-    <section className={styles.section} style={{ opacity: orderReady ? 1 : 0 }}>
+    <section
+      ref={sectionRef}
+      className={styles.section}
+      style={{ opacity: orderReady ? 1 : 0 }}
+    >
       <div className={styles.inner}>
         <div className={styles.header}>
           <span className={styles.teamLabel}>TEAM</span>
