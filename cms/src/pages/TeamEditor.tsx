@@ -62,6 +62,13 @@ export default function TeamEditor({ mode }: { mode: "create" | "edit" }) {
     setForm((f) => ({ ...f, [key]: value }));
   }
 
+  function handleImageRemove() {
+    update("imageKey", null);
+    update("imageWidth", null);
+    update("imageHeight", null);
+    setImageUrl(null);
+  }
+
   async function handleImageChange(e: ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0];
     if (!file) return;
@@ -206,7 +213,14 @@ export default function TeamEditor({ mode }: { mode: "create" | "edit" }) {
           <input type="file" accept="image/png,image/jpeg,image/webp,image/gif" onChange={handleImageChange} />
         </label>
         {uploading && <p>上传中…</p>}
-        {imageUrl && <img src={imageUrl} alt="" className="image-preview" />}
+        {imageUrl && (
+          <div>
+            <img src={imageUrl} alt="" className="image-preview" />
+            <button type="button" className="btn-link danger" onClick={handleImageRemove} disabled={uploading}>
+              移除头像
+            </button>
+          </div>
+        )}
 
         {error && <p className="form-error">{error}</p>}
 

@@ -134,6 +134,26 @@ export default function EventEditor({ mode }: { mode: "create" | "edit" }) {
     }
   }
 
+  function clearCover() {
+    setForm((f) => ({
+      ...f,
+      coverImageKey: null,
+      coverImageWidth: null,
+      coverImageHeight: null,
+    }));
+    setCoverUrl(null);
+  }
+
+  function clearHero() {
+    setForm((f) => ({
+      ...f,
+      heroImageKey: null,
+      heroImageWidth: null,
+      heroImageHeight: null,
+    }));
+    setHeroUrl(null);
+  }
+
   function clearVideoPoster() {
     setForm((f) => ({ ...f, videoPosterKey: null, videoPosterWidth: null, videoPosterHeight: null }));
     setVideoPosterUrl(null);
@@ -324,7 +344,14 @@ export default function EventEditor({ mode }: { mode: "create" | "edit" }) {
           <input type="file" accept="image/png,image/jpeg,image/webp,image/gif" onChange={handleCoverChange} />
         </label>
         {uploadingCover && <p>封面上传中…</p>}
-        {coverUrl && <img src={coverUrl} alt="" className="image-preview" />}
+        {coverUrl && (
+          <div>
+            <img src={coverUrl} alt="" className="image-preview" />
+            <button type="button" className="btn-link danger" onClick={clearCover} disabled={uploadingCover}>
+              移除封面图
+            </button>
+          </div>
+        )}
 
         <label>
           <span>
@@ -341,7 +368,14 @@ export default function EventEditor({ mode }: { mode: "create" | "edit" }) {
           />
         </label>
         {(uploadingHero || uploadingVideo) && <p>{uploadingVideo ? "视频上传中…" : "图片上传中…"}</p>}
-        {heroUrl && !form.videoUrl && <img src={heroUrl} alt="" className="image-preview" />}
+        {heroUrl && !form.videoUrl && (
+          <div>
+            <img src={heroUrl} alt="" className="image-preview" />
+            <button type="button" className="btn-link danger" onClick={clearHero} disabled={uploadingHero}>
+              移除详情图
+            </button>
+          </div>
+        )}
         {form.videoUrl && (
           <div className="video-preview-wrap">
             {/\.(mp4|webm|ogg)(\?.*)?$/i.test(form.videoUrl) ? (
