@@ -1,6 +1,6 @@
 import { createContext, useCallback, useContext, useRef, useState, type ReactNode } from "react";
 
-export type ToastType = "success" | "error";
+export type ToastType = "success" | "error" | "notice";
 
 interface ToastItem {
   id: number;
@@ -16,6 +16,7 @@ interface ToastContextValue {
 const ToastContext = createContext<ToastContextValue | null>(null);
 
 const TOAST_DURATION_MS = 2500;
+const NOTICE_TOAST_DURATION_MS = 4000;
 
 export function ToastProvider({ children }: { children: ReactNode }) {
   const [toasts, setToasts] = useState<ToastItem[]>([]);
@@ -25,10 +26,11 @@ export function ToastProvider({ children }: { children: ReactNode }) {
 
   const showToast = useCallback((message: string, type: ToastType = "success") => {
     const id = nextId.current++;
+    const duration = type === "notice" ? NOTICE_TOAST_DURATION_MS : TOAST_DURATION_MS;
     setToasts((prev) => [...prev, { id, message, type }]);
     setTimeout(() => {
       setToasts((prev) => prev.filter((t) => t.id !== id));
-    }, TOAST_DURATION_MS);
+    }, duration);
   }, []);
 
   const showSuccessDialog = useCallback((message: string, onConfirm?: () => void) => {

@@ -1,5 +1,6 @@
 import { useEffect, useState, type ChangeEvent } from "react";
 import { contactQrApi, mediaApi, type ContactQr, type ContactQrType } from "../lib/api";
+import { notifyUploadFailure } from "../lib/mediaUpload";
 import { useToast } from "../lib/ToastContext";
 import { SkeletonBlock } from "../components/Skeleton";
 import UploadSizeHint from "../components/UploadSizeHint";
@@ -28,7 +29,7 @@ function QrCard({ type, label, item, onChange }: {
       showSuccessDialog("上传成功");
       onChange();
     } catch (err) {
-      showToast(err instanceof Error ? err.message : "上传失败", "error");
+      notifyUploadFailure(err, showToast);
     } finally {
       setUploading(false);
       e.target.value = "";

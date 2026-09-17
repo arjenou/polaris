@@ -5,6 +5,7 @@ import { useToast } from "../lib/ToastContext";
 import ImageCropper from "../components/ImageCropper";
 import UploadSizeHint from "../components/UploadSizeHint";
 import { LOGO_ASPECT_RATIO } from "../lib/coverImage";
+import { notifyUploadFailure } from "../lib/mediaUpload";
 
 const REGION_LABELS: Record<GroupCompanyRegion, string> = {
   domestic: "日本国内企業",
@@ -81,7 +82,7 @@ export default function GroupCompanyEditor({ mode }: { mode: "create" | "edit" }
       setCropSource(null);
       showToast("图片上传成功");
     } catch (err) {
-      setError(err instanceof Error ? err.message : "上传失败");
+      notifyUploadFailure(err, showToast);
     } finally {
       setUploading(false);
     }

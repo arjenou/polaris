@@ -5,6 +5,7 @@ import { useToast } from "../lib/ToastContext";
 import UploadSizeHint from "../components/UploadSizeHint";
 import { generateSlug } from "../lib/slug";
 import { datetimeLocalToIso, isoToDatetimeLocal } from "../lib/datetime";
+import { notifyUploadFailure } from "../lib/mediaUpload";
 
 const EVENT_COVER_ASPECT_RATIO = 4 / 3;
 const EVENT_HERO_ASPECT_RATIO = 16 / 9;
@@ -93,7 +94,7 @@ export default function EventEditor({ mode }: { mode: "create" | "edit" }) {
       setCoverUrl(res.url);
       showToast("封面上传成功");
     } catch (err) {
-      setError(err instanceof Error ? err.message : "上传失败");
+      notifyUploadFailure(err, showToast);
     } finally {
       setUploadingCover(false);
       e.target.value = "";
@@ -112,7 +113,7 @@ export default function EventEditor({ mode }: { mode: "create" | "edit" }) {
         update("videoUrl", res.url);
         showToast("详情视频上传成功");
       } catch (err) {
-        setError(err instanceof Error ? err.message : "视频上传失败");
+        notifyUploadFailure(err, showToast);
       } finally {
         setUploadingVideo(false);
         e.target.value = "";
@@ -132,7 +133,7 @@ export default function EventEditor({ mode }: { mode: "create" | "edit" }) {
       setHeroUrl(res.url);
       showToast("详情图片上传成功");
     } catch (err) {
-      setError(err instanceof Error ? err.message : "上传失败");
+      notifyUploadFailure(err, showToast);
     } finally {
       setUploadingHero(false);
       e.target.value = "";
@@ -181,7 +182,7 @@ export default function EventEditor({ mode }: { mode: "create" | "edit" }) {
       setVideoPosterUrl(res.url);
       showToast("视频封面图上传成功");
     } catch (err) {
-      setError(err instanceof Error ? err.message : "上传失败");
+      notifyUploadFailure(err, showToast);
     } finally {
       setUploadingPoster(false);
       e.target.value = "";
@@ -202,7 +203,7 @@ export default function EventEditor({ mode }: { mode: "create" | "edit" }) {
       setGalleryItems((items) => [...items, ...uploaded]);
       showToast(`已上传 ${uploaded.length} 张图库照片`);
     } catch (err) {
-      setError(err instanceof Error ? err.message : "上传失败");
+      notifyUploadFailure(err, showToast);
     } finally {
       setUploadingGallery(false);
       e.target.value = "";

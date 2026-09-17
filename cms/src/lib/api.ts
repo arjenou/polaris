@@ -1,3 +1,6 @@
+import { uploadMediaFile } from "./mediaUpload";
+import { ApiError } from "./apiError";
+
 /**
  * Shape shared by every content type built on the news/recommended post
  * model (see cms/functions/_lib/postsApi.ts on the backend).
@@ -22,14 +25,6 @@ export interface ContentPost {
 }
 
 export type ContentPostInput = Omit<ContentPost, "id" | "imageUrl" | "createdAt" | "updatedAt">;
-
-class ApiError extends Error {
-  status: number;
-  constructor(message: string, status: number) {
-    super(message);
-    this.status = status;
-  }
-}
 
 async function request<T>(path: string, options: RequestInit = {}): Promise<T> {
   const res = await fetch(path, {
@@ -84,14 +79,7 @@ export const newsApi = createContentApi("/api/admin/news");
 export const recommendedApi = createContentApi("/api/admin/recommended");
 
 export const mediaApi = {
-  upload: (file: File, folder = "news") => {
-    const formData = new FormData();
-    formData.append("file", file);
-    return request<{ key: string; url: string; width: number | null; height: number | null }>(
-      `/api/admin/media/upload?folder=${folder}`,
-      { method: "POST", body: formData },
-    );
-  },
+  upload: (file: File, folder = "news") => uploadMediaFile(file, folder),
 };
 
 export interface AdminUser {

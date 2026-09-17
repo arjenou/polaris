@@ -14,6 +14,7 @@ import {
   type GroupInfoLocale,
 } from "../lib/api";
 import { useToast } from "../lib/ToastContext";
+import { notifyUploadFailure } from "../lib/mediaUpload";
 import { SkeletonBlock } from "../components/Skeleton";
 
 function readImageSize(file: File): Promise<{ width: number; height: number }> {
@@ -194,7 +195,7 @@ function AssetCard({
       showSuccessDialog("上传成功");
       onChange();
     } catch (err) {
-      showToast(err instanceof Error ? err.message : "上传失败", "error");
+      notifyUploadFailure(err, showToast);
     } finally {
       setUploading(false);
     }
@@ -211,7 +212,7 @@ function AssetCard({
       showSuccessDialog("上传成功");
       onChange();
     } catch (err) {
-      showToast(err instanceof Error ? err.message : "上传失败", "error");
+      notifyUploadFailure(err, showToast);
     } finally {
       setUploading(false);
     }

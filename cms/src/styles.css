@@ -1115,6 +1115,12 @@ body {
   margin-top: 12px;
 }
 
+.form-hint-warn {
+  color: #8a6a3e;
+  font-size: 13px;
+  margin: 6px 0 0;
+}
+
 .form-error {
   color: #c0392b;
   font-size: 13px;
@@ -1183,6 +1189,13 @@ body {
 .toast-error {
   background: #c0392b;
   color: #fff;
+}
+
+.toast-notice {
+  background: #fffaf0;
+  color: #5c4a32;
+  border: 1px solid #f0dcc0;
+  box-shadow: 0 8px 24px rgba(92, 74, 50, 0.08);
 }
 
 @keyframes toast-in {
@@ -1366,6 +1379,59 @@ body {
   max-width: 100%;
   border-radius: 6px;
   margin: 8px 0;
+}
+
+.upload-progress-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 1300;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(15, 23, 42, 0.45);
+  padding: 20px;
+}
+
+.upload-progress-card {
+  width: min(420px, 100%);
+  background: #fff;
+  border-radius: 10px;
+  padding: 24px;
+  box-shadow: 0 16px 40px rgba(15, 23, 42, 0.18);
+}
+
+.upload-progress-title {
+  font-size: 16px;
+  font-weight: 700;
+  margin-bottom: 8px;
+}
+
+.upload-progress-file {
+  font-size: 13px;
+  color: #4a5468;
+  margin-bottom: 16px;
+  word-break: break-all;
+}
+
+.upload-progress-track {
+  height: 8px;
+  border-radius: 999px;
+  background: #eef0f3;
+  overflow: hidden;
+}
+
+.upload-progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #1e6fd9, #4a9af0);
+  border-radius: 999px;
+  transition: width 0.15s ease;
+}
+
+.upload-progress-percent {
+  margin-top: 10px;
+  font-size: 13px;
+  color: #8a93a6;
+  text-align: right;
 }
 
 .rich-text-content a {

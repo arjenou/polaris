@@ -9,6 +9,7 @@ import { useToast } from "../lib/ToastContext";
 import { generateSlug } from "../lib/slug";
 import { datetimeLocalToIso, isoToDatetimeLocal } from "../lib/datetime";
 import { CONTENT_TYPES, type ContentTypeKey } from "../lib/contentTypes";
+import { notifyUploadFailure } from "../lib/mediaUpload";
 
 const EXCERPT_MAX_LENGTH = 120;
 
@@ -80,7 +81,7 @@ export default function PostEditor({ resource, mode }: { resource: ContentTypeKe
       setCropSource(null);
       showToast("封面图上传成功");
     } catch (err) {
-      setError(err instanceof Error ? err.message : "上传失败");
+      notifyUploadFailure(err, showToast);
     } finally {
       setUploading(false);
     }

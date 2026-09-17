@@ -3,6 +3,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import { mediaApi, teamApi, type TeamMemberInput } from "../lib/api";
 import { useToast } from "../lib/ToastContext";
 import UploadSizeHint from "../components/UploadSizeHint";
+import { notifyUploadFailure } from "../lib/mediaUpload";
 
 function emptyForm(locale: "ja" | "zh"): TeamMemberInput {
   return {
@@ -84,7 +85,7 @@ export default function TeamEditor({ mode }: { mode: "create" | "edit" }) {
       setImageUrl(res.url);
       showToast("图片上传成功");
     } catch (err) {
-      setError(err instanceof Error ? err.message : "上传失败");
+      notifyUploadFailure(err, showToast);
     } finally {
       setUploading(false);
     }

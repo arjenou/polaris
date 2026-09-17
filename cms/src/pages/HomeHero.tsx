@@ -5,6 +5,7 @@ import { BANNER_ASPECT_HOME_HERO } from "../lib/bannerAspectRatios";
 import { DEFAULT_OBJECT_POSITION, type ObjectPosition } from "../lib/objectPosition";
 import { homeHeroApi, mediaApi, type HomeHeroHeadline, type HomeHeroLocale, type HomeHeroSlide } from "../lib/api";
 import { useToast } from "../lib/ToastContext";
+import { notifyUploadFailure } from "../lib/mediaUpload";
 import { SkeletonBlock, SkeletonGrid } from "../components/Skeleton";
 import UploadSizeHint from "../components/UploadSizeHint";
 
@@ -207,7 +208,7 @@ export default function HomeHero() {
         await openNextUploadFromQueue();
       }
     } catch (err) {
-      setError(err instanceof Error ? err.message : "上传失败");
+      notifyUploadFailure(err, showToast);
     } finally {
       setUploading(false);
     }

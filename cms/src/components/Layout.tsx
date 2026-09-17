@@ -2,6 +2,7 @@ import { useEffect } from "react";
 import { NavLink, Outlet, useLocation, useNavigate } from "react-router-dom";
 import { useAuth } from "../lib/AuthContext";
 import { ContactUnreadProvider, useContactUnread } from "../lib/ContactUnreadContext";
+import UploadProgressOverlay from "./UploadProgressOverlay";
 
 function SidebarNav() {
   const { isSuperAdmin } = useAuth();
@@ -97,6 +98,7 @@ export default function Layout() {
         <main className="main-content">
           <Outlet />
         </main>
+        <UploadProgressOverlay />
       </div>
     </ContactUnreadProvider>
   );

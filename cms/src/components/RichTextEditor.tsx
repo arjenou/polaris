@@ -3,7 +3,8 @@ import { EditorContent, useEditor } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
 import Image from "@tiptap/extension-image";
 import { useRef, useState } from "react";
-import { ApiError, mediaApi } from "../lib/api";
+import { mediaApi } from "../lib/api";
+import { formatUploadFailureMessage } from "../lib/mediaUpload";
 import UploadSizeHint from "./UploadSizeHint";
 
 /**
@@ -67,7 +68,7 @@ export default function RichTextEditor({ initialContent, onChange }: RichTextEdi
       const res = await mediaApi.upload(file, "news");
       editor.chain().focus().setImage({ src: res.url, alt: "" }).run();
     } catch (err) {
-      setUploadError(err instanceof ApiError ? err.message : "图片上传失败");
+      setUploadError(formatUploadFailureMessage(err, "图片上传失败"));
     } finally {
       setUploadingImage(false);
     }
@@ -185,7 +186,7 @@ export default function RichTextEditor({ initialContent, onChange }: RichTextEdi
           重做
         </button>
       </div>
-      {uploadError && <p className="form-error">{uploadError}</p>}
+      {uploadError && <p className="form-hint-warn">{uploadError}</p>}
       <EditorContent editor={editor} />
     </div>
   );

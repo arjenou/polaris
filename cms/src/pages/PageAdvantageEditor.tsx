@@ -3,6 +3,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import { mediaApi, pageAdvantagesApi, type PageAdvantageInput, type PageGalleryKey } from "../lib/api";
 import { useToast } from "../lib/ToastContext";
 import UploadSizeHint from "../components/UploadSizeHint";
+import { notifyUploadFailure } from "../lib/mediaUpload";
 
 const PAGE_LABELS: Record<PageGalleryKey, string> = {
   "real-estate": "不動産取引",
@@ -70,7 +71,7 @@ export default function PageAdvantageEditor({ mode }: { mode: "create" | "edit" 
       setImageUrl(res.url);
       showToast("图片上传成功");
     } catch (err) {
-      setError(err instanceof Error ? err.message : "上传失败");
+      notifyUploadFailure(err, showToast);
     } finally {
       setUploading(false);
     }

@@ -6,6 +6,7 @@ import { BANNER_ASPECT_COMING_SOON } from "../lib/bannerAspectRatios";
 import { DEFAULT_OBJECT_POSITION, type ObjectPosition } from "../lib/objectPosition";
 import { maintenancePageApi, mediaApi, type MaintenancePage } from "../lib/api";
 import { useToast } from "../lib/ToastContext";
+import { notifyUploadFailure } from "../lib/mediaUpload";
 import { SkeletonBlock } from "../components/Skeleton";
 
 function readImageSize(file: File): Promise<{ width: number; height: number }> {
@@ -84,7 +85,7 @@ export default function MaintenancePageSettings() {
       setPendingSize(null);
       showSuccessDialog("上传成功");
     } catch (err) {
-      showToast(err instanceof Error ? err.message : "上传失败", "error");
+      notifyUploadFailure(err, showToast);
     } finally {
       setUploading(false);
     }

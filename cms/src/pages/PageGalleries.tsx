@@ -8,6 +8,7 @@ import {
   type PageMidImage,
 } from "../lib/api";
 import { useToast } from "../lib/ToastContext";
+import { notifyUploadFailure } from "../lib/mediaUpload";
 import { SkeletonGrid } from "../components/Skeleton";
 import UploadSizeHint from "../components/UploadSizeHint";
 
@@ -64,7 +65,7 @@ export default function PageGalleries() {
       showSuccessDialog(`已上传 ${files.length} 张图片`);
       refresh();
     } catch (err) {
-      setError(err instanceof Error ? err.message : "上传失败");
+      notifyUploadFailure(err, showToast);
     } finally {
       setUploading(false);
       e.target.value = "";
@@ -82,7 +83,7 @@ export default function PageGalleries() {
       setMidImage(updated);
       showSuccessDialog("上传成功");
     } catch (err) {
-      setError(err instanceof Error ? err.message : "上传失败");
+      notifyUploadFailure(err, showToast);
     } finally {
       setUploadingMid(false);
       e.target.value = "";
