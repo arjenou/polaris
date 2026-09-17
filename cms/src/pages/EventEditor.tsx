@@ -238,7 +238,7 @@ export default function EventEditor({ mode }: { mode: "create" | "edit" }) {
     setError(null);
     const payload: EventInput = { ...form, gallery: galleryItems.map((item) => item.key) };
     try {
-      const goToList = () => navigate("/events");
+      const goToList = () => navigate(`/events/${locale}`);
       if (mode === "create") {
         const slug = generateSlug(form.title, form.date);
         await eventsApi.create({ ...payload, slug });

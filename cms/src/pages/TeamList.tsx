@@ -2,11 +2,12 @@ import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { teamApi, type TeamMember } from "../lib/api";
 import { useToast } from "../lib/ToastContext";
+import { useListLocale } from "../lib/useListLocale";
 import { SkeletonTableRows } from "../components/Skeleton";
 
 export default function TeamList() {
   const { showToast, showSuccessDialog } = useToast();
-  const [locale, setLocale] = useState<"ja" | "zh">("ja");
+  const { locale, switchLocale } = useListLocale("/team");
   const [members, setMembers] = useState<TeamMember[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -96,10 +97,10 @@ export default function TeamList() {
 
       <div className="tabs-bar">
         <div className="tabs">
-          <button className={locale === "ja" ? "active" : ""} onClick={() => setLocale("ja")}>
+          <button className={locale === "ja" ? "active" : ""} onClick={() => switchLocale("ja")}>
             日语
           </button>
-          <button className={locale === "zh" ? "active" : ""} onClick={() => setLocale("zh")}>
+          <button className={locale === "zh" ? "active" : ""} onClick={() => switchLocale("zh")}>
             中文
           </button>
         </div>

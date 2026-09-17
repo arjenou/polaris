@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import { eventsApi, type EventInput, type EventItem } from "../lib/api";
 import { useToast } from "../lib/ToastContext";
 import { formatDateTime } from "../lib/datetime";
+import { useListLocale } from "../lib/useListLocale";
 import { SkeletonTableRows } from "../components/Skeleton";
 
 function isVisible(event: EventItem): boolean {
@@ -19,7 +20,7 @@ function statusLabel(event: EventItem): string {
 
 export default function EventList() {
   const { showToast, showSuccessDialog } = useToast();
-  const [locale, setLocale] = useState<"ja" | "zh">("ja");
+  const { locale, switchLocale } = useListLocale("/events");
   const [events, setEvents] = useState<EventItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -122,10 +123,10 @@ export default function EventList() {
 
       <div className="tabs-bar">
         <div className="tabs">
-          <button className={locale === "ja" ? "active" : ""} onClick={() => setLocale("ja")}>
+          <button className={locale === "ja" ? "active" : ""} onClick={() => switchLocale("ja")}>
             日语
           </button>
-          <button className={locale === "zh" ? "active" : ""} onClick={() => setLocale("zh")}>
+          <button className={locale === "zh" ? "active" : ""} onClick={() => switchLocale("zh")}>
             中文
           </button>
         </div>

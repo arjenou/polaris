@@ -82,7 +82,7 @@ export default function PageAdvantageEditor({ mode }: { mode: "create" | "edit" 
     setSaving(true);
     setError(null);
     try {
-      const goToList = () => navigate("/page-advantages");
+      const goToList = () => navigate(`/page-advantages/${pageKey}/${locale}`);
       if (mode === "create") {
         await pageAdvantagesApi.create(pageKey, form);
         showSuccessDialog("创建成功", goToList);

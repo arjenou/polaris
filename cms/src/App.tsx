@@ -57,16 +57,9 @@ export default function App() {
         }
       >
         <Route index element={<HomeRedirect />} />
+        <Route path="news" element={<Navigate to="/news/ja" replace />} />
         <Route
-          path="news"
-          element={
-            <RequireSuperAdmin>
-              <PostList resource="news" />
-            </RequireSuperAdmin>
-          }
-        />
-        <Route
-          path="news/new"
+          path="news/:locale/new"
           element={
             <RequireSuperAdmin>
               <PostEditor resource="news" mode="create" />
@@ -74,7 +67,7 @@ export default function App() {
           }
         />
         <Route
-          path="news/:id/edit"
+          path="news/:locale/:id/edit"
           element={
             <RequireSuperAdmin>
               <PostEditor resource="news" mode="edit" />
@@ -82,15 +75,16 @@ export default function App() {
           }
         />
         <Route
-          path="recommended"
+          path="news/:locale"
           element={
             <RequireSuperAdmin>
-              <PostList resource="recommended" />
+              <PostList resource="news" />
             </RequireSuperAdmin>
           }
         />
+        <Route path="recommended" element={<Navigate to="/recommended/ja" replace />} />
         <Route
-          path="recommended/new"
+          path="recommended/:locale/new"
           element={
             <RequireSuperAdmin>
               <PostEditor resource="recommended" mode="create" />
@@ -98,7 +92,7 @@ export default function App() {
           }
         />
         <Route
-          path="recommended/:id/edit"
+          path="recommended/:locale/:id/edit"
           element={
             <RequireSuperAdmin>
               <PostEditor resource="recommended" mode="edit" />
@@ -106,13 +100,14 @@ export default function App() {
           }
         />
         <Route
-          path="team"
+          path="recommended/:locale"
           element={
             <RequireSuperAdmin>
-              <TeamList />
+              <PostList resource="recommended" />
             </RequireSuperAdmin>
           }
         />
+        <Route path="team" element={<Navigate to="/team/ja" replace />} />
         <Route
           path="team/:locale/new"
           element={
@@ -130,13 +125,14 @@ export default function App() {
           }
         />
         <Route
-          path="events"
+          path="team/:locale"
           element={
             <RequireSuperAdmin>
-              <EventList />
+              <TeamList />
             </RequireSuperAdmin>
           }
         />
+        <Route path="events" element={<Navigate to="/events/ja" replace />} />
         <Route
           path="events/:locale/new"
           element={
@@ -150,6 +146,14 @@ export default function App() {
           element={
             <RequireSuperAdmin>
               <EventEditor mode="edit" />
+            </RequireSuperAdmin>
+          }
+        />
+        <Route
+          path="events/:locale"
+          element={
+            <RequireSuperAdmin>
+              <EventList />
             </RequireSuperAdmin>
           }
         />
@@ -169,14 +173,7 @@ export default function App() {
             </RequireSuperAdmin>
           }
         />
-        <Route
-          path="page-advantages"
-          element={
-            <RequireSuperAdmin>
-              <PageAdvantagesList />
-            </RequireSuperAdmin>
-          }
-        />
+        <Route path="page-advantages" element={<Navigate to="/page-advantages/real-estate/ja" replace />} />
         <Route
           path="page-advantages/:pageKey/:locale/new"
           element={
@@ -194,6 +191,14 @@ export default function App() {
           }
         />
         <Route
+          path="page-advantages/:pageKey/:locale"
+          element={
+            <RequireSuperAdmin>
+              <PageAdvantagesList />
+            </RequireSuperAdmin>
+          }
+        />
+        <Route
           path="group-info"
           element={
             <RequireSuperAdmin>
@@ -201,14 +206,7 @@ export default function App() {
             </RequireSuperAdmin>
           }
         />
-        <Route
-          path="group-timeline"
-          element={
-            <RequireSuperAdmin>
-              <GroupTimeline />
-            </RequireSuperAdmin>
-          }
-        />
+        <Route path="group-timeline" element={<Navigate to="/group-timeline/ja" replace />} />
         <Route
           path="group-timeline/:locale/new"
           element={
@@ -226,13 +224,14 @@ export default function App() {
           }
         />
         <Route
-          path="group-companies"
+          path="group-timeline/:locale"
           element={
             <RequireSuperAdmin>
-              <GroupCompaniesList />
+              <GroupTimeline />
             </RequireSuperAdmin>
           }
         />
+        <Route path="group-companies" element={<Navigate to="/group-companies/ja/domestic" replace />} />
         <Route
           path="group-companies/:locale/:region/new"
           element={
@@ -246,6 +245,14 @@ export default function App() {
           element={
             <RequireSuperAdmin>
               <GroupCompanyEditor mode="edit" />
+            </RequireSuperAdmin>
+          }
+        />
+        <Route
+          path="group-companies/:locale/:region"
+          element={
+            <RequireSuperAdmin>
+              <GroupCompaniesList />
             </RequireSuperAdmin>
           }
         />

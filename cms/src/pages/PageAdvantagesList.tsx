@@ -1,7 +1,8 @@
 import { useEffect, useState, type DragEvent } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import { pageAdvantagesApi, type PageAdvantage, type PageGalleryKey } from "../lib/api";
 import { useToast } from "../lib/ToastContext";
+import { isContentLocale, type ContentLocale } from "../lib/locale";
 import { SkeletonTableRows } from "../components/Skeleton";
 
 const PAGE_TABS: { key: PageGalleryKey; label: string }[] = [
@@ -10,10 +11,23 @@ const PAGE_TABS: { key: PageGalleryKey; label: string }[] = [
   { key: "asset-management", label: "不動産管理" },
 ];
 
+function isPageKey(value: string | undefined): value is PageGalleryKey {
+  return value === "real-estate" || value === "renovation" || value === "asset-management";
+}
+
 export default function PageAdvantagesList() {
+  const navigate = useNavigate();
+  const { pageKey: pageKeyParam, locale: localeParam } = useParams<{ pageKey: string; locale: string }>();
   const { showToast, showSuccessDialog } = useToast();
-  const [pageKey, setPageKey] = useState<PageGalleryKey>("real-estate");
-  const [locale, setLocale] = useState<"ja" | "zh">("ja");
+
+  useEffect(() => {
+    if (!isPageKey(pageKeyParam) || !isContentLocale(localeParam)) {
+      navigate("/page-advantages/real-estate/ja", { replace: true });
+    }
+  }, [pageKeyParam, localeParam, navigate]);
+
+  const pageKey: PageGalleryKey = isPageKey(pageKeyParam) ? pageKeyParam : "real-estate";
+  const locale: ContentLocale = isContentLocale(localeParam) ? localeParam : "ja";
   const [items, setItems] = useState<PageAdvantage[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -102,7 +116,11 @@ export default function PageAdvantagesList() {
 
       <div className="tabs">
         {PAGE_TABS.map((tab) => (
-          <button key={tab.key} className={pageKey === tab.key ? "active" : ""} onClick={() => setPageKey(tab.key)}>
+          <button
+            key={tab.key}
+            className={pageKey === tab.key ? "active" : ""}
+            onClick={() => navigate(`/page-advantages/${tab.key}/${locale}`)}
+          >
             {tab.label}
           </button>
         ))}
@@ -110,10 +128,16 @@ export default function PageAdvantagesList() {
 
       <div className="tabs-bar">
         <div className="tabs">
-          <button className={locale === "ja" ? "active" : ""} onClick={() => setLocale("ja")}>
+          <button
+            className={locale === "ja" ? "active" : ""}
+            onClick={() => navigate(`/page-advantages/${pageKey}/ja`)}
+          >
             日语
           </button>
-          <button className={locale === "zh" ? "active" : ""} onClick={() => setLocale("zh")}>
+          <button
+            className={locale === "zh" ? "active" : ""}
+            onClick={() => navigate(`/page-advantages/${pageKey}/zh`)}
+          >
             中文
           </button>
         </div>

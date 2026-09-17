@@ -2,11 +2,12 @@ import { useEffect, useState, type DragEvent } from "react";
 import { Link } from "react-router-dom";
 import { groupInfoApi, type GroupTimelineEntry } from "../lib/api";
 import { useToast } from "../lib/ToastContext";
+import { useListLocale } from "../lib/useListLocale";
 import { SkeletonTableRows } from "../components/Skeleton";
 
 export default function GroupTimeline() {
   const { showToast, showSuccessDialog } = useToast();
-  const [locale, setLocale] = useState<"ja" | "zh">("ja");
+  const { locale, switchLocale } = useListLocale("/group-timeline");
   const [items, setItems] = useState<GroupTimelineEntry[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -90,10 +91,10 @@ export default function GroupTimeline() {
 
       <div className="tabs-bar">
         <div className="tabs">
-          <button className={locale === "ja" ? "active" : ""} onClick={() => setLocale("ja")}>
+          <button className={locale === "ja" ? "active" : ""} onClick={() => switchLocale("ja")}>
             日语
           </button>
-          <button className={locale === "zh" ? "active" : ""} onClick={() => setLocale("zh")}>
+          <button className={locale === "zh" ? "active" : ""} onClick={() => switchLocale("zh")}>
             中文
           </button>
         </div>

@@ -100,7 +100,7 @@ export default function TeamEditor({ mode }: { mode: "create" | "edit" }) {
       languages: splitList(languagesText),
     };
     try {
-      const goToList = () => navigate("/team");
+      const goToList = () => navigate(`/team/${locale}`);
       if (mode === "create") {
         await teamApi.create(payload);
         showSuccessDialog("创建成功", goToList);

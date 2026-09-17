@@ -41,7 +41,7 @@ export default function GroupTimelineEditor({ mode }: { mode: "create" | "edit" 
     setSaving(true);
     setError(null);
     try {
-      const goToList = () => navigate("/group-timeline");
+      const goToList = () => navigate(`/group-timeline/${locale}`);
       if (mode === "create") {
         await groupInfoApi.createTimelineEntry(form);
         showSuccessDialog("创建成功", goToList);

@@ -1,13 +1,27 @@
 import { useEffect, useState, type DragEvent } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import { groupCompaniesApi, type GroupCompany, type GroupCompanyRegion } from "../lib/api";
 import { useToast } from "../lib/ToastContext";
+import { isContentLocale, type ContentLocale } from "../lib/locale";
 import { SkeletonTableRows } from "../components/Skeleton";
 
+function isRegion(value: string | undefined): value is GroupCompanyRegion {
+  return value === "domestic" || value === "overseas";
+}
+
 export default function GroupCompaniesList() {
+  const navigate = useNavigate();
+  const { locale: localeParam, region: regionParam } = useParams<{ locale: string; region: string }>();
   const { showToast, showSuccessDialog } = useToast();
-  const [locale, setLocale] = useState<"ja" | "zh">("ja");
-  const [region, setRegion] = useState<GroupCompanyRegion>("domestic");
+
+  useEffect(() => {
+    if (!isContentLocale(localeParam) || !isRegion(regionParam)) {
+      navigate("/group-companies/ja/domestic", { replace: true });
+    }
+  }, [localeParam, regionParam, navigate]);
+
+  const locale: ContentLocale = isContentLocale(localeParam) ? localeParam : "ja";
+  const region: GroupCompanyRegion = isRegion(regionParam) ? regionParam : "domestic";
   const [items, setItems] = useState<GroupCompany[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -102,10 +116,16 @@ export default function GroupCompaniesList() {
 
       <div className="tabs-bar">
         <div className="tabs">
-          <button className={locale === "ja" ? "active" : ""} onClick={() => setLocale("ja")}>
+          <button
+            className={locale === "ja" ? "active" : ""}
+            onClick={() => navigate(`/group-companies/ja/${region}`)}
+          >
             日语
           </button>
-          <button className={locale === "zh" ? "active" : ""} onClick={() => setLocale("zh")}>
+          <button
+            className={locale === "zh" ? "active" : ""}
+            onClick={() => navigate(`/group-companies/zh/${region}`)}
+          >
             中文
           </button>
         </div>
@@ -115,10 +135,16 @@ export default function GroupCompaniesList() {
       </div>
 
       <div className="tabs">
-        <button className={region === "domestic" ? "active" : ""} onClick={() => setRegion("domestic")}>
+        <button
+          className={region === "domestic" ? "active" : ""}
+          onClick={() => navigate(`/group-companies/${locale}/domestic`)}
+        >
           日本国内企業
         </button>
-        <button className={region === "overseas" ? "active" : ""} onClick={() => setRegion("overseas")}>
+        <button
+          className={region === "overseas" ? "active" : ""}
+          onClick={() => navigate(`/group-companies/${locale}/overseas`)}
+        >
           海外企業
         </button>
       </div>

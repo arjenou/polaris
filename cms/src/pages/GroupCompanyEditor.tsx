@@ -99,7 +99,7 @@ export default function GroupCompanyEditor({ mode }: { mode: "create" | "edit" }
     setSaving(true);
     setError(null);
     try {
-      const goToList = () => navigate("/group-companies");
+      const goToList = () => navigate(`/group-companies/${locale}/${region}`);
       if (mode === "create") {
         await groupCompaniesApi.create(form);
         showSuccessDialog("创建成功", goToList);

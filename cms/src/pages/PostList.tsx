@@ -4,6 +4,7 @@ import type { ContentPost, ContentPostInput } from "../lib/api";
 import { useToast } from "../lib/ToastContext";
 import { formatDateTime } from "../lib/datetime";
 import { CONTENT_TYPES, type ContentTypeKey } from "../lib/contentTypes";
+import { useListLocale } from "../lib/useListLocale";
 import { SkeletonTableRows } from "../components/Skeleton";
 
 function isVisible(post: ContentPost): boolean {
@@ -21,7 +22,7 @@ function statusLabel(post: ContentPost): string {
 export default function PostList({ resource }: { resource: ContentTypeKey }) {
   const config = CONTENT_TYPES[resource];
   const { showToast, showSuccessDialog } = useToast();
-  const [locale, setLocale] = useState<"ja" | "zh">("ja");
+  const { locale, switchLocale } = useListLocale(config.basePath);
   const [posts, setPosts] = useState<ContentPost[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -92,14 +93,14 @@ export default function PostList({ resource }: { resource: ContentTypeKey }) {
 
       <div className="tabs-bar">
         <div className="tabs">
-          <button className={locale === "ja" ? "active" : ""} onClick={() => setLocale("ja")}>
+          <button className={locale === "ja" ? "active" : ""} onClick={() => switchLocale("ja")}>
             日语
           </button>
-          <button className={locale === "zh" ? "active" : ""} onClick={() => setLocale("zh")}>
+          <button className={locale === "zh" ? "active" : ""} onClick={() => switchLocale("zh")}>
             中文
           </button>
         </div>
-        <Link to={`${config.basePath}/new`} className="btn-primary">
+        <Link to={`${config.basePath}/${locale}/new`} className="btn-primary">
           {config.labels.newButtonLabel}
         </Link>
       </div>
@@ -148,7 +149,7 @@ export default function PostList({ resource }: { resource: ContentTypeKey }) {
                   )}
                 </td>
                 <td className="table-actions">
-                  <Link to={`${config.basePath}/${post.id}/edit`}>编辑</Link>
+                  <Link to={`${config.basePath}/${locale}/${post.id}/edit`}>编辑</Link>
                   <button className="btn-link danger" onClick={() => handleDelete(post)}>
                     删除
                   </button>

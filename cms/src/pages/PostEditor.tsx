@@ -12,27 +12,29 @@ import { CONTENT_TYPES, type ContentTypeKey } from "../lib/contentTypes";
 
 const EXCERPT_MAX_LENGTH = 120;
 
-const EMPTY_FORM: ContentPostInput = {
-  locale: "ja",
-  slug: "",
-  title: "",
-  date: "",
-  tag: "",
-  excerpt: "",
-  content: "",
-  imageKey: null,
-  imageWidth: null,
-  imageHeight: null,
-  published: true,
-  scheduledAt: null,
-};
+function emptyForm(locale: "ja" | "zh"): ContentPostInput {
+  return {
+    locale,
+    slug: "",
+    title: "",
+    date: "",
+    tag: "",
+    excerpt: "",
+    content: "",
+    imageKey: null,
+    imageWidth: null,
+    imageHeight: null,
+    published: true,
+    scheduledAt: null,
+  };
+}
 
 export default function PostEditor({ resource, mode }: { resource: ContentTypeKey; mode: "create" | "edit" }) {
   const config = CONTENT_TYPES[resource];
-  const { id } = useParams();
+  const { locale, id } = useParams<{ locale: "ja" | "zh"; id: string }>();
   const navigate = useNavigate();
   const { showToast, showSuccessDialog } = useToast();
-  const [form, setForm] = useState<ContentPostInput>(EMPTY_FORM);
+  const [form, setForm] = useState<ContentPostInput>(emptyForm(locale ?? "ja"));
   const [imageUrl, setImageUrl] = useState<string | null>(null);
   const [cropSource, setCropSource] = useState<File | null>(null);
   const [loading, setLoading] = useState(mode === "edit");
@@ -102,7 +104,7 @@ export default function PostEditor({ resource, mode }: { resource: ContentTypeKe
     setSaving(true);
     setError(null);
     try {
-      const goToList = () => navigate(config.basePath);
+      const goToList = () => navigate(`${config.basePath}/${locale}`);
       if (mode === "create") {
         const slug = generateSlug(form.title, form.date);
         await config.api.create({ ...form, slug });
@@ -120,23 +122,20 @@ export default function PostEditor({ resource, mode }: { resource: ContentTypeKe
     }
   }
 
+  if (!locale) return <p className="form-error">缺少页面参数</p>;
   if (loading) return <p>加载中…</p>;
 
   return (
     <div>
       <div className="page-header">
-        <h1>{mode === "create" ? config.labels.createTitle : config.labels.editTitle}</h1>
+        <h1>
+          {mode === "create" ? config.labels.createTitle : config.labels.editTitle} ·{" "}
+          {form.locale === "zh" ? "中文" : "日语"}
+        </h1>
       </div>
 
       <form className="editor-form" onSubmit={handleSubmit}>
         <div className="form-row">
-          <label>
-            语言
-            <select value={form.locale} onChange={(e) => update("locale", e.target.value as "ja" | "zh")}>
-              <option value="ja">日语</option>
-              <option value="zh">中文</option>
-            </select>
-          </label>
           <label>
             Slug（系统自动生成）
             <input value={mode === "create" ? "保存后自动生成" : form.slug} disabled />
