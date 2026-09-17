@@ -6,6 +6,9 @@ import UploadSizeHint from "../components/UploadSizeHint";
 import { generateSlug } from "../lib/slug";
 import { datetimeLocalToIso, isoToDatetimeLocal } from "../lib/datetime";
 
+const EVENT_COVER_ASPECT_RATIO = 4 / 3;
+const EVENT_HERO_ASPECT_RATIO = 16 / 9;
+
 const EMPTY_FORM: EventInput = {
   locale: "ja",
   slug: "",
@@ -336,22 +339,26 @@ export default function EventEditor({ mode }: { mode: "create" | "edit" }) {
           <textarea rows={3} value={form.summary} onChange={(e) => update("summary", e.target.value)} />
         </label>
 
-        <label>
-          <span>
-            封面图（必填，首页轮播卡片 / 列表页使用）
-            <UploadSizeHint spec="eventCover" />
-          </span>
-          <input type="file" accept="image/png,image/jpeg,image/webp,image/gif" onChange={handleCoverChange} />
-        </label>
-        {uploadingCover && <p>封面上传中…</p>}
-        {coverUrl && (
-          <div>
-            <img src={coverUrl} alt="" className="image-preview" />
-            <button type="button" className="btn-link danger" onClick={clearCover} disabled={uploadingCover}>
-              移除封面图
-            </button>
-          </div>
-        )}
+        <div className="image-field">
+          <label>
+            <span>
+              封面图（必填，首页轮播卡片 / 列表页使用）
+              <UploadSizeHint spec="eventCover" />
+            </span>
+            <input type="file" accept="image/png,image/jpeg,image/webp,image/gif" onChange={handleCoverChange} />
+          </label>
+          {uploadingCover && <p>封面上传中…</p>}
+          {coverUrl && (
+            <div className="cover-preview-wrap">
+              <div className="cover-preview" style={{ aspectRatio: `${EVENT_COVER_ASPECT_RATIO}` }}>
+                <img src={coverUrl} alt="" />
+              </div>
+              <button type="button" className="btn-link danger" onClick={clearCover} disabled={uploadingCover}>
+                移除封面图
+              </button>
+            </div>
+          )}
+        </div>
 
         <label>
           <span>
@@ -369,8 +376,10 @@ export default function EventEditor({ mode }: { mode: "create" | "edit" }) {
         </label>
         {(uploadingHero || uploadingVideo) && <p>{uploadingVideo ? "视频上传中…" : "图片上传中…"}</p>}
         {heroUrl && !form.videoUrl && (
-          <div>
-            <img src={heroUrl} alt="" className="image-preview" />
+          <div className="cover-preview-wrap">
+            <div className="cover-preview" style={{ aspectRatio: `${EVENT_HERO_ASPECT_RATIO}` }}>
+              <img src={heroUrl} alt="" />
+            </div>
             <button type="button" className="btn-link danger" onClick={clearHero} disabled={uploadingHero}>
               移除详情图
             </button>

@@ -848,11 +848,18 @@ body {
   border: 1px solid #eef0f3;
 }
 
+.image-field {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
 .cover-preview-wrap {
   display: flex;
   flex-direction: column;
   align-items: flex-start;
   gap: 8px;
+  margin-top: 4px;
 }
 
 .cover-preview {
