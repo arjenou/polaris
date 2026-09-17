@@ -129,7 +129,7 @@ export default function EventList() {
             中文
           </button>
         </div>
-        <Link to="/events/new" className="btn-primary">
+        <Link to={`/events/${locale}/new`} className="btn-primary">
           + 新建
         </Link>
       </div>
@@ -207,7 +207,7 @@ export default function EventList() {
                   )}
                 </td>
                 <td className="table-actions">
-                  <Link to={`/events/${event.id}/edit`}>编辑</Link>
+                  <Link to={`/events/${locale}/${event.id}/edit`}>编辑</Link>
                   <button className="btn-link danger" onClick={() => handleDelete(event)}>
                     删除
                   </button>

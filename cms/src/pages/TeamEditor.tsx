@@ -4,23 +4,25 @@ import { mediaApi, teamApi, type TeamMemberInput } from "../lib/api";
 import { useToast } from "../lib/ToastContext";
 import UploadSizeHint from "../components/UploadSizeHint";
 
-const EMPTY_FORM: TeamMemberInput = {
-  locale: "ja",
-  lastName: "",
-  firstName: "",
-  lastNameKana: "",
-  firstNameKana: "",
-  department: "",
-  position: "",
-  description: "",
-  tags: [],
-  languages: [],
-  imageKey: null,
-  imageWidth: null,
-  imageHeight: null,
-  isPresident: false,
-  published: true,
-};
+function emptyForm(locale: "ja" | "zh"): TeamMemberInput {
+  return {
+    locale,
+    lastName: "",
+    firstName: "",
+    lastNameKana: "",
+    firstNameKana: "",
+    department: "",
+    position: "",
+    description: "",
+    tags: [],
+    languages: [],
+    imageKey: null,
+    imageWidth: null,
+    imageHeight: null,
+    isPresident: false,
+    published: true,
+  };
+}
 
 function splitList(text: string): string[] {
   return text
@@ -30,10 +32,10 @@ function splitList(text: string): string[] {
 }
 
 export default function TeamEditor({ mode }: { mode: "create" | "edit" }) {
-  const { id } = useParams();
+  const { locale, id } = useParams<{ locale: "ja" | "zh"; id: string }>();
   const navigate = useNavigate();
   const { showToast, showSuccessDialog } = useToast();
-  const [form, setForm] = useState<TeamMemberInput>(EMPTY_FORM);
+  const [form, setForm] = useState<TeamMemberInput>(emptyForm(locale ?? "ja"));
   const [tagsText, setTagsText] = useState("");
   const [languagesText, setLanguagesText] = useState("");
   const [imageUrl, setImageUrl] = useState<string | null>(null);
@@ -115,23 +117,19 @@ export default function TeamEditor({ mode }: { mode: "create" | "edit" }) {
     }
   }
 
+  if (!locale) return <p className="form-error">缺少页面参数</p>;
   if (loading) return <p>加载中…</p>;
 
   return (
     <div>
       <div className="page-header">
-        <h1>{mode === "create" ? "新建社员" : "编辑社员"}</h1>
+        <h1>
+          {mode === "create" ? "新建社员" : "编辑社员"} · {form.locale === "zh" ? "中文" : "日语"}
+        </h1>
       </div>
 
       <form className="editor-form" onSubmit={handleSubmit}>
         <div className="form-row">
-          <label>
-            语言
-            <select value={form.locale} onChange={(e) => update("locale", e.target.value as "ja" | "zh")}>
-              <option value="ja">日语</option>
-              <option value="zh">中文</option>
-            </select>
-          </label>
           <label className="checkbox-label">
             <input
               type="checkbox"

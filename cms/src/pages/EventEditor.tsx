@@ -9,36 +9,38 @@ import { datetimeLocalToIso, isoToDatetimeLocal } from "../lib/datetime";
 const EVENT_COVER_ASPECT_RATIO = 4 / 3;
 const EVENT_HERO_ASPECT_RATIO = 16 / 9;
 
-const EMPTY_FORM: EventInput = {
-  locale: "ja",
-  slug: "",
-  title: "",
-  date: "",
-  dateRange: "",
-  badge: "",
-  badgeColor: "#1e6fd9",
-  summary: "",
-  coverImageKey: null,
-  coverImageWidth: null,
-  coverImageHeight: null,
-  heroImageKey: null,
-  heroImageWidth: null,
-  heroImageHeight: null,
-  videoUrl: "",
-  videoPosterKey: null,
-  videoPosterWidth: null,
-  videoPosterHeight: null,
-  overview: { eventName: "", datetime: "", venue: "", participants: "", content: "", organizer: "" },
-  published: true,
-  scheduledAt: null,
-  gallery: [],
-};
+function emptyForm(locale: "ja" | "zh"): EventInput {
+  return {
+    locale,
+    slug: "",
+    title: "",
+    date: "",
+    dateRange: "",
+    badge: "",
+    badgeColor: "#1e6fd9",
+    summary: "",
+    coverImageKey: null,
+    coverImageWidth: null,
+    coverImageHeight: null,
+    heroImageKey: null,
+    heroImageWidth: null,
+    heroImageHeight: null,
+    videoUrl: "",
+    videoPosterKey: null,
+    videoPosterWidth: null,
+    videoPosterHeight: null,
+    overview: { eventName: "", datetime: "", venue: "", participants: "", content: "", organizer: "" },
+    published: true,
+    scheduledAt: null,
+    gallery: [],
+  };
+}
 
 export default function EventEditor({ mode }: { mode: "create" | "edit" }) {
-  const { id } = useParams();
+  const { locale, id } = useParams<{ locale: "ja" | "zh"; id: string }>();
   const navigate = useNavigate();
   const { showToast, showSuccessDialog } = useToast();
-  const [form, setForm] = useState<EventInput>(EMPTY_FORM);
+  const [form, setForm] = useState<EventInput>(emptyForm(locale ?? "ja"));
   const [coverUrl, setCoverUrl] = useState<string | null>(null);
   const [heroUrl, setHeroUrl] = useState<string | null>(null);
   const [videoPosterUrl, setVideoPosterUrl] = useState<string | null>(null);
@@ -254,6 +256,7 @@ export default function EventEditor({ mode }: { mode: "create" | "edit" }) {
     }
   }
 
+  if (!locale) return <p className="form-error">缺少页面参数</p>;
   if (loading) return <p>加载中…</p>;
 
   const uploading = uploadingCover || uploadingVideo || uploadingHero || uploadingPoster || uploadingGallery;
@@ -261,18 +264,13 @@ export default function EventEditor({ mode }: { mode: "create" | "edit" }) {
   return (
     <div>
       <div className="page-header">
-        <h1>{mode === "create" ? "新建活动" : "编辑活动"}</h1>
+        <h1>
+          {mode === "create" ? "新建活动" : "编辑活动"} · {form.locale === "zh" ? "中文" : "日语"}
+        </h1>
       </div>
 
       <form className="editor-form" onSubmit={handleSubmit}>
         <div className="form-row">
-          <label>
-            语言
-            <select value={form.locale} onChange={(e) => update("locale", e.target.value as "ja" | "zh")}>
-              <option value="ja">日语</option>
-              <option value="zh">中文</option>
-            </select>
-          </label>
           <label className="checkbox-label">
             <input
               type="checkbox"

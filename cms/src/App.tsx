@@ -114,7 +114,7 @@ export default function App() {
           }
         />
         <Route
-          path="team/new"
+          path="team/:locale/new"
           element={
             <RequireSuperAdmin>
               <TeamEditor mode="create" />
@@ -122,7 +122,7 @@ export default function App() {
           }
         />
         <Route
-          path="team/:id/edit"
+          path="team/:locale/:id/edit"
           element={
             <RequireSuperAdmin>
               <TeamEditor mode="edit" />
@@ -138,7 +138,7 @@ export default function App() {
           }
         />
         <Route
-          path="events/new"
+          path="events/:locale/new"
           element={
             <RequireSuperAdmin>
               <EventEditor mode="create" />
@@ -146,7 +146,7 @@ export default function App() {
           }
         />
         <Route
-          path="events/:id/edit"
+          path="events/:locale/:id/edit"
           element={
             <RequireSuperAdmin>
               <EventEditor mode="edit" />

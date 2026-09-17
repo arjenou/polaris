@@ -103,7 +103,7 @@ export default function TeamList() {
             中文
           </button>
         </div>
-        <Link to="/team/new" className="btn-primary">
+        <Link to={`/team/${locale}/new`} className="btn-primary">
           + 新建
         </Link>
       </div>
@@ -206,7 +206,7 @@ export default function TeamList() {
                   <span className="count-badge">{member.submissionCount}</span>
                 </td>
                 <td className="table-actions">
-                  <Link to={`/team/${member.id}/edit`}>编辑</Link>
+                  <Link to={`/team/${locale}/${member.id}/edit`}>编辑</Link>
                   <button className="btn-link danger" onClick={() => handleDelete(member)}>
                     删除
                   </button>
