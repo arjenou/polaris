@@ -304,9 +304,6 @@ export default function Analytics() {
       <div className="page-header">
         <h1>访问统计</h1>
       </div>
-      <p className="hint">
-        数据来自 Cloudflare Web Analytics，每次打开本页时实时获取，日期按日本时间计算。"访问次数"指从站外进入网站的次数，"页面浏览量"指所有页面的打开次数。
-      </p>
 
       <div className="tabs">
         {RANGE_OPTIONS.map((opt) => (
