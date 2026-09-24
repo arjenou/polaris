@@ -1,4 +1,5 @@
 import type { Metadata, Viewport } from "next";
+import Script from "next/script";
 import {
   Noto_Sans_JP,
   Noto_Sans_SC,
@@ -39,6 +40,7 @@ const notoSerifSC = Noto_Serif_SC({
 });
 
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "https://example.com";
+const CF_WEB_ANALYTICS_TOKEN = "ac183cbcc5d8430abe3722016e6c2065";
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
@@ -77,6 +79,13 @@ export default async function RootLayout({
         <LocaleHtmlAttributes />
         {children}
         <FloatingContactButtons wechatImage={qrImages.wechat} lineImage={qrImages.line} />
+        {process.env.NODE_ENV === "production" && (
+          <Script
+            src="https://static.cloudflareinsights.com/beacon.min.js"
+            data-cf-beacon={JSON.stringify({ token: CF_WEB_ANALYTICS_TOKEN })}
+            strategy="afterInteractive"
+          />
+        )}
       </body>
     </html>
   );
