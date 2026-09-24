@@ -20,6 +20,9 @@ function SidebarNav() {
     <nav className="sidebar-nav">
       {isSuperAdmin && (
         <>
+          <NavLink to="/analytics" className={({ isActive }) => (isActive ? "active" : "")}>
+            访问统计
+          </NavLink>
           <NavLink to="/news" className={({ isActive }) => (isActive ? "active" : "")}>
             新闻公告
           </NavLink>

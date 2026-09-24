@@ -14,4 +14,8 @@ export interface Env {
    * Authentication) on its *.vercel.app URL. See "Protection Bypass for
    * Automation" in the Vercel project's Deployment Protection settings. */
   VERCEL_PROTECTION_BYPASS_SECRET?: string;
+  /** Read-only Cloudflare API token (Account Analytics: Read) used by the
+   * admin traffic dashboard to query Web Analytics. Optional — without it the
+   * dashboard endpoint returns a configuration error instead of data. */
+  CF_ANALYTICS_API_TOKEN?: string;
 }

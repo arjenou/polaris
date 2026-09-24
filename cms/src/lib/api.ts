@@ -574,3 +574,22 @@ export const eventsApi = {
       body: JSON.stringify({ locale, orderedIds }),
     }),
 };
+
+export type AnalyticsRangeDays = 7 | 30;
+
+export interface TrafficReport {
+  range: { days: AnalyticsRangeDays; start: string; end: string };
+  totals: { visits: number; pageviews: number };
+  previous: { visits: number; pageviews: number };
+  daily: { date: string; visits: number; pageviews: number }[];
+  countries: { code: string; visits: number; pageviews: number }[];
+  pages: { path: string; visits: number; pageviews: number }[];
+  referrers: { host: string; kind: "search" | "other"; visits: number }[];
+  directVisits: number;
+  searchVisits: number;
+  devices: { type: string; visits: number }[];
+}
+
+export const analyticsApi = {
+  traffic: (days: AnalyticsRangeDays) => request<TrafficReport>(`/api/admin/analytics/traffic?days=${days}`),
+};

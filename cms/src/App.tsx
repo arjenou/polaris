@@ -23,6 +23,7 @@ import ContactSubmissionDetail from "./pages/ContactSubmissionDetail";
 import ContactQrSettings from "./pages/ContactQrSettings";
 import MaintenancePageSettings from "./pages/MaintenancePageSettings";
 import Account from "./pages/Account";
+import Analytics from "./pages/Analytics";
 
 function RequireAuth({ children }: { children: React.ReactNode }) {
   const { loading, username } = useAuth();
@@ -57,6 +58,14 @@ export default function App() {
         }
       >
         <Route index element={<HomeRedirect />} />
+        <Route
+          path="analytics"
+          element={
+            <RequireSuperAdmin>
+              <Analytics />
+            </RequireSuperAdmin>
+          }
+        />
         <Route path="news" element={<Navigate to="/news/ja" replace />} />
         <Route
           path="news/:locale/new"
