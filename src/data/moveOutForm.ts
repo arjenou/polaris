@@ -136,7 +136,7 @@ export const moveOutFormCopyJa: MoveOutFormCopy = {
   successTitle: "送信が完了しました",
   successBody:
     "退去受付フォームをお送りいただきありがとうございます。担当者が内容を確認のうえ、折り返しご連絡いたします。",
-  continueLabel: "フォームを見直す",
+  continueLabel: "もう一度入力する",
   homeLabel: "ホームに戻る",
 };
 
