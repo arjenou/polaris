@@ -10,7 +10,12 @@ export const metadata: Metadata = {
 export default function Page() {
   return (
     <PageShell locale="ja">
-      <MoveOutForm copy={moveOutFormCopyJa} backHref="/assets-management" homeHref="/" />
+      <MoveOutForm
+        copy={moveOutFormCopyJa}
+        backHref="/assets-management"
+        homeHref="/"
+        locale="ja"
+      />
     </PageShell>
   );
 }

@@ -175,6 +175,11 @@
   color: var(--color-text-muted);
 }
 
+.errorNote {
+  font-size: 13px;
+  color: #c0392b;
+}
+
 .actions {
   display: flex;
   justify-content: center;
@@ -202,6 +207,11 @@
 
 .submitBtn:hover {
   background: var(--color-secondary);
+}
+
+.submitBtn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
 }
 
 .secondaryBtn {

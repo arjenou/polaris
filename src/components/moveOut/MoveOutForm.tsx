@@ -3,6 +3,7 @@
 import { useState, type FormEvent } from "react";
 import Link from "next/link";
 import type { MoveOutFormCopy } from "@/data/moveOutForm";
+import { MOVE_OUT_REQUEST_ENDPOINT, type MoveOutRequestPayload } from "@/lib/moveOutRequest";
 import styles from "./MoveOutForm.module.css";
 
 type Step = "input" | "complete";
@@ -11,25 +12,68 @@ export default function MoveOutForm({
   copy,
   backHref,
   homeHref,
+  locale,
 }: {
   copy: MoveOutFormCopy;
   backHref: string;
   homeHref: string;
+  locale: "ja" | "zh";
 }) {
   const [step, setStep] = useState<Step>("input");
   const [cancelReason, setCancelReason] = useState("");
+  const [submitting, setSubmitting] = useState(false);
+  const [submitError, setSubmitError] = useState<string | null>(null);
   const otherReasonValue = copy.cancelReasonOptions[copy.cancelReasonOptions.length - 1];
   const isOtherReason = cancelReason === otherReasonValue;
 
-  const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    // No backend yet — the form is UI-only per the current project scope.
-    setStep("complete");
-    window.scrollTo({ top: 0, behavior: "smooth" });
+    const data = new FormData(event.currentTarget);
+    const text = (key: string) => String(data.get(key) ?? "");
+    const payload: MoveOutRequestPayload = {
+      locale,
+      propertyName: text("propertyName"),
+      roomNumber: text("roomNumber"),
+      contractorName: text("contractorName"),
+      phone: text("phone"),
+      email: text("email"),
+      cancelReason: text("cancelReason"),
+      cancelReasonDetail: text("cancelReasonDetail"),
+      cancelDate: text("cancelDate"),
+      attendanceDate: text("attendanceDate"),
+      attendanceTime: text("attendanceTime"),
+      newAddress: text("newAddress"),
+      bankName: text("bankName"),
+      branchName: text("branchName"),
+      accountType: text("accountType"),
+      accountNumber: text("accountNumber"),
+      accountHolderKana: text("accountHolderKana"),
+      leftoverItemsAgree: data.get("leftoverItemsAgree") !== null,
+      utilitiesAgree: data.get("utilitiesAgree") !== null,
+      otherMessage: text("otherMessage"),
+    };
+
+    setSubmitting(true);
+    setSubmitError(null);
+    try {
+      const res = await fetch(MOVE_OUT_REQUEST_ENDPOINT, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+      if (!res.ok) throw new Error("submit failed");
+      setStep("complete");
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    } catch {
+      setSubmitError(copy.errorNote);
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   const handleReset = () => {
     setCancelReason("");
+    setSubmitError(null);
     setStep("input");
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
@@ -314,13 +358,14 @@ export default function MoveOutForm({
             </div>
 
             <p className={styles.note}>{copy.submittingNote}</p>
+            {submitError && <p className={styles.errorNote}>{submitError}</p>}
 
             <div className={styles.actions}>
               <Link href={backHref} className={styles.secondaryBtn}>
                 {copy.backLabel}
               </Link>
-              <button type="submit" className={styles.submitBtn}>
-                {copy.submitLabel}
+              <button type="submit" className={styles.submitBtn} disabled={submitting}>
+                {submitting ? "…" : copy.submitLabel}
               </button>
             </div>
           </form>

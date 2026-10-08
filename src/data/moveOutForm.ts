@@ -46,6 +46,7 @@ export interface MoveOutFormCopy {
   submitLabel: string;
   backLabel: string;
   submittingNote: string;
+  errorNote: string;
   successTitle: string;
   successBody: string;
   continueLabel: string;
@@ -130,10 +131,11 @@ export const moveOutFormCopyJa: MoveOutFormCopy = {
   ],
   submitLabel: "送信する",
   backLabel: "戻る",
-  submittingNote: "※ このフォームは現在デモ表示のみです。送信機能は今後実装予定です。",
+  submittingNote: "※ ご入力内容に誤りがないかご確認の上、送信してください。",
+  errorNote: "送信に失敗しました。しばらくしてから再度お試しください。",
   successTitle: "送信が完了しました",
   successBody:
-    "（デモ）退去受付フォームの内容を確認しました。実際の送信機能は準備中です。担当者より折り返しご連絡いたします。",
+    "退去受付フォームをお送りいただきありがとうございます。担当者が内容を確認のうえ、折り返しご連絡いたします。",
   continueLabel: "フォームを見直す",
   homeLabel: "ホームに戻る",
 };
@@ -216,10 +218,10 @@ export const moveOutFormCopyZh: MoveOutFormCopy = {
   ],
   submitLabel: "提交",
   backLabel: "返回",
-  submittingNote: "※ 当前表单仅为演示效果，提交功能将在后续版本中实现。",
+  submittingNote: "※ 请确认填写内容无误后提交。",
+  errorNote: "提交失败，请稍后重试。",
   successTitle: "提交成功",
-  successBody:
-    "（演示）我们已收到您的退租申请内容，实际提交功能正在开发中。我们的负责人将尽快与您联系。",
+  successBody: "感谢您提交退租受理表单。我们的负责人将在确认内容后尽快与您联系。",
   continueLabel: "重新填写",
   homeLabel: "返回首页",
 };
