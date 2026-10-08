@@ -7,8 +7,8 @@ export default function RecommendedSectionSkeleton() {
     <section className={styles.section}>
       <div className={styles.inner}>
         <div className={styles.heading}>
-          <Skeleton width={100} height={13} style={{ marginBottom: 8 }} />
-          <Skeleton width="55%" height={26} />
+          <Skeleton width={200} height={28} style={{ marginBottom: 8 }} />
+          <Skeleton width="45%" height={14} />
         </div>
         <div className={styles.grid}>
           {Array.from({ length: 3 }).map((_, i) => (

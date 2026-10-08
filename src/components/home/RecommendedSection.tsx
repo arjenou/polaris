@@ -23,8 +23,8 @@ export default function RecommendedSection({
     <section className={styles.section}>
       <div className={styles.inner}>
         <div className={styles.heading}>
-          <div className={styles.eyebrow}>{eyebrow}</div>
-          <h2 className={styles.title}>{title}</h2>
+          <h2 className={styles.eyebrow}>{eyebrow}</h2>
+          <p className={styles.title}>{title}</p>
         </div>
         <div className={styles.grid}>
           {items.map((item) => (
