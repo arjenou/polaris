@@ -186,8 +186,8 @@ export const moveOutFormCopyZh: MoveOutFormCopy = {
     otherMessagePlaceholder: "如有其他需告知事项，请填写在此",
   },
   cancelReasonOptions: [
-    "工作调动",
-    "跳槽",
+    "勤务地点变更",
+    "就职公司变更",
     "购买自住房",
     "借续约之机",
     "房间数量不足/狭小",
