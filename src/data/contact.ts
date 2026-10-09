@@ -1,6 +1,14 @@
 export interface ContactCopy {
   heroTitle: string;
   intro: string;
+  /** Warns that this form does not count as a move-out notice, and points at
+   * the dedicated 退去受付フォーム. Split so "こちら" can be a link. */
+  moveOutNotice: {
+    lead: string;
+    beforeLink: string;
+    linkLabel: string;
+    afterLink: string;
+  };
   steps: {
     input: string;
     confirm: string;
@@ -46,6 +54,12 @@ export const contactCopyJa: ContactCopy = {
   heroTitle: "お問い合わせ",
   intro:
     "ご不明な点やご相談などがございましたら、お気軽にお問い合わせください。\n担当者より折り返しご連絡いたします。",
+  moveOutNotice: {
+    lead: "【重要】退去・解約に関するご連絡の場合、本問い合わせ窓口への送信日を、解約の意思表示または解約受付日として取り扱うことはできません。",
+    beforeLink: "退去・解約をご希望の場合は、",
+    linkLabel: "こちら",
+    afterLink: "をクリックしてください。",
+  },
   steps: {
     input: "入力",
     confirm: "確認",
@@ -100,6 +114,12 @@ export const contactCopyZh: ContactCopy = {
   heroTitle: "联系我们",
   intro:
     "如有任何疑问或咨询，欢迎随时与我们联系，我们的负责人将尽快与您联系。",
+  moveOutNotice: {
+    lead: "【重要】请注意：通过本咨询窗口发送的信息，不视为正式提出解约申请，信息发送日期亦不作为解约申请的受理日期。",
+    beforeLink: "如需办理退租或解约，请点击",
+    linkLabel: "此处",
+    afterLink: "。",
+  },
   steps: {
     input: "填写",
     confirm: "确认",

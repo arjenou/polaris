@@ -3,6 +3,7 @@
 import { useState, type FormEvent } from "react";
 import { useSearchParams } from "next/navigation";
 import Image from "next/image";
+import Link from "next/link";
 import type { ContactCopy } from "@/data/contact";
 import type { ContactQrImages } from "@/lib/contactQr";
 import styles from "./ContactForm.module.css";
@@ -34,11 +35,13 @@ type Step = "input" | "confirm" | "complete";
 export default function ContactForm({
   copy,
   homeHref,
+  moveOutHref,
   locale,
   qrImages,
 }: {
   copy: ContactCopy;
   homeHref: string;
+  moveOutHref: string;
   locale: "ja" | "zh";
   qrImages?: ContactQrImages;
 }) {
@@ -120,6 +123,16 @@ export default function ContactForm({
       <div className={styles.inner}>
         <h1 className={styles.title}>{copy.heroTitle}</h1>
         <p className={styles.intro}>{copy.intro}</p>
+
+        <p className={styles.moveOutNotice}>
+          {copy.moveOutNotice.lead}
+          <br />
+          {copy.moveOutNotice.beforeLink}
+          <Link href={moveOutHref} className={styles.moveOutLink}>
+            {copy.moveOutNotice.linkLabel}
+          </Link>
+          {copy.moveOutNotice.afterLink}
+        </p>
 
         <ol className={styles.steps} aria-label="progress">
           <li className={step === "input" ? styles.stepActive : styles.stepDone}>

@@ -14,7 +14,13 @@ export default async function Page() {
   return (
     <PageShell locale="ja">
       <Suspense fallback={null}>
-        <ContactForm copy={contactCopyJa} homeHref="/" locale="ja" qrImages={qrImages} />
+        <ContactForm
+          copy={contactCopyJa}
+          homeHref="/"
+          moveOutHref="/move-out-request"
+          locale="ja"
+          qrImages={qrImages}
+        />
       </Suspense>
     </PageShell>
   );
