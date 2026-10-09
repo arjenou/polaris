@@ -47,11 +47,21 @@ export interface MoveOutFormCopy {
   backLabel: string;
   submittingNote: string;
   errorNote: string;
+  attendanceDateError: string;
   successTitle: string;
   successBody: string;
   continueLabel: string;
   homeLabel: string;
 }
+
+/** 10:00〜18:00 split into 30-minute slots. Shared by both locales because the
+ * labels are plain times. */
+const ATTENDANCE_TIME_OPTIONS = Array.from({ length: 16 }, (_, index) => {
+  const start = 10 * 60 + index * 30;
+  const format = (minutes: number) =>
+    `${String(Math.floor(minutes / 60)).padStart(2, "0")}:${String(minutes % 60).padStart(2, "0")}`;
+  return `${format(start)}〜${format(start + 30)}`;
+});
 
 export const moveOutFormCopyJa: MoveOutFormCopy = {
   title: "退去受付フォーム",
@@ -76,7 +86,7 @@ export const moveOutFormCopyJa: MoveOutFormCopy = {
     cancelDateNote: "※賃料最終発生日です。契約上の解約予告期間をご注意ください。",
     attendanceDate: "立会希望日",
     attendanceDateNote: "※解約希望日以前の日付をご指定ください。",
-    attendanceNoticeTitle: "立会に関する注意事項（必ずご確認ください）",
+    attendanceNoticeTitle: "立会に関する注意事項（すべてご確認のうえチェックしてください）",
     attendanceTime: "立会希望時間",
     newAddress: "転居先",
     newAddressPlaceholder: "転居先のご住所をご記入ください",
@@ -111,17 +121,7 @@ export const moveOutFormCopyJa: MoveOutFormCopy = {
     "その他",
   ],
   accountTypeOptions: ["普通（フツウ）", "当座（トウザ）"],
-  attendanceTimeOptions: [
-    "10:00〜10:30",
-    "11:00〜11:30",
-    "12:00〜12:30",
-    "13:00〜13:30",
-    "14:00〜14:30",
-    "15:00〜15:30",
-    "16:00〜16:30",
-    "17:00〜17:30",
-    "18:00〜",
-  ],
+  attendanceTimeOptions: ATTENDANCE_TIME_OPTIONS,
   attendanceNoticeItems: [
     "土日祝に指定する場合には、休日立会対応料金（税込11,000円）が別途発生致します。予めご了承ください。",
     "立会時間までに、部屋内は荷物全部撤去済みの状態でお願いします。",
@@ -133,6 +133,7 @@ export const moveOutFormCopyJa: MoveOutFormCopy = {
   backLabel: "戻る",
   submittingNote: "※ ご入力内容に誤りがないかご確認の上、送信してください。",
   errorNote: "送信に失敗しました。しばらくしてから再度お試しください。",
+  attendanceDateError: "立会希望日は、解約希望日と同日またはそれ以前の日付をご指定ください。",
   successTitle: "送信が完了しました",
   successBody:
     "退去受付フォームをお送りいただきありがとうございます。担当者が内容を確認のうえ、折り返しご連絡いたします。",
@@ -163,7 +164,7 @@ export const moveOutFormCopyZh: MoveOutFormCopy = {
     cancelDateNote: "※该日期为租金最后计算日，请注意合同约定的退租通知期限。",
     attendanceDate: "希望现场验收日期",
     attendanceDateNote: "※请指定不晚于希望退租日期的日期。",
-    attendanceNoticeTitle: "关于现场验收的注意事项（请务必确认）",
+    attendanceNoticeTitle: "关于现场验收的注意事项（请逐条确认并勾选）",
     attendanceTime: "希望验收时间段",
     newAddress: "迁居地址",
     newAddressPlaceholder: "请填写迁居后的地址",
@@ -198,17 +199,7 @@ export const moveOutFormCopyZh: MoveOutFormCopy = {
     "其他",
   ],
   accountTypeOptions: ["普通账户", "支票账户"],
-  attendanceTimeOptions: [
-    "10:00〜10:30",
-    "11:00〜11:30",
-    "12:00〜12:30",
-    "13:00〜13:30",
-    "14:00〜14:30",
-    "15:00〜15:30",
-    "16:00〜16:30",
-    "17:00〜17:30",
-    "18:00〜",
-  ],
+  attendanceTimeOptions: ATTENDANCE_TIME_OPTIONS,
   attendanceNoticeItems: [
     "如指定周六、周日或节假日进行验收，将另行收取假日验收服务费（含税11,000日元），敬请谅解。",
     "在验收时间之前，请确保房间内所有物品已全部搬出。",
@@ -220,6 +211,7 @@ export const moveOutFormCopyZh: MoveOutFormCopy = {
   backLabel: "返回",
   submittingNote: "※ 请确认填写内容无误后提交。",
   errorNote: "提交失败，请稍后重试。",
+  attendanceDateError: "希望现场验收日期请选择与希望退租日期同一天或更早的日期。",
   successTitle: "提交成功",
   successBody: "感谢您提交退租受理表单。我们的负责人将在确认内容后尽快与您联系。",
   continueLabel: "重新填写",

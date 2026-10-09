@@ -18,6 +18,7 @@ export interface MoveOutRequestPayload {
   accountType: string;
   accountNumber: string;
   accountHolderKana: string;
+  attendanceNoticesAgree: boolean;
   leftoverItemsAgree: boolean;
   utilitiesAgree: boolean;
   otherMessage: string;

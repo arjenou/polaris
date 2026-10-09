@@ -103,15 +103,31 @@
 .noticeList {
   display: flex;
   flex-direction: column;
-  gap: 10px;
-  padding-left: 18px;
+  gap: 12px;
 }
 
 .noticeList li {
   font-size: 13px;
   line-height: 1.8;
   color: var(--color-text-secondary);
-  list-style: disc;
+  list-style: none;
+}
+
+/* Unlike .checkboxOption the label here wraps over several lines, so the box
+   stays pinned to the first line instead of centering against the block. */
+.noticeCheckbox {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  cursor: pointer;
+}
+
+.noticeCheckbox input {
+  accent-color: var(--color-primary);
+  width: 18px;
+  height: 18px;
+  flex-shrink: 0;
+  margin-top: 4px;
 }
 
 .fieldset {

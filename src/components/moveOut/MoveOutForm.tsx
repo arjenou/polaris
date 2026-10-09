@@ -21,6 +21,7 @@ export default function MoveOutForm({
 }) {
   const [step, setStep] = useState<Step>("input");
   const [cancelReason, setCancelReason] = useState("");
+  const [cancelDate, setCancelDate] = useState("");
   const [submitting, setSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
   const otherReasonValue = copy.cancelReasonOptions[copy.cancelReasonOptions.length - 1];
@@ -30,6 +31,13 @@ export default function MoveOutForm({
     event.preventDefault();
     const data = new FormData(event.currentTarget);
     const text = (key: string) => String(data.get(key) ?? "");
+
+    // Backs up the date input's `max`, which a manually typed value can slip past.
+    if (text("attendanceDate") > text("cancelDate")) {
+      setSubmitError(copy.attendanceDateError);
+      return;
+    }
+
     const payload: MoveOutRequestPayload = {
       locale,
       propertyName: text("propertyName"),
@@ -48,6 +56,9 @@ export default function MoveOutForm({
       accountType: text("accountType"),
       accountNumber: text("accountNumber"),
       accountHolderKana: text("accountHolderKana"),
+      attendanceNoticesAgree: copy.attendanceNoticeItems.every(
+        (_, index) => data.get(`attendanceNotice${index}`) !== null,
+      ),
       leftoverItemsAgree: data.get("leftoverItemsAgree") !== null,
       utilitiesAgree: data.get("utilitiesAgree") !== null,
       otherMessage: text("otherMessage"),
@@ -73,6 +84,7 @@ export default function MoveOutForm({
 
   const handleReset = () => {
     setCancelReason("");
+    setCancelDate("");
     setSubmitError(null);
     setStep("input");
     window.scrollTo({ top: 0, behavior: "smooth" });
@@ -198,7 +210,15 @@ export default function MoveOutForm({
                 {copy.fields.cancelDate}
                 <span className={styles.required}>{copy.requiredBadge}</span>
               </label>
-              <input id="cancelDate" name="cancelDate" type="date" required className={styles.input} />
+              <input
+                id="cancelDate"
+                name="cancelDate"
+                type="date"
+                required
+                className={styles.input}
+                value={cancelDate}
+                onChange={(event) => setCancelDate(event.target.value)}
+              />
               <p className={styles.fieldNote}>{copy.fields.cancelDateNote}</p>
             </div>
 
@@ -213,6 +233,7 @@ export default function MoveOutForm({
                 type="date"
                 required
                 className={styles.input}
+                max={cancelDate || undefined}
               />
               <p className={styles.fieldNote}>{copy.fields.attendanceDateNote}</p>
             </div>
@@ -220,8 +241,13 @@ export default function MoveOutForm({
             <div className={styles.noticeBox}>
               <h2 className={styles.noticeTitle}>{copy.fields.attendanceNoticeTitle}</h2>
               <ul className={styles.noticeList}>
-                {copy.attendanceNoticeItems.map((item) => (
-                  <li key={item}>{item}</li>
+                {copy.attendanceNoticeItems.map((item, index) => (
+                  <li key={item}>
+                    <label className={styles.noticeCheckbox}>
+                      <input type="checkbox" name={`attendanceNotice${index}`} required />
+                      {item}
+                    </label>
+                  </li>
                 ))}
               </ul>
             </div>

@@ -44,6 +44,7 @@ function parsePayload(raw: unknown): MoveOutRequestPayload | null {
     accountType: text("accountType"),
     accountNumber: text("accountNumber"),
     accountHolderKana: text("accountHolderKana"),
+    attendanceNoticesAgree: input.attendanceNoticesAgree === true,
     leftoverItemsAgree: input.leftoverItemsAgree === true,
     utilitiesAgree: input.utilitiesAgree === true,
     otherMessage: text("otherMessage"),
@@ -51,7 +52,11 @@ function parsePayload(raw: unknown): MoveOutRequestPayload | null {
 
   if (REQUIRED_FIELDS.some((field) => !payload[field])) return null;
   if (!EMAIL_RE.test(payload.email)) return null;
-  if (!payload.leftoverItemsAgree || !payload.utilitiesAgree) return null;
+  // The walkthrough has to happen on or before the day the lease ends.
+  if (payload.attendanceDate > payload.cancelDate) return null;
+  if (!payload.attendanceNoticesAgree || !payload.leftoverItemsAgree || !payload.utilitiesAgree) {
+    return null;
+  }
 
   return payload;
 }
@@ -81,6 +86,12 @@ function buildRows(payload: MoveOutRequestPayload): Array<[string, string]> {
     [labels.cancelDate, payload.cancelDate],
     [labels.attendanceDate, payload.attendanceDate],
     [labels.attendanceTime, payload.attendanceTime],
+    [
+      "立会注意事項",
+      payload.attendanceNoticesAgree
+        ? `全${moveOutFormCopyJa.attendanceNoticeItems.length}項目に同意済み`
+        : "未同意",
+    ],
     [labels.newAddress, payload.newAddress],
     [labels.bankName, payload.bankName || "―"],
     [labels.branchName, payload.branchName || "―"],
