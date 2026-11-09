@@ -31,7 +31,10 @@ export default async function Page({
   if (!post) notFound();
 
   return (
-    <PageShell locale="ja">
+    <PageShell
+      locale="ja"
+      alternateHref={post.translationSlug ? `/zh/recommended/${post.translationSlug}` : undefined}
+    >
       <NewsDetailPage post={post} basePath="/recommended" labels={{ backLabel: "← おすすめ情報一覧に戻る" }} />
     </PageShell>
   );

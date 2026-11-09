@@ -67,6 +67,9 @@ export interface EventInput {
   gallery?: string[];
   published?: boolean;
   scheduledAt?: string | null;
+  /** Id of the same event in the other locale. undefined = leave the existing
+   * link untouched, null = remove it. */
+  counterpartId?: number | null;
 }
 
 function parseGallery(value: string): string[] {
@@ -86,7 +89,7 @@ function toMediaUrl(origin: string, key: string | null): string | null {
   return key ? `${origin}/media/${key}` : null;
 }
 
-export function toEventApiShape(row: EventRow, origin: string) {
+export function toEventApiShape(row: EventRow, origin: string, counterpartId?: number | null) {
   return {
     id: row.id,
     locale: row.locale,
@@ -122,6 +125,7 @@ export function toEventApiShape(row: EventRow, origin: string) {
     published: Boolean(row.published),
     scheduledAt: fromSqliteDatetime(row.scheduled_at),
     sortOrder: row.sort_order,
+    counterpartId,
     createdAt: row.created_at,
     updatedAt: row.updated_at,
   };

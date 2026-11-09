@@ -31,7 +31,10 @@ export default async function Page({
   if (!post) notFound();
 
   return (
-    <PageShell locale="zh">
+    <PageShell
+      locale="zh"
+      alternateHref={post.translationSlug ? `/recommended/${post.translationSlug}` : undefined}
+    >
       <NewsDetailPage post={post} basePath="/zh/recommended" labels={{ backLabel: "← 返回推荐信息列表" }} />
     </PageShell>
   );

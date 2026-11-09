@@ -2,6 +2,7 @@
 import type { Env } from "../../../_lib/env";
 import { errorJson, json } from "../../../_lib/response";
 import { triggerRevalidate } from "../../../_lib/revalidate";
+import { setCounterpart, validateCounterpart } from "../../../_lib/translations";
 import {
   toEventApiShape,
   toGalleryJson,
@@ -33,6 +34,9 @@ export const onRequestPost: PagesFunction<Env> = async ({ request, env }) => {
 
   const validationError = validateEvent(input);
   if (validationError) return errorJson(validationError, 400);
+
+  const counterpartError = await validateCounterpart(env, "events", input.locale, input.counterpartId);
+  if (counterpartError) return errorJson(counterpartError, 400);
 
   // New events are inserted at the top of the list, so push every existing
   // row (for this locale) down by one before inserting at sort_order 0.
@@ -80,9 +84,13 @@ export const onRequestPost: PagesFunction<Env> = async ({ request, env }) => {
     ]).then(([, insertResult]) => insertResult);
 
     const id = result.meta.last_row_id;
+    if (input.counterpartId != null) {
+      const linkError = await setCounterpart(env, "events", "events", id, input.counterpartId);
+      if (linkError) return errorJson(linkError, 400);
+    }
     const row = await env.DB.prepare("SELECT * FROM events WHERE id = ?").bind(id).first<EventRow>();
     await triggerRevalidate(env, { kind: "events", locale: input.locale!, slug: input.slug! });
-    return json(toEventApiShape(row!, new URL(request.url).origin), { status: 201 });
+    return json(toEventApiShape(row!, new URL(request.url).origin, input.counterpartId ?? null), { status: 201 });
   } catch (e) {
     const message = e instanceof Error ? e.message : String(e);
     if (message.includes("UNIQUE")) return errorJson("该语言下 slug 已存在", 409);

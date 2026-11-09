@@ -20,6 +20,8 @@ export interface ContentPost {
   imageHeight: number | null;
   published: boolean;
   scheduledAt: string | null;
+  /** Same article in the other locale (only returned by get/create/update). */
+  counterpartId?: number | null;
   createdAt: string;
   updatedAt: string;
 }
@@ -544,6 +546,8 @@ export interface EventItem {
   published: boolean;
   scheduledAt: string | null;
   sortOrder: number;
+  /** Same event in the other locale (only returned by get/create/update). */
+  counterpartId?: number | null;
   createdAt: string;
   updatedAt: string;
 }

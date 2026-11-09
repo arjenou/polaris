@@ -10,6 +10,8 @@ export interface PostSummary {
 }
 
 export interface Post extends PostSummary {
+  /** Slug of the published counterpart in the other locale, if linked in the CMS. */
+  translationSlug: string | null;
   content: string;
   contentHtml: string;
   imageWidth: number;

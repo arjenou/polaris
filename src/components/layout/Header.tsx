@@ -52,22 +52,56 @@ function GlobeIcon({ className }: { className?: string }) {
   );
 }
 
-// ja and zh routes mirror each other 1:1 under the /zh prefix, so the
-// equivalent page in the other locale is found by toggling that prefix.
+// Static pages that exist in both locales (ja at the root, zh under /zh).
+const MIRRORED_PAGES = new Set([
+  "/",
+  "/business-headquarters",
+  "/business-headquarters-2",
+  "/assets-management",
+  "/entrepreneurship-support",
+  "/monthly-magazine",
+  "/enterprise-intelligence",
+  "/contact",
+  "/move-out-request",
+  "/news",
+  "/events",
+  "/recommended",
+]);
+
+// CMS-backed sections whose detail pages (/<section>/[slug]) have slugs that
+// are managed independently per locale. A ja slug does not exist in zh (and
+// vice versa), so the language switch on a detail page lands on the other
+// locale's list page instead of a non-existent article.
+const CMS_SECTIONS = new Set(["news", "events", "recommended"]);
+
+// ja and zh routes mirror each other under the /zh prefix, so the equivalent
+// page in the other locale is found by toggling that prefix. Anything that
+// has no counterpart (unknown URLs, per-locale article slugs) falls back to a
+// valid page so the switch never leads to a 404.
 function getLocalePath(pathname: string, targetLocale: "ja" | "zh"): string {
   const isZh = pathname === "/zh" || pathname.startsWith("/zh/");
+  const basePath = (isZh ? pathname.slice(3) : pathname).replace(/\/+$/, "") || "/";
 
-  if (targetLocale === "zh") {
-    if (isZh) return pathname;
-    return pathname === "/" ? "/zh" : `/zh${pathname}`;
+  let neutralPath = basePath;
+  if (!MIRRORED_PAGES.has(basePath)) {
+    const [, section, slug] = basePath.split("/");
+    neutralPath = slug && CMS_SECTIONS.has(section) ? `/${section}` : "/";
   }
 
-  if (!isZh) return pathname;
-  const stripped = pathname.slice(3);
-  return stripped === "" ? "/" : stripped;
+  if (targetLocale === "zh") {
+    return neutralPath === "/" ? "/zh" : `/zh${neutralPath}`;
+  }
+  return neutralPath;
 }
 
-export default function Header({ locale = "ja" }: { locale?: "ja" | "zh" }) {
+export default function Header({
+  locale = "ja",
+  alternateHref,
+}: {
+  locale?: "ja" | "zh";
+  /** Exact URL of this page in the other locale (overrides the derived one). */
+  alternateHref?: string;
+}) {
   const pathname = usePathname();
   const [menuOpen, setMenuOpen] = useState(false);
   const [openMobileGroups, setOpenMobileGroups] = useState<Set<string>>(new Set());
@@ -78,8 +112,8 @@ export default function Header({ locale = "ja" }: { locale?: "ja" | "zh" }) {
   const comingSoonShortText = comingSoonShort[locale];
   const comingSoonDetailText = comingSoonDetail[locale];
   const logoSubtitle = locale === "ja" ? site.name : null;
-  const jaHref = getLocalePath(pathname, "ja");
-  const zhHref = getLocalePath(pathname, "zh");
+  const jaHref = locale === "zh" && alternateHref ? alternateHref : getLocalePath(pathname, "ja");
+  const zhHref = locale === "ja" && alternateHref ? alternateHref : getLocalePath(pathname, "zh");
 
   useEffect(() => {
     setMenuOpen(false);

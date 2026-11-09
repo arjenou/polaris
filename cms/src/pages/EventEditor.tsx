@@ -3,6 +3,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import { eventsApi, mediaApi, type EventGalleryImage, type EventInput } from "../lib/api";
 import { useToast } from "../lib/ToastContext";
 import UploadSizeHint from "../components/UploadSizeHint";
+import CounterpartSelect from "../components/CounterpartSelect";
 import { generateSlug } from "../lib/slug";
 import { datetimeLocalToIso, isoToDatetimeLocal } from "../lib/datetime";
 import { notifyUploadFailure } from "../lib/mediaUpload";
@@ -296,6 +297,13 @@ export default function EventEditor({ mode }: { mode: "create" | "edit" }) {
             />
           </label>
         )}
+
+        <CounterpartSelect
+          locale={form.locale}
+          value={form.counterpartId}
+          load={(other) => eventsApi.list(other)}
+          onChange={(counterpartId) => update("counterpartId", counterpartId)}
+        />
 
         <label>
           标题

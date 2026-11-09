@@ -2,6 +2,7 @@
 import type { Env } from "../../../_lib/env";
 import { errorJson, json } from "../../../_lib/response";
 import { triggerRevalidate } from "../../../_lib/revalidate";
+import { findCounterpart, setCounterpart, validateCounterpart } from "../../../_lib/translations";
 import {
   toEventApiShape,
   toGalleryJson,
@@ -18,7 +19,8 @@ export const onRequestGet: PagesFunction<Env> = async ({ request, env, params })
   const row = await env.DB.prepare("SELECT * FROM events WHERE id = ?").bind(id).first<EventRow>();
   if (!row) return errorJson("未找到该活动", 404);
 
-  return json(toEventApiShape(row, new URL(request.url).origin));
+  const counterpart = await findCounterpart(env, "events", id);
+  return json(toEventApiShape(row, new URL(request.url).origin, counterpart?.id ?? null));
 };
 
 export const onRequestPut: PagesFunction<Env> = async ({ request, env, params }) => {
@@ -34,6 +36,9 @@ export const onRequestPut: PagesFunction<Env> = async ({ request, env, params })
 
   const validationError = validateEvent(input);
   if (validationError) return errorJson(validationError, 400);
+
+  const counterpartError = await validateCounterpart(env, "events", input.locale, input.counterpartId);
+  if (counterpartError) return errorJson(counterpartError, 400);
 
   const previous = await env.DB.prepare("SELECT locale, slug FROM events WHERE id = ?")
     .bind(id)
@@ -85,12 +90,18 @@ export const onRequestPut: PagesFunction<Env> = async ({ request, env, params })
     const row = await env.DB.prepare("SELECT * FROM events WHERE id = ?").bind(id).first<EventRow>();
     if (!row) return errorJson("未找到该活动", 404);
 
+    if (input.counterpartId !== undefined) {
+      const linkError = await setCounterpart(env, "events", "events", id, input.counterpartId);
+      if (linkError) return errorJson(linkError, 400);
+    }
+
     await triggerRevalidate(env, { kind: "events", locale: input.locale!, slug: input.slug! });
     if (previous && (previous.locale !== input.locale || previous.slug !== input.slug)) {
       await triggerRevalidate(env, { kind: "events", locale: previous.locale, slug: previous.slug });
     }
 
-    return json(toEventApiShape(row, new URL(request.url).origin));
+    const counterpart = await findCounterpart(env, "events", id);
+    return json(toEventApiShape(row, new URL(request.url).origin, counterpart?.id ?? null));
   } catch (e) {
     const message = e instanceof Error ? e.message : String(e);
     if (message.includes("UNIQUE")) return errorJson("该语言下 slug 已存在", 409);
@@ -106,9 +117,15 @@ export const onRequestDelete: PagesFunction<Env> = async ({ env, params }) => {
     .bind(id)
     .first<{ locale: string; slug: string }>();
 
+  const counterpart = await findCounterpart(env, "events", id);
+
   await env.DB.prepare("DELETE FROM events WHERE id = ?").bind(id).run();
 
   if (row) await triggerRevalidate(env, { kind: "events", locale: row.locale, slug: row.slug });
+  // The counterpart's page linked here from its language switch.
+  if (counterpart) {
+    await triggerRevalidate(env, { kind: "events", locale: counterpart.locale, slug: counterpart.slug });
+  }
 
   return json({ ok: true });
 };

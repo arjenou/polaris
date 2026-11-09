@@ -2,6 +2,7 @@
 import type { Env } from "../../_lib/env";
 import { errorJson, json, PUBLIC_CORS_HEADERS } from "../../_lib/response";
 import type { EventRow } from "../../_lib/events";
+import { findPublishedCounterpartSlug } from "../../_lib/translations";
 
 const EFFECTIVELY_PUBLISHED = "(published = 1 OR (scheduled_at IS NOT NULL AND scheduled_at <= datetime('now')))";
 
@@ -41,9 +42,12 @@ export const onRequestGet: PagesFunction<Env> = async ({ request, env }) => {
 
     if (!row) return errorJson("未找到该活动", 404, PUBLIC_CORS_HEADERS);
 
+    const translationSlug = await findPublishedCounterpartSlug(env, "events", locale, slug, EFFECTIVELY_PUBLISHED);
+
     return json(
       {
         slug: row.slug,
+        translationSlug,
         title: row.title,
         date: row.date,
         dateRange: row.date_range || null,

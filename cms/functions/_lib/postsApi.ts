@@ -4,6 +4,12 @@ import { errorJson, json, PUBLIC_CORS_HEADERS } from "./response";
 import { sanitizeNewsContent } from "./sanitizeHtml";
 import { EXCERPT_MAX_LENGTH, fromSqliteDatetime, toSqliteDatetime } from "./newsValidation";
 import { triggerRevalidate, type RevalidateKind } from "./revalidate";
+import {
+  findCounterpart,
+  findPublishedCounterpartSlug,
+  setCounterpart,
+  validateCounterpart,
+} from "./translations";
 
 /**
  * "news_posts" and "recommended_posts" are two independent content types
@@ -44,9 +50,12 @@ export interface PostInput {
   imageHeight?: number | null;
   published?: boolean;
   scheduledAt?: string | null;
+  /** Id of the same article in the other locale. undefined = leave the
+   * existing link untouched, null = remove it. */
+  counterpartId?: number | null;
 }
 
-function toApiShape(row: PostRow, origin: string) {
+function toApiShape(row: PostRow, origin: string, counterpartId?: number | null) {
   return {
     id: row.id,
     locale: row.locale,
@@ -62,6 +71,7 @@ function toApiShape(row: PostRow, origin: string) {
     imageHeight: row.image_height,
     published: Boolean(row.published),
     scheduledAt: fromSqliteDatetime(row.scheduled_at),
+    counterpartId,
     createdAt: row.created_at,
     updatedAt: row.updated_at,
   };
@@ -113,6 +123,9 @@ export function createPostsListHandlers(table: string, kind: RevalidateKind) {
     const validationError = validate(input);
     if (validationError) return errorJson(validationError, 400);
 
+    const counterpartError = await validateCounterpart(env, table, input.locale, input.counterpartId);
+    if (counterpartError) return errorJson(counterpartError, 400);
+
     try {
       const result = await env.DB.prepare(
         `INSERT INTO ${table} (locale, slug, title, date, tag, excerpt, content, image_key, image_width, image_height, published, scheduled_at, updated_at)
@@ -135,9 +148,13 @@ export function createPostsListHandlers(table: string, kind: RevalidateKind) {
         .run();
 
       const id = result.meta.last_row_id;
+      if (input.counterpartId != null) {
+        const linkError = await setCounterpart(env, table, kind, id, input.counterpartId);
+        if (linkError) return errorJson(linkError, 400);
+      }
       const row = await env.DB.prepare(`SELECT * FROM ${table} WHERE id = ?`).bind(id).first<PostRow>();
       await triggerRevalidate(env, { kind, locale: input.locale!, slug: input.slug! });
-      return json(toApiShape(row!, new URL(request.url).origin), { status: 201 });
+      return json(toApiShape(row!, new URL(request.url).origin, input.counterpartId ?? null), { status: 201 });
     } catch (e) {
       const message = e instanceof Error ? e.message : String(e);
       if (message.includes("UNIQUE")) return errorJson("该语言下 slug 已存在", 409);
@@ -156,7 +173,8 @@ export function createPostAdminHandlers(table: string, kind: RevalidateKind, not
     const row = await env.DB.prepare(`SELECT * FROM ${table} WHERE id = ?`).bind(id).first<PostRow>();
     if (!row) return errorJson(`未找到该${notFoundLabel}`, 404);
 
-    return json(toApiShape(row, new URL(request.url).origin));
+    const counterpart = await findCounterpart(env, table, id);
+    return json(toApiShape(row, new URL(request.url).origin, counterpart?.id ?? null));
   };
 
   const onRequestPut: PagesFunction<Env> = async ({ request, env, params }) => {
@@ -172,6 +190,9 @@ export function createPostAdminHandlers(table: string, kind: RevalidateKind, not
 
     const validationError = validate(input);
     if (validationError) return errorJson(validationError, 400);
+
+    const counterpartError = await validateCounterpart(env, table, input.locale, input.counterpartId);
+    if (counterpartError) return errorJson(counterpartError, 400);
 
     const previous = await env.DB.prepare(`SELECT locale, slug FROM ${table} WHERE id = ?`)
       .bind(id)
@@ -203,12 +224,18 @@ export function createPostAdminHandlers(table: string, kind: RevalidateKind, not
       const row = await env.DB.prepare(`SELECT * FROM ${table} WHERE id = ?`).bind(id).first<PostRow>();
       if (!row) return errorJson(`未找到该${notFoundLabel}`, 404);
 
+      if (input.counterpartId !== undefined) {
+        const linkError = await setCounterpart(env, table, kind, id, input.counterpartId);
+        if (linkError) return errorJson(linkError, 400);
+      }
+
       await triggerRevalidate(env, { kind, locale: input.locale!, slug: input.slug! });
       if (previous && (previous.locale !== input.locale || previous.slug !== input.slug)) {
         await triggerRevalidate(env, { kind, locale: previous.locale, slug: previous.slug });
       }
 
-      return json(toApiShape(row, new URL(request.url).origin));
+      const counterpart = await findCounterpart(env, table, id);
+      return json(toApiShape(row, new URL(request.url).origin, counterpart?.id ?? null));
     } catch (e) {
       const message = e instanceof Error ? e.message : String(e);
       if (message.includes("UNIQUE")) return errorJson("该语言下 slug 已存在", 409);
@@ -224,9 +251,15 @@ export function createPostAdminHandlers(table: string, kind: RevalidateKind, not
       .bind(id)
       .first<{ locale: string; slug: string }>();
 
+    const counterpart = await findCounterpart(env, table, id);
+
     await env.DB.prepare(`DELETE FROM ${table} WHERE id = ?`).bind(id).run();
 
     if (row) await triggerRevalidate(env, { kind, locale: row.locale, slug: row.slug });
+    // The counterpart's page linked here from its language switch.
+    if (counterpart) {
+      await triggerRevalidate(env, { kind, locale: counterpart.locale, slug: counterpart.slug });
+    }
 
     return json({ ok: true });
   };
@@ -275,9 +308,12 @@ export function createPublicPostsHandlers(table: string) {
 
       if (!row) return errorJson("未找到该内容", 404, PUBLIC_CORS_HEADERS);
 
+      const translationSlug = await findPublishedCounterpartSlug(env, table, locale, slug, EFFECTIVELY_PUBLISHED);
+
       return json(
         {
           slug: row.slug,
+          translationSlug,
           title: row.title,
           date: row.date,
           tag: row.tag,

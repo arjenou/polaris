@@ -30,7 +30,10 @@ export default async function Page({
   if (!event) notFound();
 
   return (
-    <PageShell locale="ja">
+    <PageShell
+      locale="ja"
+      alternateHref={event.translationSlug ? `/zh/events/${event.translationSlug}` : undefined}
+    >
       <EventDetailPage
         event={event}
         otherEvents={await getOtherEvents("ja", slug)}

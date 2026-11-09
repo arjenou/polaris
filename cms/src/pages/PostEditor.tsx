@@ -3,6 +3,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import { mediaApi, type ContentPostInput } from "../lib/api";
 import RichTextEditor from "../components/RichTextEditor";
 import ImageCropper from "../components/ImageCropper";
+import CounterpartSelect from "../components/CounterpartSelect";
 import UploadSizeHint from "../components/UploadSizeHint";
 import { COVER_ASPECT_RATIO } from "../lib/coverImage";
 import { useToast } from "../lib/ToastContext";
@@ -181,6 +182,13 @@ export default function PostEditor({ resource, mode }: { resource: ContentTypeKe
             />
           </label>
         )}
+
+        <CounterpartSelect
+          locale={form.locale}
+          value={form.counterpartId}
+          load={(other) => config.api.list(other)}
+          onChange={(counterpartId) => update("counterpartId", counterpartId)}
+        />
 
         <label>
           标题

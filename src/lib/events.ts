@@ -20,6 +20,8 @@ export interface EventCard {
 }
 
 export interface EventDetail extends EventCard {
+  /** Slug of the published counterpart in the other locale, if linked in the CMS. */
+  translationSlug: string | null;
   summary: string | null;
   heroImage: string | null;
   videoUrl: string | null;
