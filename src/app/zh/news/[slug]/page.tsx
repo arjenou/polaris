@@ -30,10 +30,15 @@ export default async function Page({
   const post = await getPostBySlug("zh", slug);
   if (!post) notFound();
 
+  // Prefer the translation linked in the CMS; otherwise fall back to the same
+  // slug in the other locale when it exists (legacy content shares slugs).
+  const otherSlug = post.translationSlug ?? ((await getPostBySlug("ja", slug)) ? slug : null);
+  const alternateHref = otherSlug ? `/news/${otherSlug}` : undefined;
+
   return (
     <PageShell
       locale="zh"
-      alternateHref={post.translationSlug ? `/news/${post.translationSlug}` : undefined}
+      alternateHref={alternateHref}
     >
       <NewsDetailPage post={post} basePath="/zh/news" labels={{ backLabel: "← 返回资讯列表" }} />
     </PageShell>

@@ -29,10 +29,15 @@ export default async function Page({
   const event = await getEventBySlug("ja", slug);
   if (!event) notFound();
 
+  // Prefer the translation linked in the CMS; otherwise fall back to the same
+  // slug in the other locale when it exists (legacy content shares slugs).
+  const otherSlug = event.translationSlug ?? ((await getEventBySlug("zh", slug)) ? slug : null);
+  const alternateHref = otherSlug ? `/zh/events/${otherSlug}` : undefined;
+
   return (
     <PageShell
       locale="ja"
-      alternateHref={event.translationSlug ? `/zh/events/${event.translationSlug}` : undefined}
+      alternateHref={alternateHref}
     >
       <EventDetailPage
         event={event}

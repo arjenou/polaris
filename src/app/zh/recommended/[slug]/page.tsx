@@ -30,10 +30,15 @@ export default async function Page({
   const post = await getRecommendedPostBySlug("zh", slug);
   if (!post) notFound();
 
+  // Prefer the translation linked in the CMS; otherwise fall back to the same
+  // slug in the other locale when it exists (legacy content shares slugs).
+  const otherSlug = post.translationSlug ?? ((await getRecommendedPostBySlug("ja", slug)) ? slug : null);
+  const alternateHref = otherSlug ? `/recommended/${otherSlug}` : undefined;
+
   return (
     <PageShell
       locale="zh"
-      alternateHref={post.translationSlug ? `/recommended/${post.translationSlug}` : undefined}
+      alternateHref={alternateHref}
     >
       <NewsDetailPage post={post} basePath="/zh/recommended" labels={{ backLabel: "← 返回推荐信息列表" }} />
     </PageShell>

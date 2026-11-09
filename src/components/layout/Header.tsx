@@ -74,13 +74,25 @@ const MIRRORED_PAGES = new Set([
 // locale's list page instead of a non-existent article.
 const CMS_SECTIONS = new Set(["news", "events", "recommended"]);
 
+function splitLocale(pathname: string): { isZh: boolean; basePath: string } {
+  const isZh = pathname === "/zh" || pathname.startsWith("/zh/");
+  const basePath = (isZh ? pathname.slice(3) : pathname).replace(/\/+$/, "") || "/";
+  return { isZh, basePath };
+}
+
+// A page of the site: a mirrored static page or an article detail page.
+function isSitePath(basePath: string): boolean {
+  if (MIRRORED_PAGES.has(basePath)) return true;
+  const [, section, slug] = basePath.split("/");
+  return Boolean(slug) && CMS_SECTIONS.has(section);
+}
+
 // ja and zh routes mirror each other under the /zh prefix, so the equivalent
 // page in the other locale is found by toggling that prefix. Anything that
 // has no counterpart (unknown URLs, per-locale article slugs) falls back to a
 // valid page so the switch never leads to a 404.
 function getLocalePath(pathname: string, targetLocale: "ja" | "zh"): string {
-  const isZh = pathname === "/zh" || pathname.startsWith("/zh/");
-  const basePath = (isZh ? pathname.slice(3) : pathname).replace(/\/+$/, "") || "/";
+  const { basePath } = splitLocale(pathname);
 
   let neutralPath = basePath;
   if (!MIRRORED_PAGES.has(basePath)) {
@@ -112,8 +124,13 @@ export default function Header({
   const comingSoonShortText = comingSoonShort[locale];
   const comingSoonDetailText = comingSoonDetail[locale];
   const logoSubtitle = locale === "ja" ? site.name : null;
-  const jaHref = locale === "zh" && alternateHref ? alternateHref : getLocalePath(pathname, "ja");
-  const zhHref = locale === "ja" && alternateHref ? alternateHref : getLocalePath(pathname, "zh");
+  // The link for the language we're already on stays on the current page; the
+  // other one goes to the exact translation when known, else its mirrored path.
+  const onSitePage = isSitePath(splitLocale(pathname).basePath);
+  const jaHref =
+    locale === "ja" ? (onSitePage ? pathname : getLocalePath(pathname, "ja")) : (alternateHref ?? getLocalePath(pathname, "ja"));
+  const zhHref =
+    locale === "zh" ? (onSitePage ? pathname : getLocalePath(pathname, "zh")) : (alternateHref ?? getLocalePath(pathname, "zh"));
 
   useEffect(() => {
     setMenuOpen(false);
