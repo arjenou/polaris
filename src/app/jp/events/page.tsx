@@ -14,7 +14,7 @@ export default async function Page() {
     <PageShell locale="ja">
       <EventsListPage
         events={events}
-        basePath="/events"
+        basePath="/jp/events"
         labels={{
           heroTitle: "社内イベント一覧",
           empty: "現在イベントはありません。",

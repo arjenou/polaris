@@ -33,7 +33,7 @@ export default async function Page({
   // Prefer the translation linked in the CMS; otherwise fall back to the same
   // slug in the other locale when it exists (legacy content shares slugs).
   const otherSlug = post.translationSlug ?? ((await getPostBySlug("ja", slug)) ? slug : null);
-  const alternateHref = otherSlug ? `/news/${otherSlug}` : undefined;
+  const alternateHref = otherSlug ? `/jp/news/${otherSlug}` : undefined;
 
   return (
     <PageShell

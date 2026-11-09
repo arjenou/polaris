@@ -53,7 +53,7 @@ export interface NewsCardItem {
  * hardcoded list unrelated to what's actually published in the CMS. */
 export async function getLatestNewsItems(locale: PostLocale, limit = 2): Promise<NewsCardItem[]> {
   const posts = await getAllPosts(locale);
-  const basePath = locale === "zh" ? "/zh/news" : "/news";
+  const basePath = locale === "zh" ? "/zh/news" : "/jp/news";
 
   return posts.slice(0, limit).map((post) => ({
     date: post.date,

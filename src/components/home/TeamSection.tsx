@@ -21,7 +21,7 @@ export default async function TeamSection({
   labels?: TeamCarouselLabels;
 }) {
   const members = await getTeamMembers(locale);
-  const contactHref = locale === "zh" ? "/zh/contact" : "/contact";
+  const contactHref = locale === "zh" ? "/zh/contact" : "/jp/contact";
 
   return <TeamCarousel members={members} contactHref={contactHref} labels={labels} />;
 }

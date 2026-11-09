@@ -12,5 +12,5 @@ export const site = {
   beianUrl: "https://beian.miit.gov.cn/",
   // The legacy site links this button to an external live WordPress install.
   // Kept as a local route for now since the contact form itself is UI-only (see /contact).
-  contactHref: "/contact",
+  contactHref: "/jp/contact",
 } as const;

@@ -3,12 +3,12 @@ import type { GroupCompanyCard, NewsItem, RecommendedItem } from "./home";
 export const heroHeadlineZh = "跨域筑新，启径拓远";
 
 export const newsItemsZh: NewsItem[] = [
-  { date: "2025.08.09", tag: "通知", title: "夏休休业通知", href: "/news/obon-2025" },
+  { date: "2025.08.09", tag: "通知", title: "夏休休业通知", href: "/zh/news/obon-2025" },
   {
     date: "2025.05.13",
     tag: "通知",
     title: "短租公寓项目火热招商中",
-    href: "/news/monthly-mansion-expansion",
+    href: "/zh/news/monthly-mansion-expansion",
   },
 ];
 
@@ -18,21 +18,21 @@ export const recommendedItemsZh: RecommendedItem[] = [
     title: "商标注册公告",
     excerpt: "各位客户、合作方及业界相关人士……",
     image: "/images/home/recommend-1.png",
-    href: "/news/trademark-notice",
+    href: "/zh/news/trademark-notice",
   },
   {
     tag: "其他",
     title: "Polaris集团招聘信息",
     excerpt: "Polaris集团正随着业务的快速扩张……",
     image: "/images/home/recommend-2.png",
-    href: "/news/careers",
+    href: "/zh/news/careers",
   },
   {
     tag: "创业支援",
     title: "港区｜自有共享办公室火热招租中",
     excerpt: "港区位于东京中心地带，是高端商务区……",
     image: "/images/home/recommend-3.png",
-    href: "/news/minato-office",
+    href: "/zh/news/minato-office",
   },
 ];
 

@@ -52,7 +52,10 @@ function GlobeIcon({ className }: { className?: string }) {
   );
 }
 
-// Static pages that exist in both locales (ja at the root, zh under /zh).
+// URL prefix of each locale: Japanese lives under /jp, Chinese under /zh.
+const LOCALE_PREFIX = { ja: "/jp", zh: "/zh" } as const;
+
+// Static pages that exist in both locales, as locale-neutral paths.
 const MIRRORED_PAGES = new Set([
   "/",
   "/business-headquarters",
@@ -69,41 +72,46 @@ const MIRRORED_PAGES = new Set([
 ]);
 
 // CMS-backed sections whose detail pages (/<section>/[slug]) have slugs that
-// are managed independently per locale. A ja slug does not exist in zh (and
-// vice versa), so the language switch on a detail page lands on the other
-// locale's list page instead of a non-existent article.
+// are managed independently per locale, so the exact counterpart can't be
+// derived from the URL alone (see `alternateHref`). Without one, the language
+// switch on a detail page lands on the other locale's list page.
 const CMS_SECTIONS = new Set(["news", "events", "recommended"]);
 
-function splitLocale(pathname: string): { isZh: boolean; basePath: string } {
-  const isZh = pathname === "/zh" || pathname.startsWith("/zh/");
-  const basePath = (isZh ? pathname.slice(3) : pathname).replace(/\/+$/, "") || "/";
-  return { isZh, basePath };
+// Strips the locale prefix (/jp or /zh) and any trailing slash.
+function toNeutralPath(pathname: string): string {
+  const prefix = Object.values(LOCALE_PREFIX).find(
+    (p) => pathname === p || pathname.startsWith(`${p}/`),
+  );
+  const rest = prefix ? pathname.slice(prefix.length) : pathname;
+  return rest.replace(/\/+$/, "") || "/";
+}
+
+function withLocale(neutralPath: string, locale: "ja" | "zh"): string {
+  const prefix = LOCALE_PREFIX[locale];
+  return neutralPath === "/" ? prefix : `${prefix}${neutralPath}`;
 }
 
 // A page of the site: a mirrored static page or an article detail page.
-function isSitePath(basePath: string): boolean {
-  if (MIRRORED_PAGES.has(basePath)) return true;
-  const [, section, slug] = basePath.split("/");
+function isSitePath(neutralPath: string): boolean {
+  if (MIRRORED_PAGES.has(neutralPath)) return true;
+  const [, section, slug] = neutralPath.split("/");
   return Boolean(slug) && CMS_SECTIONS.has(section);
 }
 
-// ja and zh routes mirror each other under the /zh prefix, so the equivalent
-// page in the other locale is found by toggling that prefix. Anything that
-// has no counterpart (unknown URLs, per-locale article slugs) falls back to a
-// valid page so the switch never leads to a 404.
+// ja and zh routes mirror each other under their locale prefix, so the
+// equivalent page in the other locale is found by swapping that prefix.
+// Anything that has no counterpart (unknown URLs, per-locale article slugs)
+// falls back to a valid page so the switch never leads to a 404.
 function getLocalePath(pathname: string, targetLocale: "ja" | "zh"): string {
-  const { basePath } = splitLocale(pathname);
+  const neutral = toNeutralPath(pathname);
 
-  let neutralPath = basePath;
-  if (!MIRRORED_PAGES.has(basePath)) {
-    const [, section, slug] = basePath.split("/");
-    neutralPath = slug && CMS_SECTIONS.has(section) ? `/${section}` : "/";
+  let target = neutral;
+  if (!MIRRORED_PAGES.has(neutral)) {
+    const [, section, slug] = neutral.split("/");
+    target = slug && CMS_SECTIONS.has(section) ? `/${section}` : "/";
   }
 
-  if (targetLocale === "zh") {
-    return neutralPath === "/" ? "/zh" : `/zh${neutralPath}`;
-  }
-  return neutralPath;
+  return withLocale(target, targetLocale);
 }
 
 export default function Header({
@@ -119,14 +127,14 @@ export default function Header({
   const [openMobileGroups, setOpenMobileGroups] = useState<Set<string>>(new Set());
   const navItems: NavItem[] = locale === "zh" ? zhNavItems : jaNavItems;
   const visibleItems = navItems.filter((item) => !item.hidden);
-  const homeHref = locale === "zh" ? "/zh" : "/";
+  const homeHref = LOCALE_PREFIX[locale];
   const contactHref = locale === "zh" ? "/zh/contact" : site.contactHref;
   const comingSoonShortText = comingSoonShort[locale];
   const comingSoonDetailText = comingSoonDetail[locale];
   const logoSubtitle = locale === "ja" ? site.name : null;
   // The link for the language we're already on stays on the current page; the
   // other one goes to the exact translation when known, else its mirrored path.
-  const onSitePage = isSitePath(splitLocale(pathname).basePath);
+  const onSitePage = isSitePath(toNeutralPath(pathname));
   const jaHref =
     locale === "ja" ? (onSitePage ? pathname : getLocalePath(pathname, "ja")) : (alternateHref ?? getLocalePath(pathname, "ja"));
   const zhHref =

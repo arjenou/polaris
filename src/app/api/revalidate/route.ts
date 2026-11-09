@@ -17,21 +17,21 @@ type RevalidateKind =
  * card fed by the CMS, and therefore also need revalidating on every change. */
 const PAGES_WITH_CARD: Record<RevalidateKind, { ja: string[]; zh: string[] }> = {
   news: {
-    ja: ["/", "/assets-management", "/business-headquarters", "/business-headquarters-2"],
+    ja: ["/jp", "/jp/assets-management", "/jp/business-headquarters", "/jp/business-headquarters-2"],
     zh: ["/zh", "/zh/assets-management", "/zh/business-headquarters", "/zh/business-headquarters-2"],
   },
   recommended: {
-    ja: ["/"],
+    ja: ["/jp"],
     zh: ["/zh"],
   },
   // "team" has no dedicated list/detail page — it only ever appears in the
   // homepage carousel.
   team: {
-    ja: ["/"],
+    ja: ["/jp"],
     zh: ["/zh"],
   },
   events: {
-    ja: ["/"],
+    ja: ["/jp"],
     zh: ["/zh"],
   },
   // "gallery" and "advantages" are handled separately below via
@@ -48,17 +48,17 @@ const PAGES_WITH_CARD: Record<RevalidateKind, { ja: string[]; zh: string[] }> = 
   // "group-companies" has no dedicated list/detail page — it only ever
   // appears on グループ情報 (enterprise-intelligence).
   "group-companies": {
-    ja: ["/enterprise-intelligence"],
+    ja: ["/jp/enterprise-intelligence"],
     zh: ["/zh/enterprise-intelligence"],
   },
-  // "contact" is handled directly below (fixed /contact + /zh/contact
+  // "contact" is handled directly below (fixed /jp/contact + /zh/contact
   // paths, shared across locales like "gallery") — this entry only exists
   // to satisfy the Record type.
   contact: {
     ja: [],
     zh: [],
   },
-  // "home-hero" is handled directly below (fixed / + /zh paths) — this
+  // "home-hero" is handled directly below (fixed /jp + /zh paths) — this
   // entry only exists to satisfy the Record type.
   "home-hero": {
     ja: [],
@@ -72,17 +72,17 @@ const PAGES_WITH_CARD: Record<RevalidateKind, { ja: string[]; zh: string[] }> = 
 };
 
 const BASE_PATH: Partial<Record<RevalidateKind, { ja: string; zh: string }>> = {
-  news: { ja: "/news", zh: "/zh/news" },
-  recommended: { ja: "/recommended", zh: "/zh/recommended" },
-  events: { ja: "/events", zh: "/zh/events" },
+  news: { ja: "/jp/news", zh: "/zh/news" },
+  recommended: { ja: "/jp/recommended", zh: "/zh/recommended" },
+  events: { ja: "/jp/events", zh: "/zh/events" },
 };
 
 /** The three fixed pages managed by "gallery" and "advantages" content
  * (不動産取引 / リノベーション / 不動産管理). */
 const PAGE_KEY_PATHS: Record<string, { ja: string; zh: string }> = {
-  "real-estate": { ja: "/business-headquarters", zh: "/zh/business-headquarters" },
-  renovation: { ja: "/business-headquarters-2", zh: "/zh/business-headquarters-2" },
-  "asset-management": { ja: "/assets-management", zh: "/zh/assets-management" },
+  "real-estate": { ja: "/jp/business-headquarters", zh: "/zh/business-headquarters" },
+  renovation: { ja: "/jp/business-headquarters-2", zh: "/zh/business-headquarters-2" },
+  "asset-management": { ja: "/jp/assets-management", zh: "/zh/assets-management" },
 };
 
 /**
@@ -125,7 +125,7 @@ export async function POST(request: NextRequest) {
                       : "news";
 
   if (kind === "contact") {
-    const paths = ["/contact", "/zh/contact"];
+    const paths = ["/jp/contact", "/zh/contact"];
     for (const path of paths) revalidatePath(path);
     return NextResponse.json({ revalidated: true, paths });
   }
@@ -133,15 +133,15 @@ export async function POST(request: NextRequest) {
   // Headline text differs per locale but slides are shared, so simplest to
   // always revalidate both homepage paths together on any hero change.
   if (kind === "home-hero") {
-    const paths = ["/", "/zh"];
+    const paths = ["/jp", "/zh"];
     for (const path of paths) revalidatePath(path);
     return NextResponse.json({ revalidated: true, paths });
   }
 
   if (kind === "maintenance-page") {
     const paths = [
-      "/monthly-magazine",
-      "/entrepreneurship-support",
+      "/jp/monthly-magazine",
+      "/jp/entrepreneurship-support",
       "/zh/monthly-magazine",
       "/zh/entrepreneurship-support",
     ];

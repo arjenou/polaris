@@ -12,7 +12,7 @@ export default function NotFound() {
       <NotFoundPage
         title="お探しのページが見つかりません"
         body="URLが間違っているか、ページが削除・移動された可能性があります。お手数ですが、トップページからお探しの情報をご確認ください。"
-        homeHref="/"
+        homeHref="/jp"
         homeLabel="トップページへ戻る"
       />
     </PageShell>

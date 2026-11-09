@@ -40,7 +40,7 @@ const defaultLabels: EventsCarouselLabels = {
 export default function EventsCarousel({
   labels = defaultLabels,
   events,
-  basePath = "/events",
+  basePath = "/jp/events",
 }: {
   labels?: EventsCarouselLabels;
   events: EventCard[];

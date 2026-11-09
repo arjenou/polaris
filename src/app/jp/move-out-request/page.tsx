@@ -12,8 +12,8 @@ export default function Page() {
     <PageShell locale="ja">
       <MoveOutForm
         copy={moveOutFormCopyJa}
-        backHref="/assets-management"
-        homeHref="/"
+        backHref="/jp/assets-management"
+        homeHref="/jp"
         locale="ja"
       />
     </PageShell>

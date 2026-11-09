@@ -18,7 +18,7 @@ export default async function EventsSection({
   labels?: EventsCarouselLabels;
 }) {
   const events = await getAllEvents(locale);
-  const basePath = locale === "zh" ? "/zh/events" : "/events";
+  const basePath = locale === "zh" ? "/zh/events" : "/jp/events";
 
   return <EventsCarousel labels={labels} events={events} basePath={basePath} />;
 }

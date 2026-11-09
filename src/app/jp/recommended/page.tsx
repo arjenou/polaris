@@ -1,23 +1,23 @@
 import type { Metadata } from "next";
 import PageShell from "@/components/layout/PageShell";
 import NewsListPage from "@/components/news/NewsListPage";
-import { getAllPosts } from "@/lib/posts";
+import { getAllRecommendedPosts } from "@/lib/recommended";
 
 export const metadata: Metadata = {
-  title: "お知らせ一覧 | ポラリス・グループ",
+  title: "おすすめ情報一覧 | ポラリス・グループ",
 };
 
 export default async function Page() {
-  const posts = await getAllPosts("ja");
+  const posts = await getAllRecommendedPosts("ja");
 
   return (
     <PageShell locale="ja">
       <NewsListPage
         posts={posts}
-        basePath="/news"
+        basePath="/jp/recommended"
         labels={{
-          heroTitle: "お知らせ一覧",
-          empty: "現在お知らせはありません。",
+          heroTitle: "おすすめ情報一覧",
+          empty: "現在おすすめ情報はありません。",
         }}
       />
     </PageShell>

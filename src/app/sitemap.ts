@@ -6,17 +6,17 @@ import { getAllEventSlugs } from "@/lib/events";
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "https://example.com";
 
 const jaPaths = [
-  "",
-  "/business-headquarters",
-  "/assets-management",
-  "/business-headquarters-2",
-  "/entrepreneurship-support",
-  "/monthly-magazine",
-  "/enterprise-intelligence",
-  "/contact",
-  "/news",
-  "/recommended",
-  "/events",
+  "/jp",
+  "/jp/business-headquarters",
+  "/jp/assets-management",
+  "/jp/business-headquarters-2",
+  "/jp/entrepreneurship-support",
+  "/jp/monthly-magazine",
+  "/jp/enterprise-intelligence",
+  "/jp/contact",
+  "/jp/news",
+  "/jp/recommended",
+  "/jp/events",
 ];
 
 const zhPaths = [
@@ -42,11 +42,11 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     getAllEventSlugs("ja"),
     getAllEventSlugs("zh"),
   ]);
-  const jaNewsPaths = jaSlugs.map((slug) => `/news/${slug}`);
+  const jaNewsPaths = jaSlugs.map((slug) => `/jp/news/${slug}`);
   const zhNewsPaths = zhSlugs.map((slug) => `/zh/news/${slug}`);
-  const jaRecommendedPaths = jaRecommendedSlugs.map((slug) => `/recommended/${slug}`);
+  const jaRecommendedPaths = jaRecommendedSlugs.map((slug) => `/jp/recommended/${slug}`);
   const zhRecommendedPaths = zhRecommendedSlugs.map((slug) => `/zh/recommended/${slug}`);
-  const jaEventPaths = jaEventSlugs.map((slug) => `/events/${slug}`);
+  const jaEventPaths = jaEventSlugs.map((slug) => `/jp/events/${slug}`);
   const zhEventPaths = zhEventSlugs.map((slug) => `/zh/events/${slug}`);
 
   const allPaths = [
@@ -67,6 +67,6 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       pathname.includes("/news/") || pathname.includes("/recommended/") || pathname.includes("/events/")
         ? "monthly"
         : "weekly",
-    priority: pathname === "" || pathname === "/zh" ? 1 : 0.7,
+    priority: pathname === "/jp" || pathname === "/zh" ? 1 : 0.7,
   }));
 }

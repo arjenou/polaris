@@ -25,13 +25,13 @@ export const newsItems: NewsItem[] = [
     date: "2025.08.09",
     tag: "お知らせ",
     title: "お盆休みお知らせ",
-    href: "/news/obon-2025",
+    href: "/jp/news/obon-2025",
   },
   {
     date: "2025.05.13",
     tag: "お知らせ",
     title: "マンスリーマンション事業展開",
-    href: "/news/monthly-mansion-expansion",
+    href: "/jp/news/monthly-mansion-expansion",
   },
 ];
 
@@ -49,21 +49,21 @@ export const recommendedItems: RecommendedItem[] = [
     title: "商標登録に関するご報告とご注意",
     excerpt: "客様、取引先様 業界関係者各位：...",
     image: "/images/home/recommend-1.png",
-    href: "/news/trademark-notice",
+    href: "/jp/news/trademark-notice",
   },
   {
     tag: "その他",
     title: "ポラリス・グループキャリア採用情報",
     excerpt: "ポラリス・グループは事業の急速な拡大に...",
     image: "/images/home/recommend-2.png",
-    href: "/news/careers",
+    href: "/jp/news/careers",
   },
   {
     tag: "創業支援",
     title: "港区｜自社運営レンタルオフィス入居者募集中",
     excerpt: "港区は東京の中心に位置するハイグレード...",
     image: "/images/home/recommend-3.png",
-    href: "/news/minato-office",
+    href: "/jp/news/minato-office",
   },
 ];
 
@@ -78,12 +78,12 @@ export const domesticCompanies: GroupCompanyCard[] = [
   {
     title: "不動産買取再贩・不動産仲介全般",
     image: "/images/home/group-nexus.png",
-    href: "/business-headquarters",
+    href: "/jp/business-headquarters",
   },
   {
     title: "赁貨管理・建物管理・リーシング",
     image: "/images/home/group-property.png",
-    href: "/assets-management",
+    href: "/jp/assets-management",
   },
   {
     title: "マンスリーマンションの運営",

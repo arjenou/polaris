@@ -32,10 +32,10 @@ export interface NavItem {
 }
 
 export const jaNavItems: NavItem[] = [
-  { label: "ホーム", href: "/" },
+  { label: "ホーム", href: "/jp" },
   {
     label: "不動産取引",
-    href: "/business-headquarters",
+    href: "/jp/business-headquarters",
     banner: "/images/nav/banner-real-estate.png",
     brand: "/images/nav/brand-polaris-next.png",
     groups: [
@@ -57,7 +57,7 @@ export const jaNavItems: NavItem[] = [
   },
   {
     label: "不動産管理",
-    href: "/assets-management",
+    href: "/jp/assets-management",
     banner: "/images/nav/banner-assets-management.jpg",
     brand: "/images/nav/brand-polaris-property.png",
     groups: [
@@ -68,7 +68,7 @@ export const jaNavItems: NavItem[] = [
           { label: "PM収支管理" },
           { label: "リーシング業務" },
           { label: "入居者・テナント対応" },
-          { label: "退去受付フォーム", href: "/move-out-request", bold: true, mobileTrailing: true },
+          { label: "退去受付フォーム", href: "/jp/move-out-request", bold: true, mobileTrailing: true },
         ],
       },
       {
@@ -84,7 +84,7 @@ export const jaNavItems: NavItem[] = [
   },
   {
     label: "リノベーション",
-    href: "/business-headquarters-2",
+    href: "/jp/business-headquarters-2",
     banner: "/images/nav/banner-renovation.png",
     brand: "/images/nav/brand-polaris-next.png",
     groups: [
@@ -94,10 +94,10 @@ export const jaNavItems: NavItem[] = [
     ],
   },
   // 海外ビジネス was hidden on the legacy site (commented out) — kept hidden here for parity.
-  { label: "海外ビジネス", href: "/immigration-planning", hidden: true },
+  { label: "海外ビジネス", href: "/jp/immigration-planning", hidden: true },
   {
     label: "創業支援",
-    href: "/entrepreneurship-support",
+    href: "/jp/entrepreneurship-support",
     banner: "/images/nav/banner-startup.png",
     brand: "/images/nav/brand-kyoboku.png",
     comingSoon: true,
@@ -121,7 +121,7 @@ export const jaNavItems: NavItem[] = [
   },
   {
     label: "マンスリー",
-    href: "/monthly-magazine",
+    href: "/jp/monthly-magazine",
     banner: "/images/nav/banner-monthly.png",
     brand: "/images/nav/brand-ark-nest.png",
     comingSoon: true,
@@ -133,7 +133,7 @@ export const jaNavItems: NavItem[] = [
       },
     ],
   },
-  { label: "グループ情報", href: "/enterprise-intelligence" },
+  { label: "グループ情報", href: "/jp/enterprise-intelligence" },
 ];
 
 export const zhNavItems: NavItem[] = [

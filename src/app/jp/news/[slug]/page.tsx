@@ -40,7 +40,7 @@ export default async function Page({
       locale="ja"
       alternateHref={alternateHref}
     >
-      <NewsDetailPage post={post} basePath="/news" labels={{ backLabel: "← お知らせ一覧に戻る" }} />
+      <NewsDetailPage post={post} basePath="/jp/news" labels={{ backLabel: "← お知らせ一覧に戻る" }} />
     </PageShell>
   );
 }

@@ -16,8 +16,8 @@ export default async function Page() {
       <Suspense fallback={null}>
         <ContactForm
           copy={contactCopyJa}
-          homeHref="/"
-          moveOutHref="/move-out-request"
+          homeHref="/jp"
+          moveOutHref="/jp/move-out-request"
           locale="ja"
           qrImages={qrImages}
         />

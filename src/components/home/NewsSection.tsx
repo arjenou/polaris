@@ -4,7 +4,7 @@ import styles from "./NewsSection.module.css";
 
 export default function NewsSection({
   items = defaultNewsItems,
-  moreHref = "/news",
+  moreHref = "/jp/news",
   moreLabel = "More",
 }: {
   items?: NewsItem[];

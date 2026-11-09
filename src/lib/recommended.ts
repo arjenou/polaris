@@ -37,7 +37,7 @@ export interface RecommendedCardItem {
 /** Used by the homepage "おすすめ情報" card grid. */
 export async function getLatestRecommendedItems(locale: PostLocale, limit = 3): Promise<RecommendedCardItem[]> {
   const posts = await getAllRecommendedPosts(locale);
-  const basePath = locale === "zh" ? "/zh/recommended" : "/recommended";
+  const basePath = locale === "zh" ? "/zh/recommended" : "/jp/recommended";
 
   return posts.slice(0, limit).map((post) => ({
     tag: post.tag,

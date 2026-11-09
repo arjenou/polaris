@@ -10,7 +10,7 @@ export default function RecommendedSection({
   eyebrow = "おすすめ情報",
   title = "最新事例やお役立ち情報をピックアップ！",
   items = defaultItems,
-  moreHref = "/recommended",
+  moreHref = "/jp/recommended",
   moreLabel = "More",
 }: {
   eyebrow?: string;

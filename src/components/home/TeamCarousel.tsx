@@ -49,7 +49,7 @@ const defaultLabels: TeamCarouselLabels = {
 
 export default function TeamCarousel({
   members,
-  contactHref = "/contact",
+  contactHref = "/jp/contact",
   labels = defaultLabels,
 }: {
   members: TeamMemberCard[];

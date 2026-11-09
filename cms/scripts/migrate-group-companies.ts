@@ -33,14 +33,14 @@ const DOMESTIC_JA: CompanySeed[] = [
     business: "実需物件買取再販・収益物件買取再販・不動産仲介全般・リノベーション・リフォーム",
     address: "東京都千代田区麴町３丁目５−１５ 得水ビル 5F",
     imagePath: "/images/pages/group-info/company-nexus.png",
-    href: "/business-headquarters",
+    href: "/jp/business-headquarters",
   },
   {
     name: "ポラリス・プロパティ株式会社",
     business: "リーシング・賃貸管理（PM）・建物管理（BM）",
     address: "東京都千代田区麴町３丁目５−１５ 得水ビル 5F",
     imagePath: "/images/pages/group-info/company-property.png",
-    href: "/assets-management",
+    href: "/jp/assets-management",
   },
   {
     name: "ArkNest株式会社",

@@ -42,8 +42,8 @@ export default async function Page({
       <EventDetailPage
         event={event}
         otherEvents={await getOtherEvents("ja", slug)}
-        basePath="/events"
-        homeHref="/"
+        basePath="/jp/events"
+        homeHref="/jp"
       />
     </PageShell>
   );
