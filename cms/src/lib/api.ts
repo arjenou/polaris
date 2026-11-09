@@ -169,11 +169,17 @@ export interface ContactSubmission {
   contactMethod: string;
   createdAt: string;
   isRead: boolean;
+  isHandled: boolean;
 }
 
 export const contactSubmissionsApi = {
   list: () => request<ContactSubmission[]>("/api/admin/contact-submissions"),
   get: (id: number) => request<ContactSubmission>(`/api/admin/contact-submissions/${id}`),
+  setHandled: (id: number, handled: boolean) =>
+    request<ContactSubmission>(`/api/admin/contact-submissions/${id}`, {
+      method: "PATCH",
+      body: JSON.stringify({ handled }),
+    }),
   remove: (id: number) => request<{ ok: true }>(`/api/admin/contact-submissions/${id}`, { method: "DELETE" }),
   unreadCount: () => request<{ count: number }>("/api/admin/contact-submissions/unread-count"),
 };

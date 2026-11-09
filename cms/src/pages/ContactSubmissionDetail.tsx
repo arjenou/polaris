@@ -23,6 +23,7 @@ export default function ContactSubmissionDetail() {
   const [item, setItem] = useState<ContactSubmission | null>(null);
   const [loading, setLoading] = useState(true);
   const [deleting, setDeleting] = useState(false);
+  const [handling, setHandling] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
@@ -51,6 +52,21 @@ export default function ContactSubmissionDetail() {
     } catch (err) {
       showToast(err instanceof Error ? err.message : "删除失败", "error");
       setDeleting(false);
+    }
+  }
+
+  async function handleToggleHandled() {
+    if (!item) return;
+    const next = !item.isHandled;
+    setHandling(true);
+    try {
+      const updated = await contactSubmissionsApi.setHandled(item.id, next);
+      setItem(updated);
+      showToast(next ? "已标记为已处理" : "已取消已处理", "success", "center");
+    } catch (err) {
+      showToast(err instanceof Error ? err.message : "操作失败", "error");
+    } finally {
+      setHandling(false);
     }
   }
 
@@ -90,6 +106,14 @@ export default function ContactSubmissionDetail() {
             <dd className="detail-message">{item.message || "—"}</dd>
           </div>
           <div className="form-actions detail-actions">
+            <button
+              type="button"
+              className={item.isHandled ? "btn-ghost" : "btn-primary"}
+              onClick={handleToggleHandled}
+              disabled={handling}
+            >
+              {handling ? "处理中…" : item.isHandled ? "取消已处理" : "已处理"}
+            </button>
             <button type="button" className="btn-danger" onClick={handleDelete} disabled={deleting}>
               {deleting ? "删除中…" : "删除"}
             </button>

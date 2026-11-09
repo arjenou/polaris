@@ -15,6 +15,7 @@ export interface ContactSubmissionRow {
   contact_method: string;
   created_at: string;
   is_read: number;
+  is_handled: number;
 }
 
 export const CONTACT_SUBMISSION_SELECT = `SELECT cs.*, tm.last_name AS member_last_name, tm.first_name AS member_first_name
@@ -36,5 +37,6 @@ export function toContactSubmissionApiShape(row: ContactSubmissionRow) {
     contactMethod: row.contact_method,
     createdAt: fromSqliteDatetime(row.created_at) ?? row.created_at,
     isRead: !!row.is_read,
+    isHandled: !!row.is_handled,
   };
 }

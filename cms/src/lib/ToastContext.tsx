@@ -1,15 +1,17 @@
 import { createContext, useCallback, useContext, useRef, useState, type ReactNode } from "react";
 
 export type ToastType = "success" | "error" | "notice";
+export type ToastPosition = "top-right" | "center";
 
 interface ToastItem {
   id: number;
   message: string;
   type: ToastType;
+  position: ToastPosition;
 }
 
 interface ToastContextValue {
-  showToast: (message: string, type?: ToastType) => void;
+  showToast: (message: string, type?: ToastType, position?: ToastPosition) => void;
   showSuccessDialog: (message: string, onConfirm?: () => void) => void;
 }
 
@@ -24,10 +26,10 @@ export function ToastProvider({ children }: { children: ReactNode }) {
   const dialogOnConfirmRef = useRef<(() => void) | undefined>(undefined);
   const nextId = useRef(0);
 
-  const showToast = useCallback((message: string, type: ToastType = "success") => {
+  const showToast = useCallback((message: string, type: ToastType = "success", position: ToastPosition = "top-right") => {
     const id = nextId.current++;
     const duration = type === "notice" ? NOTICE_TOAST_DURATION_MS : TOAST_DURATION_MS;
-    setToasts((prev) => [...prev, { id, message, type }]);
+    setToasts((prev) => [...prev, { id, message, type, position }]);
     setTimeout(() => {
       setToasts((prev) => prev.filter((t) => t.id !== id));
     }, duration);
@@ -49,11 +51,22 @@ export function ToastProvider({ children }: { children: ReactNode }) {
     <ToastContext.Provider value={{ showToast, showSuccessDialog }}>
       {children}
       <div className="toast-stack">
-        {toasts.map((t) => (
-          <div key={t.id} className={`toast toast-${t.type}`}>
-            {t.message}
-          </div>
-        ))}
+        {toasts
+          .filter((t) => t.position === "top-right")
+          .map((t) => (
+            <div key={t.id} className={`toast toast-${t.type}`}>
+              {t.message}
+            </div>
+          ))}
+      </div>
+      <div className="toast-stack toast-stack-center">
+        {toasts
+          .filter((t) => t.position === "center")
+          .map((t) => (
+            <div key={t.id} className={`toast toast-${t.type}`}>
+              {t.message}
+            </div>
+          ))}
       </div>
       {dialogMessage && (
         <div className="dialog-overlay" onClick={closeDialog} role="presentation">

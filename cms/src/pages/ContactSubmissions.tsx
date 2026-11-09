@@ -72,6 +72,7 @@ export default function ContactSubmissions() {
                   <Link to={`/contact-submissions/${s.id}`} onClick={(e) => e.stopPropagation()}>
                     查看
                   </Link>
+                  {s.isHandled && <span className="handled-tag">已处理</span>}
                 </td>
               </tr>
             ))}
