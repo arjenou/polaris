@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
+import LanguageFallbackNotice from "@/components/layout/LanguageFallbackNotice";
 import PageShell from "@/components/layout/PageShell";
 import EventDetailPage from "@/components/events/EventDetailPage";
 import { getAllEventSlugs, getEventBySlug, getOtherEvents } from "@/lib/events";
@@ -32,9 +33,13 @@ export async function generateMetadata({
   params: Promise<{ slug: string }>;
 }): Promise<Metadata> {
   const { slug } = await params;
-  const event = await getEventBySlug("zh", slug);
+  const own = await getEventBySlug("zh", slug);
+  const event = own ?? (await getEventBySlug("ja", slug));
   return {
     title: event ? `${event.title} | Polaris Group` : "公司活动 | Polaris Group",
+    // The other language's original stands in when there is no translation;
+    // keep that duplicate out of search results.
+    robots: own ? undefined : { index: false },
   };
 }
 
@@ -44,19 +49,22 @@ export default async function Page({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
-  const event = await getEventBySlug("zh", slug);
+  const own = await getEventBySlug("zh", slug);
+  // No Chinese version: show the Japanese original instead of a 404, so the
+  // language switch always stays on the same article.
+  const event = own ?? (await getEventBySlug("ja", slug));
   if (!event) notFound();
 
-  // Prefer the translation linked in the CMS; otherwise fall back to the same
-  // slug in the other locale when it exists (legacy content shares slugs).
-  const otherSlug = event.translationSlug ?? ((await getEventBySlug("ja", slug)) ? slug : null);
-  const alternateHref = otherSlug ? `/jp/events/${otherSlug}` : undefined;
+  // Link to the translation linked in the CMS, else to the same slug in the
+  // other locale (which itself falls back to this article if it has none).
+  const alternateHref = `/jp/events/${own ? (event.translationSlug ?? slug) : slug}`;
 
   return (
     <PageShell
       locale="zh"
       alternateHref={alternateHref}
     >
+      {!own && <LanguageFallbackNotice locale="zh" />}
       <EventDetailPage
         event={event}
         otherEvents={await getOtherEvents("zh", slug)}

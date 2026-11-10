@@ -1,0 +1,18 @@
+.notice {
+  max-width: var(--container-width);
+  margin: 16px auto 0;
+  padding: 10px 16px;
+  border: 1px solid #f0dcc0;
+  border-radius: 6px;
+  background: #fffaf0;
+  color: #5c4a32;
+  font-size: 13px;
+  line-height: 1.6;
+}
+
+@media (max-width: 880px) {
+  .notice {
+    margin-left: var(--container-padding);
+    margin-right: var(--container-padding);
+  }
+}
