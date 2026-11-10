@@ -11,31 +11,34 @@ import LocaleHtmlAttributes from "@/components/layout/LocaleHtmlAttributes";
 import { getContactQrImages } from "@/lib/contactQr";
 import "./globals.css";
 
+// The CJK families below are split into ~100 unicode-range slices, and every
+// slice of every weight is downloaded from Google Fonts at build time. Using
+// the variable font (no `weight`) keeps it to one file per slice instead of
+// one per weight, which keeps the build fast and far less likely to fail on a
+// single flaky download.
 const notoSansJP = Noto_Sans_JP({
   variable: "--font-noto-sans-jp",
   subsets: ["latin"],
-  weight: ["400", "500", "700", "900"],
   display: "swap",
 });
 
 const shipporiMincho = Shippori_Mincho_B1({
   variable: "--font-shippori-mincho",
   subsets: ["latin"],
-  weight: ["400", "500", "600", "700", "800"],
+  // Static font: only the weights the site actually uses (no 600).
+  weight: ["400", "500", "700", "800"],
   display: "swap",
 });
 
 const notoSansSC = Noto_Sans_SC({
   variable: "--font-noto-sans-sc",
   subsets: ["latin"],
-  weight: ["400", "500", "700", "900"],
   display: "swap",
 });
 
 const notoSerifSC = Noto_Serif_SC({
   variable: "--font-noto-serif-sc",
   subsets: ["latin"],
-  weight: ["400", "500", "600", "700", "900"],
   display: "swap",
 });
 
